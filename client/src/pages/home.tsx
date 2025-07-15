@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages, Monitor, Smartphone, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import UrlInput from "@/components/url-input";
@@ -38,6 +39,7 @@ export default function Home() {
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const [isLegalOpen, setIsLegalOpen] = useState(false);
   const { toast } = useToast();
 
   const analyzeMutation = useMutation({
@@ -512,9 +514,46 @@ export default function Home() {
               
               {/* Footer for centered layout */}
               <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  © 2025 Web Performance Analyzer. All rights reserved. Created by Luis Mena.
-                </p>
+                <div className="flex items-center justify-center gap-1 flex-wrap text-sm text-slate-500 dark:text-slate-400">
+                  <span>© 2025 Web Performance Analyzer. All rights reserved. Created by Luis Mena.</span>
+                  <span className="mx-1">•</span>
+                  <Dialog open={isLegalOpen} onOpenChange={setIsLegalOpen}>
+                    <DialogTrigger asChild>
+                      <button 
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors"
+                        onClick={() => setIsLegalOpen(true)}
+                      >
+                        Legal Notice
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          Legal Notice
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                        <p>
+                          All rights reserved to Luis Mena Hernandez.
+                        </p>
+                        <div className="space-y-2">
+                          <p className="font-medium">Legal Address:</p>
+                          <address className="not-italic text-slate-600 dark:text-slate-400">
+                            461 N Lake<br />
+                            Aurora, Illinois 60506<br />
+                            United States
+                          </address>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium">Application Registration Number:</p>
+                          <p className="text-slate-600 dark:text-slate-400 font-mono">
+                            EU VAT: EU847629301
+                          </p>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </div>
           </div>
