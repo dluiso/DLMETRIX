@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages } from "lucide-react";
+import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages, Monitor, Smartphone, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
