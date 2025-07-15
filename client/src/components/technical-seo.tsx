@@ -83,7 +83,7 @@ export default function TechnicalSeo({ checks }: TechnicalSeoProps) {
           </Badge>
         </div>
         <p className="text-sm text-slate-600 mt-2">
-          Comprehensive technical analysis similar to Google PageSpeed Insights
+          Comprehensive technical analysis covering performance, accessibility, and SEO best practices
         </p>
       </CardHeader>
       <CardContent>

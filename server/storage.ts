@@ -1,23 +1,23 @@
-import { seoAnalyses, type SeoAnalysis, type InsertSeoAnalysis } from "@shared/schema";
+import { webAnalyses, type WebAnalysis, type InsertWebAnalysis } from "@shared/schema";
 
 export interface IStorage {
   getUser(id: number): Promise<any | undefined>;
   getUserByUsername(username: string): Promise<any | undefined>;
   createUser(user: any): Promise<any>;
-  createSeoAnalysis(analysis: InsertSeoAnalysis): Promise<SeoAnalysis>;
-  getSeoAnalysis(id: number): Promise<SeoAnalysis | undefined>;
-  getSeoAnalysesByUrl(url: string): Promise<SeoAnalysis[]>;
+  createWebAnalysis(analysis: InsertWebAnalysis): Promise<WebAnalysis>;
+  getWebAnalysis(id: number): Promise<WebAnalysis | undefined>;
+  getWebAnalysesByUrl(url: string): Promise<WebAnalysis[]>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, any>;
-  private seoAnalyses: Map<number, SeoAnalysis>;
+  private webAnalyses: Map<number, WebAnalysis>;
   private currentUserId: number;
   private currentAnalysisId: number;
 
   constructor() {
     this.users = new Map();
-    this.seoAnalyses = new Map();
+    this.webAnalyses = new Map();
     this.currentUserId = 1;
     this.currentAnalysisId = 1;
   }
@@ -39,9 +39,9 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async createSeoAnalysis(insertAnalysis: InsertSeoAnalysis): Promise<SeoAnalysis> {
+  async createWebAnalysis(insertAnalysis: InsertWebAnalysis): Promise<WebAnalysis> {
     const id = this.currentAnalysisId++;
-    const analysis: SeoAnalysis = { 
+    const analysis: WebAnalysis = { 
       id,
       url: insertAnalysis.url,
       title: insertAnalysis.title ?? null,
@@ -54,20 +54,28 @@ export class MemStorage implements IStorage {
       twitterCardTags: insertAnalysis.twitterCardTags ?? null,
       schemaMarkup: insertAnalysis.schemaMarkup ?? false,
       sitemap: insertAnalysis.sitemap ?? false,
-      score: insertAnalysis.score ?? 0,
+      coreWebVitals: insertAnalysis.coreWebVitals ?? null,
+      performanceScore: insertAnalysis.performanceScore ?? 0,
+      accessibilityScore: insertAnalysis.accessibilityScore ?? 0,
+      bestPracticesScore: insertAnalysis.bestPracticesScore ?? 0,
+      seoScore: insertAnalysis.seoScore ?? 0,
+      mobileScreenshot: insertAnalysis.mobileScreenshot ?? null,
+      desktopScreenshot: insertAnalysis.desktopScreenshot ?? null,
       recommendations: insertAnalysis.recommendations ?? null,
-      technicalSeoChecks: insertAnalysis.technicalSeoChecks ?? null,
+      diagnostics: insertAnalysis.diagnostics ?? null,
+      insights: insertAnalysis.insights ?? null,
+      technicalChecks: insertAnalysis.technicalChecks ?? null,
     };
-    this.seoAnalyses.set(id, analysis);
+    this.webAnalyses.set(id, analysis);
     return analysis;
   }
 
-  async getSeoAnalysis(id: number): Promise<SeoAnalysis | undefined> {
-    return this.seoAnalyses.get(id);
+  async getWebAnalysis(id: number): Promise<WebAnalysis | undefined> {
+    return this.webAnalyses.get(id);
   }
 
-  async getSeoAnalysesByUrl(url: string): Promise<SeoAnalysis[]> {
-    return Array.from(this.seoAnalyses.values()).filter(
+  async getWebAnalysesByUrl(url: string): Promise<WebAnalysis[]> {
+    return Array.from(this.webAnalyses.values()).filter(
       (analysis) => analysis.url === url,
     );
   }

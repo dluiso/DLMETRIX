@@ -1,8 +1,8 @@
-# SEO Tag Analyzer
+# Web Performance Analyzer
 
 ## Overview
 
-This is a full-stack web application for analyzing SEO meta tags and providing recommendations. The application scrapes websites, extracts meta tags, evaluates SEO performance, and provides detailed analysis with social media previews and actionable recommendations.
+This is a comprehensive full-stack web application for analyzing website performance, Core Web Vitals, accessibility, best practices, and SEO. The application uses Lighthouse for performance analysis, Puppeteer for screenshots, and provides detailed insights with actionable recommendations across mobile and desktop devices.
 
 ## User Preferences
 
@@ -32,39 +32,53 @@ Preferred communication style: Simple, everyday language.
 ## Key Components
 
 ### Frontend Components
+- **Performance Overview**: Comprehensive dashboard showing all category scores
+- **Core Web Vitals**: Interactive mobile/desktop metrics display with thresholds
+- **Screenshots View**: Mobile and desktop page captures with device previews
 - **URL Input**: Form for entering websites to analyze
-- **SEO Score**: Visual dashboard showing overall SEO performance
 - **Meta Tag Analysis**: Detailed breakdown of title, description, and meta tags
 - **Social Media Previews**: Google, Facebook, and Twitter preview cards
-- **Recommendations**: Actionable suggestions for SEO improvements
-- **Technical SEO**: Analysis of robots.txt, sitemap, schema markup
+- **Recommendations**: Actionable suggestions categorized by performance, accessibility, best practices, and SEO
+- **Technical Analysis**: Analysis of robots.txt, sitemap, schema markup, and performance checks
 
 ### Backend Services
-- **SEO Analysis Engine**: Web scraping with Cheerio for HTML parsing
-- **Meta Tag Extraction**: Comprehensive extraction of standard and social meta tags
-- **Scoring Algorithm**: Calculates SEO scores based on best practices
-- **Recommendation Engine**: Generates prioritized improvement suggestions
+- **Lighthouse Integration**: Full performance analysis engine using Google Lighthouse
+- **Puppeteer Screenshot Capture**: Mobile and desktop page screenshots
+- **Core Web Vitals Measurement**: LCP, FID, CLS, FCP, TTFB metrics for both device types
+- **Multi-Category Analysis**: Performance, Accessibility, Best Practices, and SEO scoring
+- **Diagnostic Engine**: Detailed insights and optimization opportunities extraction
+- **SEO Analysis Engine**: Traditional meta tag and HTML structure analysis
 
 ### Data Models
-- **SEO Analysis**: Stores complete analysis results including scores and recommendations
+- **Web Analysis**: Stores comprehensive analysis results including:
+  - Core Web Vitals for mobile and desktop
+  - Performance, Accessibility, Best Practices, and SEO scores
+  - Mobile and desktop screenshots (base64 encoded)
+  - Lighthouse diagnostics and insights
+  - Traditional SEO meta tag analysis
+  - Categorized recommendations with fix guidelines
 - **Users**: Basic user management (prepared for future authentication)
 
 ## Data Flow
 
 1. **User Input**: User enters a URL through the frontend interface
-2. **API Request**: Frontend sends POST request to `/api/seo/analyze`
-3. **Web Scraping**: Backend fetches website content using Axios
-4. **HTML Parsing**: Cheerio extracts meta tags, Open Graph, Twitter Cards
-5. **Analysis**: Backend evaluates SEO elements and calculates scores
-6. **Storage**: Results saved to database via Drizzle ORM
-7. **Response**: Structured analysis data returned to frontend
-8. **Visualization**: React components render analysis results and recommendations
+2. **API Request**: Frontend sends POST request to `/api/web/analyze`
+3. **Lighthouse Analysis**: Backend launches Puppeteer browser and runs Lighthouse for mobile and desktop
+4. **Screenshot Capture**: Puppeteer captures page screenshots for both device types
+5. **SEO Data Extraction**: Parallel HTML parsing with Cheerio for meta tags, Open Graph, Twitter Cards
+6. **Metrics Processing**: Core Web Vitals extraction and performance score calculation
+7. **Diagnostics & Insights**: Lighthouse audit results processed into actionable recommendations
+8. **Storage**: Complete analysis results saved to database via Drizzle ORM
+9. **Response**: Comprehensive analysis data returned to frontend
+10. **Visualization**: React components render performance scores, Core Web Vitals, screenshots, and recommendations
 
 ## External Dependencies
 
 ### Core Libraries
+- **lighthouse**: Google's web performance analysis engine
+- **puppeteer**: Headless browser automation for screenshots and Lighthouse
 - **@neondatabase/serverless**: PostgreSQL database connection
-- **axios**: HTTP client for web scraping
+- **axios**: HTTP client for basic SEO data fetching
 - **cheerio**: Server-side HTML parsing and manipulation
 - **drizzle-orm**: Type-safe database ORM
 - **@tanstack/react-query**: Server state management
@@ -99,4 +113,34 @@ Preferred communication style: Simple, everyday language.
 - `npm run start`: Production server
 - `npm run db:push`: Apply database schema changes
 
-The application uses a monorepo structure with shared TypeScript definitions, enabling type safety between frontend and backend while maintaining clear separation of concerns.
+## Recent Changes (January 2025)
+
+### Major Architecture Expansion
+- **Transformed from SEO-focused to comprehensive web performance analyzer**
+- **Lighthouse Integration**: Full Google Lighthouse analysis engine implementation
+- **Core Web Vitals**: Real-time measurement of LCP, FID, CLS, FCP, TTFB for mobile and desktop
+- **Screenshot Capture**: Automated mobile (375×667) and desktop (1350×940) page screenshots
+- **Multi-Category Scoring**: Performance, Accessibility, Best Practices, and SEO scores
+- **Enhanced Recommendations**: Categorized fix guidelines with code examples
+
+### Database Schema Updates
+- Expanded from `seoAnalyses` to `webAnalyses` table
+- Added Core Web Vitals fields for mobile and desktop
+- Added performance scores for all four categories
+- Added screenshot storage (base64 encoded)
+- Added structured diagnostics and insights storage
+
+### Frontend Enhancements
+- **Performance Overview**: Circular progress indicators for all scores
+- **Core Web Vitals Component**: Tabbed mobile/desktop metrics with color-coded thresholds
+- **Screenshots View**: Device-specific preview with viewport information
+- **Updated Branding**: "Web Performance Analyzer" with comprehensive analysis description
+
+### Technical Implementation
+- **Puppeteer Integration**: Browser automation for Lighthouse and screenshot capture
+- **Lighthouse Configuration**: Device-specific analysis with proper throttling
+- **Parallel Processing**: Simultaneous mobile/desktop analysis and screenshot capture
+- **Error Handling**: Robust browser management and analysis failure recovery
+- **Type Safety**: Updated TypeScript definitions for comprehensive analysis results
+
+The application maintains backward compatibility with existing SEO components while providing advanced web performance insights similar to Google PageSpeed Insights.

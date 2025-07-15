@@ -13,16 +13,19 @@ import TwitterCardsAnalysis from "@/components/twitter-cards-analysis";
 import VisualRecommendations from "@/components/visual-recommendations";
 import PreviewTabs from "@/components/preview-tabs";
 import TechnicalSeo from "@/components/technical-seo";
-import { SeoAnalysisResult } from "@/types/seo";
+import CoreWebVitalsComponent from "@/components/core-web-vitals";
+import PerformanceOverview from "@/components/performance-overview";
+import ScreenshotsView from "@/components/screenshots-view";
+import { WebAnalysisResult } from "@/types/seo";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function Home() {
-  const [seoData, setSeoData] = useState<SeoAnalysisResult | null>(null);
+  const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const analyzeMutation = useMutation({
-    mutationFn: async (url: string): Promise<SeoAnalysisResult> => {
-      const response = await apiRequest("POST", "/api/seo/analyze", { url });
+    mutationFn: async (url: string): Promise<WebAnalysisResult> => {
+      const response = await apiRequest("POST", "/api/web/analyze", { url });
       return response.json();
     },
     onSuccess: (data) => {
@@ -51,8 +54,8 @@ export default function Home() {
                 <Search className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl font-bold text-slate-900 truncate">SEO Tag Analyzer</h1>
-                <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Analyze and optimize your website's meta tags</p>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900 truncate">Web Performance Analyzer</h1>
+                <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Comprehensive website analysis with Core Web Vitals, SEO, and performance insights</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
@@ -86,32 +89,47 @@ export default function Home() {
 
         {seoData && (
           <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-            {/* SEO Score Overview */}
-            <SeoScore data={seoData} />
+            {/* Performance Overview */}
+            <PerformanceOverview 
+              performanceScore={seoData.performanceScore}
+              accessibilityScore={seoData.accessibilityScore}
+              bestPracticesScore={seoData.bestPracticesScore}
+              seoScore={seoData.seoScore}
+            />
 
-            {/* Visual Summary Cards */}
-            <SeoSummaryCards data={seoData} />
+            {/* Core Web Vitals */}
+            <CoreWebVitalsComponent data={seoData.coreWebVitals} />
 
-            {/* Preview Tabs */}
-            <PreviewTabs data={seoData} />
+            {/* Screenshots */}
+            <ScreenshotsView 
+              mobileScreenshot={seoData.mobileScreenshot}
+              desktopScreenshot={seoData.desktopScreenshot}
+              url={seoData.url}
+            />
 
-            {/* Meta Tags Analysis */}
-            <MetaTagAnalysis data={seoData} />
+            {/* Legacy SEO Analysis */}
+            <div className="grid gap-4 sm:gap-6">
+              {/* Preview Tabs */}
+              <PreviewTabs data={seoData} />
 
-            {/* Meta Description Analysis */}
-            <MetaDescriptionAnalysis data={seoData} />
+              {/* Meta Tags Analysis */}
+              <MetaTagAnalysis data={seoData} />
 
-            {/* Open Graph and Twitter Cards */}
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-              <OpenGraphAnalysis data={seoData} />
-              <TwitterCardsAnalysis data={seoData} />
+              {/* Meta Description Analysis */}
+              <MetaDescriptionAnalysis data={seoData} />
+
+              {/* Open Graph and Twitter Cards */}
+              <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                <OpenGraphAnalysis data={seoData} />
+                <TwitterCardsAnalysis data={seoData} />
+              </div>
+
+              {/* Visual Recommendations */}
+              <VisualRecommendations recommendations={seoData.recommendations} />
+
+              {/* Technical Checks */}
+              <TechnicalSeo checks={seoData.technicalChecks} />
             </div>
-
-            {/* Visual Recommendations */}
-            <VisualRecommendations recommendations={seoData.recommendations} />
-
-            {/* Technical SEO */}
-            <TechnicalSeo checks={seoData.technicalSeoChecks} />
           </div>
         )}
       </main>
@@ -123,7 +141,7 @@ export default function Home() {
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary mb-4"></div>
               <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Analyzing Website</h3>
-              <p className="text-sm sm:text-base text-slate-600">Fetching HTML and parsing meta tags...</p>
+              <p className="text-sm sm:text-base text-slate-600">Running Lighthouse analysis, capturing screenshots, and measuring Core Web Vitals...</p>
             </div>
           </Card>
         </div>
