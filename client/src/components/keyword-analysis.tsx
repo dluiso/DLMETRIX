@@ -61,27 +61,29 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Search className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          <span>SEO Keyword Analysis</span>
-          <Badge variant="outline" className="ml-2">
+      <CardHeader className="pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <div className="flex items-center space-x-2">
+            <Search className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <CardTitle className="text-base sm:text-lg">SEO Keyword Analysis</CardTitle>
+          </div>
+          <Badge variant="outline" className="text-xs sm:text-sm w-fit">
             Score: {data.overallKeywordScore}/100
           </Badge>
-        </CardTitle>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+        </div>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
           Comprehensive keyword performance analysis with trend insights and optimization opportunities
         </p>
       </CardHeader>
 
       <CardContent>
-        <Tabs defaultValue="primary" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="primary">Primary</TabsTrigger>
-            <TabsTrigger value="secondary">Secondary</TabsTrigger>
-            <TabsTrigger value="longtail">Long-tail</TabsTrigger>
-            <TabsTrigger value="density">Density</TabsTrigger>
-            <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
+        <Tabs defaultValue="primary" className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto">
+            <TabsTrigger value="primary" className="text-xs sm:text-sm px-2 py-2">Primary</TabsTrigger>
+            <TabsTrigger value="secondary" className="text-xs sm:text-sm px-2 py-2">Secondary</TabsTrigger>
+            <TabsTrigger value="longtail" className="text-xs sm:text-sm px-2 py-2">Long-tail</TabsTrigger>
+            <TabsTrigger value="density" className="text-xs sm:text-sm px-2 py-2">Density</TabsTrigger>
+            <TabsTrigger value="opportunities" className="text-xs sm:text-sm px-2 py-2 col-span-2 sm:col-span-1">Opportunities</TabsTrigger>
           </TabsList>
 
           <TabsContent value="primary" className="space-y-4">
@@ -95,25 +97,25 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
               </h4>
               
               {data.primaryKeywords.map((keyword, index) => (
-                <div key={index} className="border dark:border-slate-600 rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <h5 className="font-medium text-slate-900 dark:text-slate-100">
+                <div key={index} className="border dark:border-slate-600 rounded-lg p-3 sm:p-4 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div className="flex items-center space-x-2 flex-wrap">
+                      <h5 className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">
                         "{keyword.keyword}"
                       </h5>
                       {getTrendIcon(keyword.trend)}
-                      <Badge className={getCompetitionColor(keyword.competition)}>
+                      <Badge className={`${getCompetitionColor(keyword.competition)} text-xs`}>
                         {keyword.competition} competition
                       </Badge>
                     </div>
                     {keyword.position && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs w-fit">
                         Rank #{keyword.position}
                       </Badge>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
                     <div className="space-y-1">
                       <p className="text-slate-600 dark:text-slate-400 text-xs">Monthly Volume</p>
                       <p className="font-medium flex items-center">
@@ -144,7 +146,7 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
                       <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Related Keywords:</p>
                       <div className="flex flex-wrap gap-1">
                         {keyword.relatedKeywords.map((related, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">
+                          <Badge key={i} variant="outline" className="text-xs break-all">
                             {related}
                           </Badge>
                         ))}
@@ -280,9 +282,9 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
                 <span>Keyword Opportunities</span>
               </h4>
               
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 lg:grid-cols-2">
                 <div className="space-y-3">
-                  <h5 className="font-medium text-slate-800 dark:text-slate-200 flex items-center space-x-1">
+                  <h5 className="font-medium text-slate-800 dark:text-slate-200 flex items-center space-x-1 text-sm sm:text-base">
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
                     <span>Missed Opportunities</span>
                   </h5>

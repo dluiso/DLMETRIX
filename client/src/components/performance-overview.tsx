@@ -64,16 +64,16 @@ export default function PerformanceOverview({
   const overallScore = Math.round((performanceScore + accessibilityScore + bestPracticesScore + seoScore) / 4);
 
   return (
-    <div className="grid gap-6" data-component="performance-overview">
+    <div className="grid gap-4 sm:gap-6" data-component="performance-overview">
       {/* Overall Score */}
       <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-slate-900 dark:text-slate-100">
-            <span>Overall Performance</span>
-            <Badge variant={getBadgeVariant(overallScore)} className="text-lg px-3 py-1">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">Overall Performance</CardTitle>
+            <Badge variant={getBadgeVariant(overallScore)} className="text-sm sm:text-lg px-2 sm:px-3 py-1 w-fit">
               {overallScore}
             </Badge>
-          </CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center">
@@ -113,21 +113,21 @@ export default function PerformanceOverview({
       </Card>
 
       {/* Individual Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {categories.map((category) => (
           <Card key={category.title} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
                 <div className="flex items-center space-x-3">
                   <div className="text-slate-600 dark:text-slate-400">
                     {category.icon}
                   </div>
                   <div>
-                    <h3 className="font-medium text-slate-900 dark:text-slate-100">{category.title}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">{category.description}</p>
+                    <h3 className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">{category.title}</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{category.description}</p>
                   </div>
                 </div>
-                <Badge variant={getBadgeVariant(category.score)} className="text-lg px-3 py-1">
+                <Badge variant={getBadgeVariant(category.score)} className="text-sm sm:text-lg px-2 sm:px-3 py-1 w-fit">
                   {category.score}
                 </Badge>
               </div>

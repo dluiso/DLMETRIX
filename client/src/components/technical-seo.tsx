@@ -377,22 +377,22 @@ Sitemap: https://yoursite.com/sitemap.xml`,
 
   return (
     <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-      <CardHeader>
-        <div className="flex items-center justify-between">
+      <CardHeader className="pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div className="flex items-center space-x-2">
             <Settings className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-            <CardTitle className="text-slate-900 dark:text-slate-100">Advanced Technical SEO Analysis</CardTitle>
+            <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">Technical SEO Analysis</CardTitle>
           </div>
-          <Badge variant={passRate >= 80 ? "default" : passRate >= 60 ? "secondary" : "destructive"}>
+          <Badge variant={passRate >= 80 ? "default" : passRate >= 60 ? "secondary" : "destructive"} className="text-xs sm:text-sm w-fit">
             {passedChecks}/{totalChecks} Passed ({passRate}%)
           </Badge>
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
           Comprehensive technical analysis covering performance, accessibility, and SEO best practices
         </p>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {categories.map((category) => {
             const categoryPassed = category.items.filter(item => checks[item.key]).length;
             const categoryTotal = category.items.length;
@@ -401,8 +401,8 @@ Sitemap: https://yoursite.com/sitemap.xml`,
             return (
               <div key={category.title} className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-slate-900 dark:text-slate-100">{category.title}</h4>
-                  <span className={`text-sm font-medium ${
+                  <h4 className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">{category.title}</h4>
+                  <span className={`text-xs sm:text-sm font-medium ${
                     categoryRate >= 80 ? 'text-green-600 dark:text-green-400' : 
                     categoryRate >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 
                     'text-red-600 dark:text-red-400'
@@ -418,19 +418,19 @@ Sitemap: https://yoursite.com/sitemap.xml`,
                     
                     return (
                       <div key={item.key} className="border dark:border-slate-600 rounded-md overflow-hidden">
-                        <div className="flex items-center justify-between p-2 hover:bg-slate-50 dark:hover:bg-slate-700">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-2 hover:bg-slate-50 dark:hover:bg-slate-700 gap-2">
                           <div className="flex items-center space-x-3 flex-1">
                             {checks[item.key] ? (
-                              <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                              <Check className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                             ) : (
-                              <X className="w-4 h-4 text-red-600 dark:text-red-400" />
+                              <X className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
                             )}
-                            <div className="flex-1">
-                              <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{item.label}</p>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100">{item.label}</p>
                               <p className="text-xs text-slate-600 dark:text-slate-400">{item.description}</p>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 justify-end sm:justify-start">
                             <Badge 
                               variant={checks[item.key] ? "default" : "destructive"}
                               className="text-xs"
@@ -440,7 +440,7 @@ Sitemap: https://yoursite.com/sitemap.xml`,
                             {hasFailed && (
                               <button
                                 onClick={() => toggleExpanded(item.key)}
-                                className="flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100 dark:hover:bg-slate-600"
+                                className="flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100 dark:hover:bg-slate-600 flex-shrink-0"
                               >
                                 {isExpanded ? (
                                   <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400" />

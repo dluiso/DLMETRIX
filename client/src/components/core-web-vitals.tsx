@@ -102,12 +102,12 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
 
   return (
     <Card data-component="core-web-vitals" className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2 text-slate-900 dark:text-slate-100">
+      <CardHeader className="pb-3">
+        <div className="flex items-center space-x-2">
           <Activity className="w-5 h-5 text-primary" />
-          <span>Core Web Vitals</span>
-        </CardTitle>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+          <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">Core Web Vitals</CardTitle>
+        </div>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
           Essential metrics for user experience and search ranking
         </p>
       </CardHeader>
@@ -127,17 +127,17 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
           </div>
         )}
         <Tabs defaultValue="mobile" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="mobile">Mobile</TabsTrigger>
-            <TabsTrigger value="desktop">Desktop</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6">
+            <TabsTrigger value="mobile" className="text-xs sm:text-sm px-2 py-2">Mobile</TabsTrigger>
+            <TabsTrigger value="desktop" className="text-xs sm:text-sm px-2 py-2">Desktop</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="mobile" className="space-y-4">
-            <div className="grid gap-4">
+          <TabsContent value="mobile" className="space-y-3 sm:space-y-4">
+            <div className="grid gap-3 sm:gap-4">
               {vitalsConfig.map((vital) => {
                 const value = data.mobile[vital.key as keyof typeof data.mobile];
                 return (
-                  <div key={vital.key} className="flex items-center justify-between p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700">
+                  <div key={vital.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 gap-2">
                     <div className="flex items-center space-x-3">
                       <div className="text-slate-600 dark:text-slate-400">
                         {vital.icon}

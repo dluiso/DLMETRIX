@@ -61,41 +61,41 @@ export default function AiSearchAnalysisComponent({ data }: AiSearchAnalysisProp
 
   return (
     <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-      <CardHeader>
-        <div className="flex items-center justify-between">
+      <CardHeader className="pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div className="flex items-center space-x-2">
             <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <CardTitle className="text-slate-900 dark:text-slate-100">AI Search Content Analysis</CardTitle>
+            <CardTitle className="text-slate-900 dark:text-slate-100 text-base sm:text-lg">AI Search Content Analysis</CardTitle>
           </div>
           <Badge 
             variant={data.overallScore >= 80 ? "default" : data.overallScore >= 60 ? "secondary" : "destructive"}
-            className="text-sm"
+            className="text-xs sm:text-sm w-fit"
           >
             {data.overallScore}/100 AI Ready
           </Badge>
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
           Analyze how AI search engines understand and index your website content for optimal AI-powered search results
         </p>
       </CardHeader>
 
       <CardContent>
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="content">Best Content</TabsTrigger>
-            <TabsTrigger value="improvements">Content Ideas</TabsTrigger>
-            <TabsTrigger value="insights">AI Insights</TabsTrigger>
-            <TabsTrigger value="recommendations">Optimize</TabsTrigger>
+        <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">Overview</TabsTrigger>
+            <TabsTrigger value="content" className="text-xs sm:text-sm px-2 py-2">Best Content</TabsTrigger>
+            <TabsTrigger value="improvements" className="text-xs sm:text-sm px-2 py-2 col-span-1 sm:col-span-1">Content Ideas</TabsTrigger>
+            <TabsTrigger value="insights" className="text-xs sm:text-sm px-2 py-2">AI Insights</TabsTrigger>
+            <TabsTrigger value="recommendations" className="text-xs sm:text-sm px-2 py-2 col-span-1 sm:col-span-1">Optimize</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             {/* AI Readiness Scores */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="bg-slate-50 dark:bg-slate-700 p-3 sm:p-4 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">Overall AI Score</h4>
-                  <span className={`text-lg font-bold ${getScoreColor(data.overallScore)}`}>
+                  <h4 className="text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100">Overall AI Score</h4>
+                  <span className={`text-base sm:text-lg font-bold ${getScoreColor(data.overallScore)}`}>
                     {data.overallScore}
                   </span>
                 </div>
