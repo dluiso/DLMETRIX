@@ -202,8 +202,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-0 sm:h-16 gap-4 sm:gap-0">
             <div className="flex items-center space-x-3 w-full sm:w-auto">
-              <div className="bg-primary text-white p-2 rounded-lg flex-shrink-0">
-                <Search className="w-5 h-5" />
+              <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg flex-shrink-0">
+                <BarChart3 className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">{t.title}</h1>
@@ -475,37 +475,46 @@ export default function Home() {
                 <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
-              {/* Features Preview */}
-              <div className="mt-12 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <Monitor className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mx-auto mb-1 sm:mb-2" />
-                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Desktop</p>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mx-auto mb-1 sm:mb-2" />
-                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Mobile</p>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 mx-auto mb-1 sm:mb-2" />
-                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Performance</p>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <Globe className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500 mx-auto mb-1 sm:mb-2" />
-                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">SEO</p>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 mx-auto mb-1 sm:mb-2" />
-                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">AI Search</p>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500 mx-auto mb-1 sm:mb-2" />
-                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Keywords</p>
+              {/* Features List */}
+              <div className="mt-12 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="flex flex-wrap items-center justify-center gap-4 text-slate-600 dark:text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <Monitor className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm font-medium">Desktop</span>
+                  </div>
+                  <span className="text-slate-400 dark:text-slate-600">|</span>
+                  <div className="flex items-center gap-2">
+                    <Smartphone className="w-4 h-4 text-green-500" />
+                    <span className="text-sm font-medium">Mobile</span>
+                  </div>
+                  <span className="text-slate-400 dark:text-slate-600">|</span>
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 text-purple-500" />
+                    <span className="text-sm font-medium">Performance</span>
+                  </div>
+                  <span className="text-slate-400 dark:text-slate-600">|</span>
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-indigo-500" />
+                    <span className="text-sm font-medium">SEO</span>
+                  </div>
+                  <span className="text-slate-400 dark:text-slate-600">|</span>
+                  <div className="flex items-center gap-2">
+                    <Search className="w-4 h-4 text-orange-500" />
+                    <span className="text-sm font-medium">AI Search</span>
+                  </div>
+                  <span className="text-slate-400 dark:text-slate-600">|</span>
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-pink-500" />
+                    <span className="text-sm font-medium">Keywords</span>
+                  </div>
                 </div>
               </div>
               
               {/* Footer for centered layout */}
-              <div className="mt-16 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <Footer />
+              <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  © 2025 Web Performance Analyzer. All rights reserved. Created by Luis Mena.
+                </p>
               </div>
             </div>
           </div>
