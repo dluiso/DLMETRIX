@@ -68,91 +68,89 @@ export default function PerformanceOverview({
   const overallScore = Math.round((performanceScore + accessibilityScore + bestPracticesScore + seoScore) / 4);
 
   return (
-    <div className="grid gap-4 sm:gap-6" data-component="performance-overview">
-      {/* Overall Score */}
-      <Card className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
-        <CardHeader className="pb-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">{t.performanceOverview}</CardTitle>
-            <Badge variant={getBadgeVariant(overallScore)} className="text-sm sm:text-lg px-2 sm:px-3 py-1 w-fit">
-              {overallScore}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center">
-            <div className="relative w-32 h-32">
-              <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+    <Card className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in" data-component="performance-overview">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">
+          {t.performanceOverview}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Side - Overall Score */}
+          <div className="lg:col-span-1 flex flex-col items-center justify-center">
+            <div className="relative w-32 h-32 mb-4">
+              {/* Circular Progress */}
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                 <circle
                   cx="50"
                   cy="50"
-                  r="40"
+                  r="45"
                   stroke="currentColor"
                   strokeWidth="8"
-                  fill="transparent"
-                  className="text-slate-200 dark:text-slate-600"
+                  fill="none"
+                  className="text-slate-200 dark:text-slate-700"
                 />
                 <circle
                   cx="50"
                   cy="50"
-                  r="40"
+                  r="45"
                   stroke="currentColor"
                   strokeWidth="8"
-                  fill="transparent"
-                  strokeDasharray={`${overallScore * 2.51} 251`}
-                  className={getScoreColor(overallScore)}
+                  fill="none"
+                  strokeDasharray={`${overallScore * 2.83} 283`}
+                  className={overallScore >= 90 ? "text-green-500" : overallScore >= 50 ? "text-yellow-500" : "text-red-500"}
+                  strokeLinecap="round"
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`text-2xl font-bold ${getScoreColor(overallScore)}`}>
+                <span className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
                   {overallScore}
                 </span>
               </div>
             </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400 text-center">
+              {language === 'en' ? 'Average score across all categories' : 'Puntuación promedio en todas las categorías'}
+            </p>
           </div>
-          <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-4">
-            Average score across all categories
-          </p>
-        </CardContent>
-      </Card>
 
-      {/* Individual Categories */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        {categories.map((category) => (
-          <Card key={category.title} className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-                <div className="flex items-center space-x-3">
-                  <div className="text-slate-600 dark:text-slate-400">
-                    {category.icon}
+          {/* Right Side - Category Scores in 2x2 Grid */}
+          <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {categories.map((category, index) => (
+              <div 
+                key={index}
+                className="p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={getScoreColor(category.score)}>
+                      {category.icon}
+                    </div>
+                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm">
+                      {category.title}
+                    </h3>
                   </div>
-                  <div>
-                    <h3 className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">{category.title}</h3>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{category.description}</p>
-                  </div>
+                  <Badge variant={getBadgeVariant(category.score)} className="text-xs">
+                    {category.score}
+                  </Badge>
                 </div>
-                <Badge variant={getBadgeVariant(category.score)} className="text-sm sm:text-lg px-2 sm:px-3 py-1 w-fit">
-                  {category.score}
-                </Badge>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+                  {category.description}
+                </p>
+                <div className="flex items-center gap-2 text-xs">
                   <span className="text-slate-600 dark:text-slate-400">Score</span>
+                  <Progress 
+                    value={category.score} 
+                    className="flex-1 h-2"
+                  />
                   <span className={`font-medium ${getScoreColor(category.score)}`}>
                     {category.score}/100
                   </span>
                 </div>
-                <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(category.score)}`}
-                    style={{ width: `${category.score}%` }}
-                  />
-                </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
