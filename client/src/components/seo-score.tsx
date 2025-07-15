@@ -41,101 +41,159 @@ export default function SeoScore({ data }: SeoScoreProps) {
     return "Needs Work";
   };
 
+  const passedPercentage = Math.round((stats.passed / (stats.passed + stats.warnings + stats.errors || 1)) * 100);
+  const warningsPercentage = Math.round((stats.warnings / (stats.passed + stats.warnings + stats.errors || 1)) * 100);
+  const failedPercentage = Math.round((stats.errors / (stats.passed + stats.warnings + stats.errors || 1)) * 100);
+
   return (
-    <Card>
-      <CardContent className="p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
-          <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4 sm:mb-0">SEO Score Overview</h3>
-          <div className="flex items-center justify-center sm:justify-end space-x-3">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 relative">
-              <svg className="w-14 h-14 sm:w-16 sm:h-16 transform -rotate-90">
-                <circle 
-                  cx="28" 
-                  cy="28" 
-                  r="24" 
-                  stroke="hsl(220, 13%, 91%)" 
-                  strokeWidth="3" 
-                  fill="none"
-                  className="sm:hidden"
-                />
-                <circle 
-                  cx="32" 
-                  cy="32" 
-                  r="28" 
-                  stroke="hsl(220, 13%, 91%)" 
-                  strokeWidth="4" 
-                  fill="none"
-                  className="hidden sm:block"
-                />
-                <circle 
-                  cx="28" 
-                  cy="28" 
-                  r="24" 
-                  stroke={score >= 80 ? "hsl(142, 76%, 36%)" : score >= 60 ? "hsl(45, 93%, 47%)" : "hsl(0, 72%, 51%)"} 
-                  strokeWidth="3" 
-                  fill="none"
-                  strokeDasharray={2 * Math.PI * 24}
-                  strokeDashoffset={2 * Math.PI * 24 - (score / 100) * 2 * Math.PI * 24}
-                  strokeLinecap="round"
-                  className="transition-all duration-1000 ease-out sm:hidden"
-                />
-                <circle 
-                  cx="32" 
-                  cy="32" 
-                  r="28" 
-                  stroke={score >= 80 ? "hsl(142, 76%, 36%)" : score >= 60 ? "hsl(45, 93%, 47%)" : "hsl(0, 72%, 51%)"} 
-                  strokeWidth="4" 
-                  fill="none"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
-                  strokeLinecap="round"
-                  className="transition-all duration-1000 ease-out hidden sm:block"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-base sm:text-lg font-bold text-slate-900">{score}</span>
-              </div>
+    <div className="space-y-4">
+      {/* Header Banner */}
+      <div className={`rounded-lg p-4 ${
+        score >= 80 ? 'bg-green-100 border border-green-200' : 
+        score >= 60 ? 'bg-yellow-100 border border-yellow-200' : 
+        'bg-red-100 border border-red-200'
+      }`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Award className={`w-6 h-6 ${
+              score >= 80 ? 'text-green-600' : 
+              score >= 60 ? 'text-yellow-600' : 
+              'text-red-600'
+            }`} />
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">SEO Analysis Results</h2>
+              <p className={`text-sm ${
+                score >= 80 ? 'text-green-700' : 
+                score >= 60 ? 'text-yellow-700' : 
+                'text-red-700'
+              }`}>
+                Scored {stats.passed} passed, {stats.warnings} warnings, {stats.errors} failed
+              </p>
             </div>
-            <div className="text-center sm:text-left">
-              <div className="text-xs sm:text-sm text-slate-600">Score</div>
-              <div className={`text-xs font-medium ${getScoreColor(score)}`}>
+          </div>
+          <Badge className={`${
+            score >= 80 ? 'bg-green-200 text-green-800' : 
+            score >= 60 ? 'bg-yellow-200 text-yellow-800' : 
+            'bg-red-200 text-red-800'
+          } text-sm font-semibold px-3 py-1`}>
+            {getScoreStatus(score)}
+          </Badge>
+        </div>
+      </div>
+
+      {/* Main Analysis Card */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Left: Score Circle */}
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="relative w-32 h-32 mb-4">
+                <svg className="w-32 h-32 transform -rotate-90">
+                  <circle 
+                    cx="64" 
+                    cy="64" 
+                    r="56" 
+                    stroke="hsl(220, 13%, 91%)" 
+                    strokeWidth="8" 
+                    fill="none"
+                  />
+                  <circle 
+                    cx="64" 
+                    cy="64" 
+                    r="56" 
+                    stroke={score >= 80 ? "hsl(142, 76%, 36%)" : score >= 60 ? "hsl(45, 93%, 47%)" : "hsl(0, 72%, 51%)"} 
+                    strokeWidth="8" 
+                    fill="none"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-slate-900">{score}</span>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-1">Overall SEO Score</h3>
+              <p className={`text-lg font-semibold ${getScoreColor(score)}`}>
                 {getScoreStatus(score)}
+              </p>
+            </div>
+
+            {/* Right: SEO Health Summary */}
+            <div>
+              <div className="flex items-center space-x-2 mb-6">
+                <TrendingUp className="w-5 h-5 text-slate-600" />
+                <h3 className="text-lg font-semibold text-slate-900">SEO Health Summary</h3>
+              </div>
+
+              <div className="grid gap-4 mb-6">
+                {/* Passed Checks */}
+                <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="font-medium text-green-800">Passed Checks</span>
+                  </div>
+                  <span className="text-2xl font-bold text-green-600">{stats.passed}</span>
+                </div>
+
+                {/* Warnings */}
+                <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="font-medium text-yellow-800">Warnings</span>
+                  </div>
+                  <span className="text-2xl font-bold text-yellow-600">{stats.warnings}</span>
+                </div>
+
+                {/* Failed Checks */}
+                <div className="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                      <X className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="font-medium text-red-800">Failed Checks</span>
+                  </div>
+                  <span className="text-2xl font-bold text-red-600">{stats.errors}</span>
+                </div>
+              </div>
+
+              {/* Check Distribution */}
+              <div>
+                <div className="flex items-center space-x-2 mb-3">
+                  <TrendingUp className="w-4 h-4 text-slate-500" />
+                  <span className="text-sm font-medium text-slate-700">Check Distribution</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-3 mb-2">
+                  <div className="flex h-3 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-green-500 transition-all duration-1000 ease-out" 
+                      style={{ width: `${passedPercentage}%` }}
+                    />
+                    <div 
+                      className="bg-yellow-500 transition-all duration-1000 ease-out" 
+                      style={{ width: `${warningsPercentage}%` }}
+                    />
+                    <div 
+                      className="bg-red-500 transition-all duration-1000 ease-out" 
+                      style={{ width: `${failedPercentage}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-between text-xs text-slate-600">
+                  <span>{passedPercentage}% Passed</span>
+                  <span>{warningsPercentage}% Warnings</span>
+                  <span>{failedPercentage}% Failed</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <div className="text-center">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-slate-900">{stats.passed}</div>
-            <div className="text-xs sm:text-sm text-slate-600">Passed</div>
-          </div>
-          <div className="text-center">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-slate-900">{stats.warnings}</div>
-            <div className="text-xs sm:text-sm text-slate-600">Warnings</div>
-          </div>
-          <div className="text-center">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <X className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-slate-900">{stats.errors}</div>
-            <div className="text-xs sm:text-sm text-slate-600">Errors</div>
-          </div>
-          <div className="text-center">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Tags className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
-            </div>
-            <div className="text-lg sm:text-2xl font-bold text-slate-900">{totalTags}</div>
-            <div className="text-xs sm:text-sm text-slate-600">Total Tags</div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

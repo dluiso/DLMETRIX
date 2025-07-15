@@ -67,11 +67,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
 
-      // Check for schema markup
-      const schemaMarkup = $('script[type="application/ld+json"]').length > 0;
-
-      // Check for sitemap (simplified check)
-      const sitemap = html.includes('sitemap') || html.includes('Sitemap');
+      // Advanced Technical SEO Analysis
+      const performanceSeoChecks = performAdvancedSeoAnalysis($, html, url);
 
       // Calculate SEO score and generate recommendations
       const analysis = calculateSeoScore({
@@ -83,8 +80,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         viewportMeta,
         openGraphTags,
         twitterCardTags,
-        schemaMarkup,
-        sitemap,
+        schemaMarkup: performanceSeoChecks.schemaMarkup,
+        sitemap: performanceSeoChecks.sitemap,
+        technicalSeoChecks: performanceSeoChecks.technicalSeoChecks,
       });
 
       const result = {
@@ -97,8 +95,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         viewportMeta,
         openGraphTags: Object.keys(openGraphTags).length > 0 ? openGraphTags : null,
         twitterCardTags: Object.keys(twitterCardTags).length > 0 ? twitterCardTags : null,
-        schemaMarkup,
-        sitemap,
+        schemaMarkup: performanceSeoChecks.schemaMarkup,
+        sitemap: performanceSeoChecks.sitemap,
         score: analysis.score,
         recommendations: analysis.recommendations,
         technicalSeoChecks: analysis.technicalSeoChecks,
@@ -118,6 +116,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
+// Advanced SEO Analysis Function (Similar to PageSpeed Insights)
+function performAdvancedSeoAnalysis($: any, html: string, url: string) {
+  const checks: Record<string, boolean> = {};
+  
+  // Core Web Vitals & Performance Related SEO
+  checks.hasViewportMeta = $('meta[name="viewport"]').length > 0;
+  checks.hasCharset = $('meta[charset]').length > 0 || html.includes('charset=');
+  checks.hasLangAttribute = $('html[lang]').length > 0;
+  checks.hasCanonicalURL = $('link[rel="canonical"]').length > 0;
+  checks.hasRobotsMeta = $('meta[name="robots"]').length > 0;
+  
+  // Schema Markup & Structured Data
+  checks.hasSchemaMarkup = $('script[type="application/ld+json"]').length > 0;
+  checks.hasOpenGraph = $('meta[property^="og:"]').length > 0;
+  checks.hasTwitterCards = $('meta[name^="twitter:"]').length > 0;
+  
+  // Image Optimization
+  const images = $('img');
+  let imagesWithAlt = 0;
+  let imagesWithOptimizedSizes = 0;
+  
+  images.each((_: any, img: any) => {
+    if ($(img).attr('alt')) imagesWithAlt++;
+    if ($(img).attr('width') && $(img).attr('height')) imagesWithOptimizedSizes++;
+  });
+  
+  checks.imagesHaveAltText = images.length === 0 || imagesWithAlt / images.length >= 0.8;
+  checks.imagesHaveDimensions = images.length === 0 || imagesWithOptimizedSizes / images.length >= 0.5;
+  
+  // Link Analysis
+  const links = $('a[href]');
+  let internalLinks = 0;
+  let externalLinksWithNofollow = 0;
+  let totalExternalLinks = 0;
+  
+  links.each((_: any, link: any) => {
+    const href = $(link).attr('href');
+    if (href) {
+      if (href.startsWith('/') || href.includes(new URL(url).hostname)) {
+        internalLinks++;
+      } else if (href.startsWith('http')) {
+        totalExternalLinks++;
+        if ($(link).attr('rel')?.includes('nofollow')) {
+          externalLinksWithNofollow++;
+        }
+      }
+    }
+  });
+  
+  checks.hasInternalLinks = internalLinks > 0;
+  checks.externalLinksOptimized = totalExternalLinks === 0 || externalLinksWithNofollow / totalExternalLinks >= 0.5;
+  
+  // Content Analysis
+  checks.hasH1Tag = $('h1').length > 0;
+  checks.hasMultipleHeadings = $('h1, h2, h3, h4, h5, h6').length > 1;
+  checks.hasMetaDescription = $('meta[name="description"]').length > 0;
+  
+  // Performance & Technical
+  checks.hasSSL = url.startsWith('https://');
+  checks.noInlineStyles = $('style').length === 0 && !html.includes('style=');
+  checks.minifiedHTML = html.length < html.replace(/\s+/g, ' ').length * 0.8; // Basic minification check
+  
+  // Mobile Optimization
+  checks.responsiveImages = $('img[srcset]').length > 0 || $('picture').length > 0;
+  checks.touchFriendlyElements = $('[onclick]').length === 0; // Basic check for touch-friendly elements
+  
+  // Sitemap and Robots
+  checks.sitemap = html.includes('sitemap') || html.includes('Sitemap');
+  checks.robotsTxt = true; // Would need separate request to check /robots.txt
+  
+  // Social Media Optimization
+  checks.hasTwitterSite = $('meta[name="twitter:site"]').length > 0;
+  checks.hasOGImage = $('meta[property="og:image"]').length > 0;
+  
+  // Content Quality Indicators
+  const textContent = $.text();
+  checks.sufficientContent = textContent.length > 300;
+  checks.keywordInTitle = $('title').text().split(' ').length >= 3;
+  
+  return {
+    schemaMarkup: checks.hasSchemaMarkup,
+    sitemap: checks.sitemap,
+    technicalSeoChecks: checks,
+  };
+}
+
 // Helper function to calculate SEO score and recommendations
 function calculateSeoScore(data: any) {
   let score = 0;
@@ -125,7 +209,9 @@ function calculateSeoScore(data: any) {
   let warnings = 0;
   let errors = 0;
   const recommendations: any[] = [];
-  const technicalSeoChecks: Record<string, boolean> = {};
+  
+  // Use the advanced technical checks directly from data
+  const technicalSeoChecks = data.technicalSeoChecks || {};
 
   // Title tag analysis
   if (data.title) {
@@ -252,30 +338,79 @@ function calculateSeoScore(data: any) {
     });
   }
 
-  // Technical SEO checks
-  technicalSeoChecks.canonicalUrl = !!data.canonicalUrl;
-  technicalSeoChecks.robotsMeta = !!data.robotsMeta;
-  technicalSeoChecks.viewportMeta = !!data.viewportMeta;
-  technicalSeoChecks.schemaMarkup = !!data.schemaMarkup;
-  technicalSeoChecks.sitemap = !!data.sitemap;
+  // Process advanced technical SEO checks
+  const techChecks = data.technicalSeoChecks || {};
+  let techScore = 0;
+  let techPassed = 0;
+  let techWarnings = 0;
+  let techErrors = 0;
 
-  // Add points for technical SEO
-  if (data.canonicalUrl) score += 5;
-  if (data.robotsMeta) score += 5;
-  if (data.viewportMeta) score += 5;
-  if (data.schemaMarkup) score += 10;
-  if (data.sitemap) score += 5;
+  // Critical technical checks (higher points)
+  const criticalChecks = [
+    { key: 'hasSSL', points: 8, title: 'HTTPS/SSL Security', description: 'Website must use HTTPS for security and SEO' },
+    { key: 'hasViewportMeta', points: 6, title: 'Mobile Viewport', description: 'Viewport meta tag is essential for mobile optimization' },
+    { key: 'hasH1Tag', points: 6, title: 'H1 Heading Tag', description: 'Every page should have exactly one H1 tag' },
+    { key: 'hasMetaDescription', points: 6, title: 'Meta Description', description: 'Meta description is crucial for search results' },
+  ];
 
-  // Add technical SEO recommendations
-  if (!data.schemaMarkup) {
-    warnings++;
-    recommendations.push({
-      type: 'warning',
-      priority: 'medium',
-      title: 'Consider Adding Schema Markup',
-      description: 'Schema markup helps search engines better understand your content.'
-    });
-  }
+  // Important technical checks (medium points)
+  const importantChecks = [
+    { key: 'hasCharset', points: 4, title: 'Character Encoding', description: 'Proper character encoding prevents display issues' },
+    { key: 'hasLangAttribute', points: 4, title: 'Language Declaration', description: 'HTML lang attribute helps search engines understand content language' },
+    { key: 'hasCanonicalURL', points: 4, title: 'Canonical URL', description: 'Prevents duplicate content issues' },
+    { key: 'hasSchemaMarkup', points: 5, title: 'Schema Markup', description: 'Structured data improves rich snippets' },
+    { key: 'imagesHaveAltText', points: 4, title: 'Image Alt Text', description: 'Alt text improves accessibility and SEO' },
+    { key: 'hasMultipleHeadings', points: 3, title: 'Heading Structure', description: 'Proper heading hierarchy improves content structure' },
+  ];
+
+  // Performance and optimization checks (lower points)
+  const optimizationChecks = [
+    { key: 'minifiedHTML', points: 2, title: 'HTML Optimization', description: 'Minified HTML improves loading speed' },
+    { key: 'noInlineStyles', points: 2, title: 'External Stylesheets', description: 'External CSS improves caching and performance' },
+    { key: 'responsiveImages', points: 3, title: 'Responsive Images', description: 'Optimized images for different screen sizes' },
+    { key: 'hasInternalLinks', points: 2, title: 'Internal Linking', description: 'Internal links improve site navigation and SEO' },
+    { key: 'sufficientContent', points: 3, title: 'Content Length', description: 'Sufficient content provides value to users' },
+  ];
+
+  const allTechnicalChecks = [...criticalChecks, ...importantChecks, ...optimizationChecks];
+
+  // Evaluate all technical checks
+  allTechnicalChecks.forEach(check => {
+    if (techChecks[check.key]) {
+      techScore += check.points;
+      techPassed++;
+      recommendations.push({
+        type: 'success',
+        priority: 'low',
+        title: `✓ ${check.title}`,
+        description: check.description
+      });
+    } else {
+      if (criticalChecks.some(c => c.key === check.key)) {
+        techErrors++;
+        recommendations.push({
+          type: 'error',
+          priority: 'high',
+          title: `Missing: ${check.title}`,
+          description: check.description
+        });
+      } else {
+        techWarnings++;
+        recommendations.push({
+          type: 'warning',
+          priority: 'medium',
+          title: `Improve: ${check.title}`,
+          description: check.description
+        });
+      }
+    }
+  });
+
+  // Add technical score to overall score
+  score += techScore;
+  passed += techPassed;
+  warnings += techWarnings;
+  errors += techErrors;
 
   return {
     score: Math.min(score, 100),
