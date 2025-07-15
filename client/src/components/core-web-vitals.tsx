@@ -9,6 +9,10 @@ interface CoreWebVitalsProps {
 }
 
 export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
+  // Check if we have any real Core Web Vitals data
+  const hasRealData = data.mobile.lcp !== null || data.mobile.fid !== null || 
+                     data.desktop.lcp !== null || data.desktop.fid !== null;
+
   const formatTime = (value: number | null) => {
     if (value === null) return 'N/A';
     if (value < 1000) return `${Math.round(value)}ms`;
@@ -108,6 +112,20 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
         </p>
       </CardHeader>
       <CardContent>
+        {!hasRealData && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <Activity className="w-5 h-5 text-amber-600 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-amber-900">Core Web Vitals Not Available</h4>
+                <p className="text-sm text-amber-700 mt-1">
+                  Real Core Web Vitals measurements require running performance tests with Google Lighthouse. 
+                  The current analysis provides SEO and technical insights only.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         <Tabs defaultValue="mobile" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="mobile">Mobile</TabsTrigger>
