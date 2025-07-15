@@ -7,7 +7,7 @@ import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
 import MetaTagAnalysis from "@/components/meta-tag-analysis";
 import Recommendations from "@/components/recommendations";
-import Previews from "@/components/previews";
+import PreviewTabs from "@/components/preview-tabs";
 import TechnicalSeo from "@/components/technical-seo";
 import { SeoAnalysisResult } from "@/types/seo";
 import { apiRequest } from "@/lib/queryClient";
@@ -81,17 +81,21 @@ export default function Home() {
         )}
 
         {seoData && (
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {/* Left Column - SEO Analysis */}
-            <div className="xl:col-span-2 space-y-4 sm:space-y-6">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+            {/* SEO Score and Meta Tag Analysis */}
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
               <SeoScore data={seoData} />
               <MetaTagAnalysis data={seoData} />
-              <Recommendations recommendations={seoData.recommendations} />
             </div>
 
-            {/* Right Column - Previews */}
-            <div className="space-y-4 sm:space-y-6">
-              <Previews data={seoData} />
+            {/* Preview Tabs - below SEO summary */}
+            <PreviewTabs data={seoData} />
+
+            {/* Recommendations and Technical SEO */}
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <Recommendations recommendations={seoData.recommendations} />
+              </div>
               <TechnicalSeo checks={seoData.technicalSeoChecks} />
             </div>
           </div>

@@ -52,7 +52,7 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
           <h2 className="text-base sm:text-lg font-semibold text-slate-900">Website URL Analysis</h2>
         </div>
         
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1 relative">
             <Input
               type="url"
@@ -66,7 +66,7 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
           </div>
           <Button 
             type="submit" 
-            className="bg-primary hover:bg-blue-700 h-10 sm:h-11 text-sm sm:text-base w-full sm:w-auto"
+            className="bg-primary hover:bg-blue-700 h-10 sm:h-11 text-sm sm:text-base w-full sm:w-auto sm:px-6"
             disabled={isLoading}
           >
             <Search className="w-4 h-4 mr-2" />
