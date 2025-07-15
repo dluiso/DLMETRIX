@@ -17,9 +17,9 @@ export default function PerformanceOverview({
   seoScore 
 }: PerformanceOverviewProps) {
   const getScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600";
-    if (score >= 50) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 90) return "text-green-600 dark:text-green-400";
+    if (score >= 50) return "text-yellow-600 dark:text-yellow-400";
+    return "text-red-600 dark:text-red-400";
   };
 
   const getProgressColor = (score: number) => {
@@ -66,9 +66,9 @@ export default function PerformanceOverview({
   return (
     <div className="grid gap-6" data-component="performance-overview">
       {/* Overall Score */}
-      <Card>
+      <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center justify-between text-slate-900 dark:text-slate-100">
             <span>Overall Performance</span>
             <Badge variant={getBadgeVariant(overallScore)} className="text-lg px-3 py-1">
               {overallScore}
@@ -86,7 +86,7 @@ export default function PerformanceOverview({
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="transparent"
-                  className="text-slate-200"
+                  className="text-slate-200 dark:text-slate-600"
                 />
                 <circle
                   cx="50"
@@ -106,7 +106,7 @@ export default function PerformanceOverview({
               </div>
             </div>
           </div>
-          <p className="text-center text-sm text-slate-600 mt-4">
+          <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-4">
             Average score across all categories
           </p>
         </CardContent>
@@ -115,16 +115,16 @@ export default function PerformanceOverview({
       {/* Individual Categories */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {categories.map((category) => (
-          <Card key={category.title}>
+          <Card key={category.title} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="text-slate-600">
+                  <div className="text-slate-600 dark:text-slate-400">
                     {category.icon}
                   </div>
                   <div>
-                    <h3 className="font-medium text-slate-900">{category.title}</h3>
-                    <p className="text-sm text-slate-600">{category.description}</p>
+                    <h3 className="font-medium text-slate-900 dark:text-slate-100">{category.title}</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{category.description}</p>
                   </div>
                 </div>
                 <Badge variant={getBadgeVariant(category.score)} className="text-lg px-3 py-1">
@@ -133,12 +133,12 @@ export default function PerformanceOverview({
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Score</span>
+                  <span className="text-slate-600 dark:text-slate-400">Score</span>
                   <span className={`font-medium ${getScoreColor(category.score)}`}>
                     {category.score}/100
                   </span>
                 </div>
-                <div className="w-full bg-slate-200 rounded-full h-2">
+                <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(category.score)}`}
                     style={{ width: `${category.score}%` }}

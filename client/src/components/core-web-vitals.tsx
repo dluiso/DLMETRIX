@@ -25,7 +25,7 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
   };
 
   const getScoreColor = (metric: string, value: number | null) => {
-    if (value === null) return 'text-gray-500';
+    if (value === null) return 'text-gray-500 dark:text-gray-400';
     
     const thresholds = {
       lcp: { good: 2500, poor: 4000 },
@@ -36,11 +36,11 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
     };
 
     const threshold = thresholds[metric as keyof typeof thresholds];
-    if (!threshold) return 'text-gray-500';
+    if (!threshold) return 'text-gray-500 dark:text-gray-400';
 
-    if (value <= threshold.good) return 'text-green-600';
-    if (value <= threshold.poor) return 'text-yellow-600';
-    return 'text-red-600';
+    if (value <= threshold.good) return 'text-green-600 dark:text-green-400';
+    if (value <= threshold.poor) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
   const getBadgeVariant = (metric: string, value: number | null) => {
@@ -101,24 +101,24 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
   ];
 
   return (
-    <Card data-component="core-web-vitals">
+    <Card data-component="core-web-vitals" className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-slate-900 dark:text-slate-100">
           <Activity className="w-5 h-5 text-primary" />
           <span>Core Web Vitals</span>
         </CardTitle>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           Essential metrics for user experience and search ranking
         </p>
       </CardHeader>
       <CardContent>
         {!hasRealData && (
-          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
             <div className="flex items-start space-x-3">
-              <Activity className="w-5 h-5 text-amber-600 mt-0.5" />
+              <Activity className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
               <div>
-                <h4 className="font-medium text-amber-900">Core Web Vitals Not Available</h4>
-                <p className="text-sm text-amber-700 mt-1">
+                <h4 className="font-medium text-amber-900 dark:text-amber-100">Core Web Vitals Not Available</h4>
+                <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
                   Real Core Web Vitals measurements require running performance tests with Google Lighthouse. 
                   The current analysis provides SEO and technical insights only.
                 </p>
@@ -137,14 +137,14 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
               {vitalsConfig.map((vital) => {
                 const value = data.mobile[vital.key as keyof typeof data.mobile];
                 return (
-                  <div key={vital.key} className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50">
+                  <div key={vital.key} className="flex items-center justify-between p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700">
                     <div className="flex items-center space-x-3">
-                      <div className="text-slate-600">
+                      <div className="text-slate-600 dark:text-slate-400">
                         {vital.icon}
                       </div>
                       <div>
-                        <h4 className="font-medium text-slate-900">{vital.title}</h4>
-                        <p className="text-sm text-slate-600">{vital.description}</p>
+                        <h4 className="font-medium text-slate-900 dark:text-slate-100">{vital.title}</h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{vital.description}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -168,14 +168,14 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
               {vitalsConfig.map((vital) => {
                 const value = data.desktop[vital.key as keyof typeof data.desktop];
                 return (
-                  <div key={vital.key} className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50">
+                  <div key={vital.key} className="flex items-center justify-between p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700">
                     <div className="flex items-center space-x-3">
-                      <div className="text-slate-600">
+                      <div className="text-slate-600 dark:text-slate-400">
                         {vital.icon}
                       </div>
                       <div>
-                        <h4 className="font-medium text-slate-900">{vital.title}</h4>
-                        <p className="text-sm text-slate-600">{vital.description}</p>
+                        <h4 className="font-medium text-slate-900 dark:text-slate-100">{vital.title}</h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{vital.description}</p>
                       </div>
                     </div>
                     <div className="text-right">

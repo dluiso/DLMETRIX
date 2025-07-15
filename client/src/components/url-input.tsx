@@ -52,11 +52,11 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
   };
 
   return (
-    <Card className="mb-6 sm:mb-8">
+    <Card className="mb-6 sm:mb-8 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4">
           <Globe className="w-5 h-5 text-primary flex-shrink-0" />
-          <h2 className="text-base sm:text-lg font-semibold text-slate-900">Website URL Analysis</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">Website URL Analysis</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -69,7 +69,7 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
               className="pl-4 pr-10 text-sm sm:text-base h-10 sm:h-11"
               disabled={isLoading}
             />
-            <Link className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Link className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
           </div>
           <Button 
             type="submit" 

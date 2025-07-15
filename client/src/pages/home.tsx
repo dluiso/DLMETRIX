@@ -461,7 +461,7 @@ export default function Home() {
                   {analysisHistory.map((item, index) => (
                     <div 
                       key={index}
-                      className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors"
+                      className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 cursor-pointer transition-colors"
                       onClick={() => {
                         setSeoData(item);
                         setShowHistory(false);
@@ -472,17 +472,17 @@ export default function Home() {
                       }}
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-slate-900 truncate">
+                        <div className="font-medium text-slate-900 dark:text-slate-100 truncate">
                           {item.url}
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-slate-500 mt-1">
+                        <div className="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400 mt-1">
                           <div className="flex items-center space-x-1">
                             <Calendar className="w-3 h-3" />
                             <span>Just analyzed</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className="text-green-600">SEO: {item.seoScore}</span>
-                            <span className="text-blue-600">Perf: {item.performanceScore}</span>
+                            <span className="text-green-600 dark:text-green-400">SEO: {item.seoScore}</span>
+                            <span className="text-blue-600 dark:text-blue-400">Perf: {item.performanceScore}</span>
                           </div>
                         </div>
                       </div>
@@ -543,7 +543,7 @@ export default function Home() {
           <div className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Comparison Mode Banner */}
             {compareMode && compareData && (
-              <Card className="bg-blue-50 border-blue-200">
+              <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -565,19 +565,19 @@ export default function Home() {
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
                     <div>
-                      <div className="font-medium text-slate-900">{seoData.url}</div>
+                      <div className="font-medium text-slate-900 dark:text-slate-100">{seoData.url}</div>
                       <div className="flex space-x-4 mt-1">
-                        <span className="text-blue-600">Perf: {seoData.performanceScore}</span>
-                        <span className="text-green-600">SEO: {seoData.seoScore}</span>
-                        <span className="text-purple-600">A11y: {seoData.accessibilityScore}</span>
+                        <span className="text-blue-600 dark:text-blue-400">Perf: {seoData.performanceScore}</span>
+                        <span className="text-green-600 dark:text-green-400">SEO: {seoData.seoScore}</span>
+                        <span className="text-purple-600 dark:text-purple-400">A11y: {seoData.accessibilityScore}</span>
                       </div>
                     </div>
                     <div>
-                      <div className="font-medium text-slate-900">{compareData.url}</div>
+                      <div className="font-medium text-slate-900 dark:text-slate-100">{compareData.url}</div>
                       <div className="flex space-x-4 mt-1">
-                        <span className="text-blue-600">Perf: {compareData.performanceScore}</span>
-                        <span className="text-green-600">SEO: {compareData.seoScore}</span>
-                        <span className="text-purple-600">A11y: {compareData.accessibilityScore}</span>
+                        <span className="text-blue-600 dark:text-blue-400">Perf: {compareData.performanceScore}</span>
+                        <span className="text-green-600 dark:text-green-400">SEO: {compareData.seoScore}</span>
+                        <span className="text-purple-600 dark:text-purple-400">A11y: {compareData.accessibilityScore}</span>
                       </div>
                     </div>
                   </div>
@@ -633,20 +633,20 @@ export default function Home() {
       {/* Enhanced Loading Overlay */}
       {analyzeMutation.isPending && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full">
+          <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary mb-4"></div>
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">{t.analyzingWebsite}</h3>
-              <p className="text-sm sm:text-base text-slate-600 mb-4">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">{t.analyzingWebsite}</h3>
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4">
                 {analysisProgress || (language === 'en' ? 'Running comprehensive web performance analysis...' : 'Ejecutando análisis integral de rendimiento web...')}
               </p>
-              <div className="bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div className="bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
                 <div 
                   className="bg-primary h-full transition-all duration-500 ease-out rounded-full animate-pulse"
                   style={{ width: '75%' }}
                 />
               </div>
-              <div className="mt-3 text-xs text-slate-500 space-y-1">
+              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400 space-y-1">
                 <div className="flex items-center justify-center space-x-2">
                   <Monitor className="w-3 h-3" />
                   <span>{t.desktopAnalysis}</span>
