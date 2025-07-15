@@ -11,22 +11,22 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
   const getStatusIcon = (status: 'good' | 'warning' | 'error') => {
     switch (status) {
       case 'good':
-        return <Check className="w-4 h-4 text-green-600" />;
+        return <Check className="w-4 h-4 text-green-600 dark:text-green-400" />;
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-600" />;
+        return <AlertTriangle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />;
       case 'error':
-        return <X className="w-4 h-4 text-red-600" />;
+        return <X className="w-4 h-4 text-red-600 dark:text-red-400" />;
     }
   };
 
   const getStatusBadge = (status: 'good' | 'warning' | 'error') => {
     switch (status) {
       case 'good':
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">GOOD</Badge>;
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 hover:bg-green-100">GOOD</Badge>;
       case 'warning':
-        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">NEEDS IMPROVEMENT</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 hover:bg-yellow-100">NEEDS IMPROVEMENT</Badge>;
       case 'error':
-        return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">MISSING</Badge>;
+        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 hover:bg-red-100">MISSING</Badge>;
     }
   };
 
@@ -64,28 +64,28 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4 sm:mb-6">
           <Code className="w-5 h-5 text-primary flex-shrink-0" />
-          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Meta Tags Analysis</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">Meta Tags Analysis</h3>
         </div>
         
         <div className="space-y-3 sm:space-y-4">
           {/* Title Tag */}
-          <div className="border border-slate-200 rounded-lg p-3 sm:p-4">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
               <div className="flex items-center space-x-2">
                 {getStatusIcon(getTitleStatus())}
-                <span className="font-medium text-slate-900 text-sm sm:text-base">Title Tag</span>
+                <span className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">Title Tag</span>
               </div>
               {getStatusBadge(getTitleStatus())}
             </div>
             
             {data.title ? (
               <>
-                <div className="bg-slate-50 p-2 sm:p-3 rounded font-mono text-xs sm:text-sm text-slate-700 mb-2 overflow-x-auto">
+                <div className="bg-slate-50 dark:bg-slate-800 p-2 sm:p-3 rounded font-mono text-xs sm:text-sm text-slate-700 dark:text-slate-300 mb-2 overflow-x-auto">
                   &lt;title&gt;{data.title}&lt;/title&gt;
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
                   <span>Length: {data.title.length} characters</span>
-                  <span className={getTitleStatus() === 'good' ? 'text-green-600' : getTitleStatus() === 'warning' ? 'text-yellow-600' : 'text-red-600'}>
+                  <span className={getTitleStatus() === 'good' ? 'text-green-600 dark:text-green-400' : getTitleStatus() === 'warning' ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}>
                     {getTitleStatus() === 'good' ? '✓ Within recommended range (50-60)' : 
                      getTitleStatus() === 'warning' ? '⚠ Outside optimal range' : 
                      '✗ Poor length'}
@@ -100,11 +100,11 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
           </div>
 
           {/* Meta Description */}
-          <div className="border border-slate-200 rounded-lg p-3 sm:p-4">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
               <div className="flex items-center space-x-2">
                 {getStatusIcon(getDescriptionStatus())}
-                <span className="font-medium text-slate-900 text-sm sm:text-base">Meta Description</span>
+                <span className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">Meta Description</span>
               </div>
               {getStatusBadge(getDescriptionStatus())}
             </div>

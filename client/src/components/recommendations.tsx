@@ -10,22 +10,22 @@ export default function Recommendations({ recommendations }: RecommendationsProp
   const getRecommendationIcon = (type: Recommendation['type']) => {
     switch (type) {
       case 'error':
-        return <XCircle className="w-5 h-5 text-red-600" />;
+        return <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />;
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
+        return <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />;
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+        return <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />;
     }
   };
 
   const getRecommendationBg = (type: Recommendation['type']) => {
     switch (type) {
       case 'error':
-        return 'bg-red-50 border-red-200';
+        return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
       case 'warning':
-        return 'bg-yellow-50 border-yellow-200';
+        return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800';
       case 'success':
-        return 'bg-green-50 border-green-200';
+        return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
     }
   };
 
@@ -43,22 +43,22 @@ export default function Recommendations({ recommendations }: RecommendationsProp
   const getPriorityBg = (type: Recommendation['type']) => {
     switch (type) {
       case 'error':
-        return 'bg-red-100';
+        return 'bg-red-100 dark:bg-red-800';
       case 'warning':
-        return 'bg-yellow-100';
+        return 'bg-yellow-100 dark:bg-yellow-800';
       case 'success':
-        return 'bg-green-100';
+        return 'bg-green-100 dark:bg-green-800';
     }
   };
 
   const getPriorityText = (type: Recommendation['type']) => {
     switch (type) {
       case 'error':
-        return 'text-red-600';
+        return 'text-red-600 dark:text-red-300';
       case 'warning':
-        return 'text-yellow-600';
+        return 'text-yellow-600 dark:text-yellow-300';
       case 'success':
-        return 'text-green-600';
+        return 'text-green-600 dark:text-green-300';
     }
   };
 

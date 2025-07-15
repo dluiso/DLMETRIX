@@ -30,9 +30,9 @@ export default function SeoScore({ data }: SeoScoreProps) {
                    (data.twitterCardTags ? Object.keys(data.twitterCardTags).length : 0);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-green-600 dark:text-green-400";
+    if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
+    return "text-red-600 dark:text-red-400";
   };
 
   const getScoreStatus = (score: number) => {
@@ -49,30 +49,30 @@ export default function SeoScore({ data }: SeoScoreProps) {
     <div className="space-y-4">
       {/* Header Banner */}
       <div className={`rounded-lg p-4 ${
-        score >= 80 ? 'bg-green-100 border border-green-200' : 
-        score >= 60 ? 'bg-yellow-100 border border-yellow-200' : 
-        'bg-red-100 border border-red-200'
+        score >= 80 ? 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 
+        score >= 60 ? 'bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800' : 
+        'bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
       }`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Award className={`w-6 h-6 ${
-              score >= 80 ? 'text-green-600' : 
-              score >= 60 ? 'text-yellow-600' : 
-              'text-red-600'
+              score >= 80 ? 'text-green-600 dark:text-green-400' : 
+              score >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 
+              'text-red-600 dark:text-red-400'
             }`} />
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">SEO Analysis Results</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">SEO Analysis Results</h2>
               <p className={`text-sm ${
-                score >= 80 ? 'text-green-700' : 
-                score >= 60 ? 'text-yellow-700' : 
-                'text-red-700'
+                score >= 80 ? 'text-green-700 dark:text-green-300' : 
+                score >= 60 ? 'text-yellow-700 dark:text-yellow-300' : 
+                'text-red-700 dark:text-red-300'
               }`}>
                 Scored {stats.passed} passed, {stats.warnings} warnings, {stats.errors} failed
               </p>
             </div>
           </div>
           <Badge className={`${
-            score >= 80 ? 'bg-green-200 text-green-800' : 
+            score >= 80 ? 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200' : 
             score >= 60 ? 'bg-yellow-200 text-yellow-800' : 
             'bg-red-200 text-red-800'
           } text-sm font-semibold px-3 py-1`}>
