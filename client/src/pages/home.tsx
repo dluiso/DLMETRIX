@@ -457,51 +457,61 @@ export default function Home() {
             <div className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Hero Section */}
               <div className="text-center mb-8 animate-fade-in">
-                <div className="flex items-center justify-center space-x-3 mb-4">
-                  <div className="p-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 shadow-elegant backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                    <Search className="w-8 h-8 text-primary" />
-                  </div>
-                  <div className="p-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-elegant">
-                    <BarChart3 className="w-6 h-6" />
+                <div className="flex items-center justify-center mb-4">
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white shadow-elegant">
+                    <BarChart3 className="w-8 h-8" />
                   </div>
                 </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4">
                   {t.title}
                 </h1>
-                <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl mx-auto">
+                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
                   {t.subtitle}
                 </p>
               </div>
               
               {/* Centered URL Input */}
               <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} />
+                <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
               {/* Features Preview */}
-              <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <Monitor className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Desktop Analysis</p>
+              <div className="mt-12 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <Monitor className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mx-auto mb-1 sm:mb-2" />
+                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Desktop</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <Smartphone className="w-6 h-6 text-green-500 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Mobile Analysis</p>
+                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mx-auto mb-1 sm:mb-2" />
+                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Mobile</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <BarChart3 className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Performance</p>
+                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 mx-auto mb-1 sm:mb-2" />
+                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Performance</p>
                 </div>
-                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                  <Globe className="w-6 h-6 text-indigo-500 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">SEO Analysis</p>
+                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <Globe className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500 mx-auto mb-1 sm:mb-2" />
+                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">SEO</p>
                 </div>
+                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 mx-auto mb-1 sm:mb-2" />
+                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">AI Search</p>
+                </div>
+                <div className="p-3 sm:p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500 mx-auto mb-1 sm:mb-2" />
+                  <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Keywords</p>
+                </div>
+              </div>
+              
+              {/* Footer for centered layout */}
+              <div className="mt-16 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                <Footer />
               </div>
             </div>
           </div>
         ) : (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-            <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} />
+            <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
           </div>
         )}
         

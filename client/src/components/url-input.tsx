@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,12 +10,20 @@ interface UrlInputProps {
   onAnalyze: (url: string) => void;
   isLoading: boolean;
   language?: 'en' | 'es';
+  currentUrl?: string;
 }
 
-export default function UrlInput({ onAnalyze, isLoading, language = 'en' }: UrlInputProps) {
-  const [url, setUrl] = useState("");
+export default function UrlInput({ onAnalyze, isLoading, language = 'en', currentUrl }: UrlInputProps) {
+  const [url, setUrl] = useState(currentUrl || "");
   const { toast } = useToast();
   const t = getTranslations(language);
+
+  // Update URL when currentUrl changes
+  useEffect(() => {
+    if (currentUrl && currentUrl !== url) {
+      setUrl(currentUrl);
+    }
+  }, [currentUrl]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

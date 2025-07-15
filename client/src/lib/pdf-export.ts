@@ -66,6 +66,14 @@ export async function exportToPDF(data: WebAnalysisResult): Promise<void> {
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 15;
   let yPosition = margin;
+  
+  // Function to add new page if needed
+  const checkPageBreak = (requiredSpace: number) => {
+    if (yPosition + requiredSpace > pageHeight - margin) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+  };
 
   // Helper function to add text with line wrapping
   const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize = 10): number => {
@@ -619,14 +627,150 @@ export async function exportToPDF(data: WebAnalysisResult): Promise<void> {
     }
   }
 
-  // Add footer
+  // Add AI Search Analysis Section if available
+  if (data.aiSearchAnalysis) {
+    checkPageBreak(80);
+    
+    pdf.setTextColor(30, 41, 59);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('AI Search Content Analysis', margin, yPosition);
+    yPosition += 12;
+
+    // Content Quality Score
+    if (data.aiSearchAnalysis.contentQuality !== undefined) {
+      pdf.setFillColor(245, 247, 250);
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 25, 'F');
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 65, 85);
+      pdf.text('Content Quality Score:', margin, yPosition + 5);
+      
+      pdf.setFontSize(14);
+      const scoreColor = data.aiSearchAnalysis.contentQuality >= 80 ? [34, 197, 94] : 
+                        data.aiSearchAnalysis.contentQuality >= 60 ? [245, 158, 11] : [239, 68, 68];
+      pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+      pdf.text(`${data.aiSearchAnalysis.contentQuality}/100`, margin + 60, yPosition + 5);
+      yPosition += 30;
+    }
+
+    // Content Insights
+    if (data.aiSearchAnalysis.insights && data.aiSearchAnalysis.insights.length > 0) {
+      pdf.setTextColor(51, 65, 85);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Content Insights:', margin, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      data.aiSearchAnalysis.insights.slice(0, 5).forEach((insight) => {
+        checkPageBreak(20);
+        yPosition = addWrappedText(`• ${insight.title}: ${insight.description}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+        yPosition += 5;
+      });
+      yPosition += 10;
+    }
+
+    // Content Recommendations
+    if (data.aiSearchAnalysis.recommendations && data.aiSearchAnalysis.recommendations.length > 0) {
+      pdf.setTextColor(51, 65, 85);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('AI Content Recommendations:', margin, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      data.aiSearchAnalysis.recommendations.slice(0, 5).forEach((rec) => {
+        checkPageBreak(20);
+        yPosition = addWrappedText(`• ${rec.title}: ${rec.description}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+        yPosition += 5;
+      });
+      yPosition += 10;
+    }
+  }
+
+  // Add SEO Keywords Analysis Section if available
+  if (data.keywordAnalysis) {
+    checkPageBreak(80);
+    
+    pdf.setTextColor(30, 41, 59);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('SEO Keywords Analysis', margin, yPosition);
+    yPosition += 12;
+
+    // Primary Keywords
+    if (data.keywordAnalysis.primaryKeywords && data.keywordAnalysis.primaryKeywords.length > 0) {
+      pdf.setFillColor(240, 253, 244);
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 30, 'F');
+      
+      pdf.setTextColor(22, 101, 52);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Primary Keywords:', margin, yPosition + 5);
+      yPosition += 12;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      const primaryKeywords = data.keywordAnalysis.primaryKeywords.slice(0, 10).map(k => k.term).join(', ');
+      yPosition = addWrappedText(primaryKeywords, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+      yPosition += 25;
+    }
+
+    // Secondary Keywords
+    if (data.keywordAnalysis.secondaryKeywords && data.keywordAnalysis.secondaryKeywords.length > 0) {
+      pdf.setFillColor(239, 246, 255);
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 30, 'F');
+      
+      pdf.setTextColor(30, 58, 138);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Secondary Keywords:', margin, yPosition + 5);
+      yPosition += 12;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      const secondaryKeywords = data.keywordAnalysis.secondaryKeywords.slice(0, 10).map(k => k.term).join(', ');
+      yPosition = addWrappedText(secondaryKeywords, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+      yPosition += 25;
+    }
+
+    // Keyword Score
+    if (data.keywordAnalysis.score !== undefined) {
+      pdf.setFillColor(245, 247, 250);
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 20, 'F');
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 65, 85);
+      pdf.text('Keyword Optimization Score:', margin, yPosition + 5);
+      
+      pdf.setFontSize(14);
+      const scoreColor = data.keywordAnalysis.score >= 80 ? [34, 197, 94] : 
+                        data.keywordAnalysis.score >= 60 ? [245, 158, 11] : [239, 68, 68];
+      pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+      pdf.text(`${data.keywordAnalysis.score}/100`, margin + 70, yPosition + 5);
+      yPosition += 25;
+    }
+  }
+
+  // Add footer with company information
   const totalPages = pdf.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     pdf.setPage(i);
+    
+    // Page number
     pdf.setFontSize(8);
     pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 116, 139);
     pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin - 20, pageHeight - 10);
-    pdf.text('Generated by Web Performance Analyzer', margin, pageHeight - 10);
+    
+    // Footer with company info
+    pdf.setFontSize(8);
+    pdf.text('© 2025 Web Performance Analyzer. All rights reserved. Created by Luis Mena', margin, pageHeight - 10);
   }
 
   // Save the PDF
