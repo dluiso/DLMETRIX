@@ -32,112 +32,273 @@ export default function TechnicalSeo({ checks }: TechnicalSeoProps) {
         code: '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
         location: "HTML <head> section"
       },
+      hasCharset: {
+        steps: [
+          "Add UTF-8 character encoding declaration to prevent text display issues",
+          "Place this as the first meta tag in your HTML head",
+          "This ensures proper display of special characters and emojis"
+        ],
+        code: '<meta charset="UTF-8">',
+        location: "First line in HTML <head> section"
+      },
+      hasSSL: {
+        steps: [
+          "Purchase an SSL certificate from your hosting provider or use a free one from Let's Encrypt",
+          "Install and configure the certificate on your web server",
+          "Update all internal links to use https:// instead of http://",
+          "Set up 301 redirects from HTTP to HTTPS URLs"
+        ],
+        location: "Web server configuration and hosting settings"
+      },
+      minifiedHTML: {
+        steps: [
+          "Remove unnecessary whitespace, comments, and line breaks from your HTML",
+          "Use build tools like Webpack, Gulp, or online minifiers",
+          "Enable gzip compression on your web server",
+          "Consider using a CDN for faster content delivery"
+        ],
+        location: "Build process and server configuration"
+      },
+      noInlineStyles: {
+        steps: [
+          "Move all inline CSS styles to external stylesheets",
+          "Create separate .css files for your styles",
+          "Link stylesheets in the HTML head section",
+          "Use CSS classes instead of style attributes"
+        ],
+        code: `<!-- Instead of: <div style="color: red;"> -->
+<div class="error-text">
+<!-- Add to external CSS: .error-text { color: red; } -->`,
+        location: "External CSS files and HTML cleanup"
+      },
+      hasH1Tag: {
+        steps: [
+          "Add exactly one H1 tag per page containing your main headline",
+          "Make it descriptive and include your primary keyword",
+          "Place it prominently near the top of your content",
+          "Ensure it accurately describes the page content"
+        ],
+        code: '<h1>Your Main Page Headline Here</h1>',
+        location: "Main content area of your HTML"
+      },
+      hasMultipleHeadings: {
+        steps: [
+          "Create a logical heading hierarchy using H1, H2, H3, etc.",
+          "Don't skip heading levels (H1 → H2 → H3, not H1 → H3)",
+          "Use headings to structure your content outline",
+          "Include relevant keywords in subheadings naturally"
+        ],
+        code: `<h1>Main Title</h1>
+<h2>Section Title</h2>
+<h3>Subsection Title</h3>
+<h2>Another Section</h2>`,
+        location: "Throughout your HTML content structure"
+      },
       hasMetaDescription: {
         steps: [
-          "Add a compelling meta description between 120-160 characters",
+          "Write a compelling meta description between 120-160 characters",
           "Summarize your page content clearly and include relevant keywords",
-          "Make it appealing to encourage clicks from search results"
+          "Make it appealing to encourage clicks from search results",
+          "Make each page's description unique and specific"
         ],
-        code: '<meta name="description" content="Your compelling page description here">',
+        code: '<meta name="description" content="Your compelling page description that summarizes the content and includes relevant keywords">',
         location: "HTML <head> section"
       },
-      hasDocumentTitle: {
+      sufficientContent: {
         steps: [
-          "Add a descriptive title tag between 30-60 characters",
-          "Include your main keyword and make it unique for each page",
-          "Use a format like: Primary Keyword - Secondary Keyword | Brand Name"
+          "Add substantial, high-quality content (minimum 300 words)",
+          "Focus on providing value to your visitors",
+          "Include relevant keywords naturally in your text",
+          "Break up content with headings, lists, and images"
         ],
-        code: '<title>Your Page Title - Brand Name</title>',
+        location: "Main content area of your webpage"
+      },
+      keywordInTitle: {
+        steps: [
+          "Include your primary keyword in the title tag",
+          "Keep the title between 30-60 characters for best display",
+          "Make it descriptive and compelling for users",
+          "Use a format like: Primary Keyword - Brand Name"
+        ],
+        code: '<title>Primary Keyword - Descriptive Title | Brand Name</title>',
         location: "HTML <head> section"
       },
-      hasHTTPS: {
+      imagesHaveAltText: {
         steps: [
-          "Purchase an SSL certificate from your hosting provider",
-          "Install the certificate on your web server",
-          "Update all internal links to use https://",
-          "Set up 301 redirects from HTTP to HTTPS"
+          "Add descriptive alt text to all images on your page",
+          "Describe what's in the image clearly and concisely",
+          "Use keywords naturally when relevant to the image content",
+          "Leave alt empty (alt=\"\") only for purely decorative images"
         ],
-        location: "Web server configuration"
+        code: '<img src="image.jpg" alt="Descriptive text about the image content">',
+        location: "All <img> tags in your HTML"
       },
-      hasStructuredData: {
+      imagesHaveDimensions: {
+        steps: [
+          "Specify width and height attributes for all images",
+          "This prevents layout shift as images load",
+          "Use actual pixel dimensions or responsive units",
+          "Consider using CSS for responsive image sizing"
+        ],
+        code: '<img src="image.jpg" alt="Description" width="300" height="200">',
+        location: "All <img> tags in your HTML"
+      },
+      responsiveImages: {
+        steps: [
+          "Use srcset attribute to provide multiple image sizes",
+          "Implement picture element for art direction",
+          "Serve appropriate image sizes for different devices",
+          "Use modern image formats like WebP when possible"
+        ],
+        code: `<img src="image-800.jpg" 
+     srcset="image-400.jpg 400w, image-800.jpg 800w, image-1200.jpg 1200w"
+     sizes="(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px"
+     alt="Description">`,
+        location: "All <img> tags in your HTML"
+      },
+      hasInternalLinks: {
+        steps: [
+          "Add relevant internal links to other pages on your website",
+          "Use descriptive anchor text that describes the linked page",
+          "Link to related content and important pages",
+          "Ensure links are accessible and properly formatted"
+        ],
+        code: '<a href="/related-page">Descriptive anchor text</a>',
+        location: "Throughout your page content"
+      },
+      externalLinksOptimized: {
+        steps: [
+          "Add rel=\"noopener\" to external links for security",
+          "Consider rel=\"nofollow\" for untrusted external links",
+          "Use descriptive anchor text for external links",
+          "Ensure external links open in new tabs if desired"
+        ],
+        code: '<a href="https://example.com" rel="noopener" target="_blank">External Link</a>',
+        location: "All external links in your HTML"
+      },
+      hasCanonicalURL: {
+        steps: [
+          "Add a canonical link tag to specify the preferred URL version",
+          "This prevents duplicate content issues",
+          "Use the full absolute URL including https://",
+          "Ensure canonical points to the current page or preferred version"
+        ],
+        code: '<link rel="canonical" href="https://yoursite.com/current-page-url">',
+        location: "HTML <head> section"
+      },
+      hasSchemaMarkup: {
         steps: [
           "Add JSON-LD structured data to help search engines understand your content",
-          "Use schema.org markup appropriate for your content type",
-          "Test your markup using Google's Rich Results Test tool"
+          "Choose appropriate schema.org markup for your content type",
+          "Test your markup using Google's Rich Results Test tool",
+          "Include essential properties like name, description, and relevant data"
         ],
         code: `<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Your Page Name",
-  "description": "Your page description"
+  "description": "Your page description",
+  "url": "https://yoursite.com/current-page"
 }
 </script>`,
-        location: "HTML <head> or <body> section"
-      },
-      hasCanonical: {
-        steps: [
-          "Add a canonical link tag to specify the preferred URL",
-          "This prevents duplicate content issues",
-          "Use the full absolute URL including https://"
-        ],
-        code: '<link rel="canonical" href="https://yoursite.com/page-url">',
-        location: "HTML <head> section"
+        location: "HTML <head> or before closing </body> tag"
       },
       hasOpenGraph: {
         steps: [
           "Add Open Graph meta tags for better social media sharing",
-          "Include og:title, og:description, og:image, and og:url",
-          "Use high-quality images (1200x630px recommended)"
+          "Include og:title, og:description, og:image, and og:url at minimum",
+          "Use high-quality images (1200x630px recommended for Facebook)",
+          "Test your Open Graph tags using Facebook's Sharing Debugger"
         ],
         code: `<meta property="og:title" content="Your Page Title">
 <meta property="og:description" content="Your page description">
-<meta property="og:image" content="https://yoursite.com/image.jpg">
-<meta property="og:url" content="https://yoursite.com/page-url">`,
+<meta property="og:image" content="https://yoursite.com/social-image.jpg">
+<meta property="og:url" content="https://yoursite.com/current-page">
+<meta property="og:type" content="website">`,
         location: "HTML <head> section"
       },
       hasTwitterCards: {
         steps: [
           "Add Twitter Card meta tags for optimized Twitter sharing",
           "Choose appropriate card type (summary, summary_large_image, etc.)",
-          "Include twitter:title, twitter:description, and twitter:image"
+          "Include twitter:title, twitter:description, and twitter:image",
+          "Test using Twitter's Card Validator tool"
         ],
         code: `<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Your Page Title">
 <meta name="twitter:description" content="Your page description">
-<meta name="twitter:image" content="https://yoursite.com/image.jpg">`,
+<meta name="twitter:image" content="https://yoursite.com/twitter-image.jpg">`,
         location: "HTML <head> section"
       },
-      hasRobotsTxt: {
+      hasOGImage: {
+        steps: [
+          "Create and upload a high-quality social media image",
+          "Use dimensions of 1200x630px for optimal display",
+          "Include your brand and relevant visual elements",
+          "Add the og:image meta tag pointing to your image URL"
+        ],
+        code: '<meta property="og:image" content="https://yoursite.com/social-sharing-image.jpg">',
+        location: "HTML <head> section and image hosting"
+      },
+      hasLangAttribute: {
+        steps: [
+          "Add the lang attribute to your HTML tag",
+          "Specify the primary language of your page content",
+          "Use standard language codes (en, es, fr, de, etc.)",
+          "This helps screen readers and search engines"
+        ],
+        code: '<html lang="en">',
+        location: "Opening <html> tag"
+      },
+      hasRobotsMeta: {
+        steps: [
+          "Add robots meta tag to control search engine crawling",
+          "Use 'index, follow' for normal pages you want indexed",
+          "Use 'noindex' for pages you don't want in search results",
+          "Consider 'nofollow' for pages with untrusted links"
+        ],
+        code: '<meta name="robots" content="index, follow">',
+        location: "HTML <head> section"
+      },
+      sitemap: {
+        steps: [
+          "Create an XML sitemap listing all your important pages",
+          "Submit your sitemap to Google Search Console",
+          "Include sitemap location in your robots.txt file",
+          "Update sitemap regularly when adding new content"
+        ],
+        code: `<!-- In robots.txt -->
+Sitemap: https://yoursite.com/sitemap.xml`,
+        location: "Root directory and robots.txt file"
+      },
+      robotsTxt: {
         steps: [
           "Create a robots.txt file in your website's root directory",
-          "Specify which pages search engines should crawl",
-          "Include a link to your XML sitemap"
+          "Specify crawling rules for search engine bots",
+          "Include your sitemap URL for easy discovery",
+          "Test your robots.txt using Google Search Console"
         ],
         code: `User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /private/
 Sitemap: https://yoursite.com/sitemap.xml`,
         location: "Root directory (yoursite.com/robots.txt)"
       },
-      hasImageAlt: {
+      touchFriendlyElements: {
         steps: [
-          "Add descriptive alt text to all images on your page",
-          "Describe what's in the image clearly and concisely",
-          "Use keywords naturally when relevant to the image content"
+          "Ensure buttons and links are at least 44x44px for easy touch",
+          "Add adequate spacing between clickable elements",
+          "Use CSS to improve touch target sizes",
+          "Test your site on actual mobile devices"
         ],
-        code: '<img src="image.jpg" alt="Descriptive text about the image content">',
-        location: "All <img> tags in your HTML"
-      },
-      hasProperHeadings: {
-        steps: [
-          "Use only one H1 tag per page for the main heading",
-          "Create a logical heading hierarchy: H1 > H2 > H3 > etc.",
-          "Don't skip heading levels (don't jump from H1 to H3)"
-        ],
-        code: `<h1>Main Page Title</h1>
-<h2>Section Title</h2>
-<h3>Subsection Title</h3>`,
-        location: "Throughout your HTML content"
+        code: `.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px;
+}`,
+        location: "CSS stylesheet and interactive elements"
       }
     };
 
@@ -215,18 +376,18 @@ Sitemap: https://yoursite.com/sitemap.xml`,
   const passRate = Math.round((passedChecks / totalChecks) * 100);
 
   return (
-    <Card>
+    <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Settings className="w-5 h-5 text-slate-600" />
-            <CardTitle>Advanced Technical SEO Analysis</CardTitle>
+            <Settings className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            <CardTitle className="text-slate-900 dark:text-slate-100">Advanced Technical SEO Analysis</CardTitle>
           </div>
           <Badge variant={passRate >= 80 ? "default" : passRate >= 60 ? "secondary" : "destructive"}>
             {passedChecks}/{totalChecks} Passed ({passRate}%)
           </Badge>
         </div>
-        <p className="text-sm text-slate-600 mt-2">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
           Comprehensive technical analysis covering performance, accessibility, and SEO best practices
         </p>
       </CardHeader>
@@ -240,11 +401,11 @@ Sitemap: https://yoursite.com/sitemap.xml`,
             return (
               <div key={category.title} className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-slate-900">{category.title}</h4>
+                  <h4 className="font-medium text-slate-900 dark:text-slate-100">{category.title}</h4>
                   <span className={`text-sm font-medium ${
-                    categoryRate >= 80 ? 'text-green-600' : 
-                    categoryRate >= 60 ? 'text-yellow-600' : 
-                    'text-red-600'
+                    categoryRate >= 80 ? 'text-green-600 dark:text-green-400' : 
+                    categoryRate >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 
+                    'text-red-600 dark:text-red-400'
                   }`}>
                     {categoryPassed}/{categoryTotal}
                   </span>
@@ -256,17 +417,17 @@ Sitemap: https://yoursite.com/sitemap.xml`,
                     const fixGuide = getFixGuide(item.key);
                     
                     return (
-                      <div key={item.key} className="border rounded-md overflow-hidden">
-                        <div className="flex items-center justify-between p-2 hover:bg-slate-50">
+                      <div key={item.key} className="border dark:border-slate-600 rounded-md overflow-hidden">
+                        <div className="flex items-center justify-between p-2 hover:bg-slate-50 dark:hover:bg-slate-700">
                           <div className="flex items-center space-x-3 flex-1">
                             {checks[item.key] ? (
-                              <Check className="w-4 h-4 text-green-600" />
+                              <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
                             ) : (
-                              <X className="w-4 h-4 text-red-600" />
+                              <X className="w-4 h-4 text-red-600 dark:text-red-400" />
                             )}
                             <div className="flex-1">
-                              <p className="font-medium text-sm">{item.label}</p>
-                              <p className="text-xs text-slate-600">{item.description}</p>
+                              <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{item.label}</p>
+                              <p className="text-xs text-slate-600 dark:text-slate-400">{item.description}</p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -279,12 +440,12 @@ Sitemap: https://yoursite.com/sitemap.xml`,
                             {hasFailed && (
                               <button
                                 onClick={() => toggleExpanded(item.key)}
-                                className="flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100"
+                                className="flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100 dark:hover:bg-slate-600"
                               >
                                 {isExpanded ? (
-                                  <ChevronDown className="w-4 h-4 text-slate-600" />
+                                  <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                                 ) : (
-                                  <ChevronRight className="w-4 h-4 text-slate-600" />
+                                  <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                                 )}
                               </button>
                             )}
@@ -292,18 +453,18 @@ Sitemap: https://yoursite.com/sitemap.xml`,
                         </div>
                         
                         {hasFailed && isExpanded && (
-                          <div className="border-t bg-red-50 p-4">
+                          <div className="border-t bg-red-50 dark:bg-red-900/20 p-4">
                             <div className="flex items-start space-x-3">
-                              <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                               <div className="flex-1">
-                                <h5 className="font-medium text-red-900 mb-2">How to Fix This Issue</h5>
+                                <h5 className="font-medium text-red-900 dark:text-red-100 mb-2">How to Fix This Issue</h5>
                                 <div className="space-y-3">
                                   <div>
-                                    <p className="text-sm font-medium text-red-800 mb-1">Steps to resolve:</p>
-                                    <ol className="text-sm text-red-700 space-y-1">
+                                    <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Steps to resolve:</p>
+                                    <ol className="text-sm text-red-700 dark:text-red-300 space-y-1">
                                       {fixGuide.steps.map((step, index) => (
                                         <li key={index} className="flex items-start space-x-2">
-                                          <span className="font-medium text-red-600 flex-shrink-0">{index + 1}.</span>
+                                          <span className="font-medium text-red-600 dark:text-red-400 flex-shrink-0">{index + 1}.</span>
                                           <span>{step}</span>
                                         </li>
                                       ))}
@@ -312,16 +473,16 @@ Sitemap: https://yoursite.com/sitemap.xml`,
                                   
                                   {fixGuide.code && (
                                     <div>
-                                      <p className="text-sm font-medium text-red-800 mb-1">Code example:</p>
-                                      <div className="bg-slate-900 text-green-400 p-3 rounded text-xs font-mono overflow-x-auto">
+                                      <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Code example:</p>
+                                      <div className="bg-slate-900 dark:bg-slate-800 text-green-400 dark:text-green-300 p-3 rounded text-xs font-mono overflow-x-auto">
                                         <pre>{fixGuide.code}</pre>
                                       </div>
                                     </div>
                                   )}
                                   
                                   <div>
-                                    <p className="text-sm font-medium text-red-800 mb-1">Where to add this:</p>
-                                    <p className="text-sm text-red-700 bg-red-100 px-2 py-1 rounded">
+                                    <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Where to add this:</p>
+                                    <p className="text-sm text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-800/30 px-2 py-1 rounded">
                                       {fixGuide.location}
                                     </p>
                                   </div>
