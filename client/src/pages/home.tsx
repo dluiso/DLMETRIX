@@ -17,6 +17,7 @@ import TechnicalSeo from "@/components/technical-seo";
 import CoreWebVitalsComponent from "@/components/core-web-vitals";
 import PerformanceOverview from "@/components/performance-overview";
 import ScreenshotsView from "@/components/screenshots-view";
+import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
 import { WebAnalysisResult } from "@/types/seo";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF, exportVisualPDF } from "@/lib/pdf-export";
@@ -622,6 +623,11 @@ export default function Home() {
 
               {/* Visual Recommendations */}
               <VisualRecommendations recommendations={seoData.recommendations} />
+
+              {/* AI Search Content Analysis */}
+              {seoData.aiSearchAnalysis && (
+                <AiSearchAnalysisComponent data={seoData.aiSearchAnalysis} />
+              )}
 
               {/* Technical Checks */}
               <TechnicalSeo checks={seoData.technicalChecks} />

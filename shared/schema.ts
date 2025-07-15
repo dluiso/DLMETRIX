@@ -81,6 +81,38 @@ export const insightSchema = z.object({
   details: z.any().optional(),
 });
 
+// AI Content Analysis schemas
+export const aiContentInsightSchema = z.object({
+  type: z.enum(['entity', 'topic', 'fact', 'quote', 'statistic', 'definition']),
+  content: z.string(),
+  relevance: z.number(), // 0-1 score
+  context: z.string(),
+  aiOptimizationTip: z.string()
+});
+
+export const aiSearchAnalysisSchema = z.object({
+  overallScore: z.number(), // 0-100 AI readiness score
+  contentQuality: z.number(), // 0-100
+  structuredDataScore: z.number(), // 0-100
+  semanticClarityScore: z.number(), // 0-100
+  
+  // Key insights for AI consumption
+  primaryTopics: z.array(z.string()),
+  keyEntities: z.array(z.string()),
+  factualClaims: z.array(z.string()),
+  
+  // Content analysis
+  bestContent: z.array(aiContentInsightSchema),
+  improvements: z.array(z.string()),
+  aiRecommendations: z.array(z.object({
+    category: z.enum(['content_structure', 'semantic_markup', 'factual_accuracy', 'context_clarity']),
+    title: z.string(),
+    description: z.string(),
+    implementation: z.string(),
+    priority: z.enum(['high', 'medium', 'low'])
+  }))
+});
+
 // Web analysis result type
 export const webAnalysisResultSchema = z.object({
   url: z.string().url(),
@@ -128,9 +160,14 @@ export const webAnalysisResultSchema = z.object({
     diagnostics: z.array(insightSchema), // General diagnostics
   }),
   technicalChecks: z.record(z.boolean()),
+  
+  // AI Search Analysis
+  aiSearchAnalysis: aiSearchAnalysisSchema.nullable(),
 });
 
 export type WebAnalysisResult = z.infer<typeof webAnalysisResultSchema>;
 export type CoreWebVitals = z.infer<typeof coreWebVitalsSchema>;
 export type Diagnostic = z.infer<typeof diagnosticSchema>;
 export type Insight = z.infer<typeof insightSchema>;
+export type AiSearchAnalysis = z.infer<typeof aiSearchAnalysisSchema>;
+export type AiContentInsight = z.infer<typeof aiContentInsightSchema>;
