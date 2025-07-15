@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Bookmark, HelpCircle, Search } from "lucide-react";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
+import SeoSummaryCards from "@/components/seo-summary-cards";
 import MetaTagAnalysis from "@/components/meta-tag-analysis";
 import MetaDescriptionAnalysis from "@/components/meta-description-analysis";
 import OpenGraphAnalysis from "@/components/open-graph-analysis";
 import TwitterCardsAnalysis from "@/components/twitter-cards-analysis";
-import Recommendations from "@/components/recommendations";
+import VisualRecommendations from "@/components/visual-recommendations";
 import PreviewTabs from "@/components/preview-tabs";
 import TechnicalSeo from "@/components/technical-seo";
 import { SeoAnalysisResult } from "@/types/seo";
@@ -88,6 +89,9 @@ export default function Home() {
             {/* SEO Score Overview */}
             <SeoScore data={seoData} />
 
+            {/* Visual Summary Cards */}
+            <SeoSummaryCards data={seoData} />
+
             {/* Preview Tabs */}
             <PreviewTabs data={seoData} />
 
@@ -103,8 +107,8 @@ export default function Home() {
               <TwitterCardsAnalysis data={seoData} />
             </div>
 
-            {/* Recommendations */}
-            <Recommendations recommendations={seoData.recommendations} />
+            {/* Visual Recommendations */}
+            <VisualRecommendations recommendations={seoData.recommendations} />
 
             {/* Technical SEO */}
             <TechnicalSeo checks={seoData.technicalSeoChecks} />

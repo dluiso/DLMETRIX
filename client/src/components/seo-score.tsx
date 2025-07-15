@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, AlertTriangle, X, Tags } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Check, AlertTriangle, X, Tags, TrendingUp, Award } from "lucide-react";
 import { SeoAnalysisResult } from "@/types/seo";
 
 interface SeoScoreProps {
