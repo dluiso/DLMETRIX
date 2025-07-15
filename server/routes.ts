@@ -226,7 +226,8 @@ function calculateSeoScore(data: any) {
         type: 'warning',
         priority: 'medium',
         title: 'Optimize Title Tag Length',
-        description: `Title is ${titleLength} characters. Recommended length is 50-60 characters.`
+        description: `Title is ${titleLength} characters. Recommended length is 50-60 characters.`,
+        howToFix: 'Edit your title tag to be between 50-60 characters. Focus on your primary keyword and make it compelling for users. Example: <title>Primary Keyword - Secondary Keyword | Brand Name</title>'
       });
     } else {
       score += 5;
@@ -235,7 +236,8 @@ function calculateSeoScore(data: any) {
         type: 'error',
         priority: 'high',
         title: 'Fix Title Tag Length',
-        description: `Title is ${titleLength} characters. This is outside the recommended range of 50-60 characters.`
+        description: `Title is ${titleLength} characters. This is outside the recommended range of 50-60 characters.`,
+        howToFix: 'Rewrite your title tag to be 50-60 characters. Include your main keyword near the beginning and make it descriptive and compelling. Avoid keyword stuffing.'
       });
     }
   } else {
@@ -244,7 +246,8 @@ function calculateSeoScore(data: any) {
       type: 'error',
       priority: 'high',
       title: 'Missing Title Tag',
-      description: 'Your page is missing a title tag, which is crucial for SEO.'
+      description: 'Your page is missing a title tag, which is crucial for SEO.',
+      howToFix: 'Add a title tag in your <head> section: <title>Your Page Title Here</title>. Make it 50-60 characters, include your main keyword, and make it compelling for users.'
     });
   }
 
@@ -261,7 +264,8 @@ function calculateSeoScore(data: any) {
         type: 'warning',
         priority: 'medium',
         title: 'Optimize Meta Description',
-        description: `Meta description is ${descLength} characters. Recommended length is 150-160 characters.`
+        description: `Meta description is ${descLength} characters. Recommended length is 150-160 characters.`,
+        howToFix: 'Edit your meta description to be 150-160 characters. Write a compelling summary that includes your main keyword and encourages clicks: <meta name="description" content="Your optimized description here">'
       });
     } else {
       score += 5;
@@ -270,7 +274,8 @@ function calculateSeoScore(data: any) {
         type: 'error',
         priority: 'high',
         title: 'Fix Meta Description Length',
-        description: `Meta description is ${descLength} characters. This is outside the recommended range.`
+        description: `Meta description is ${descLength} characters. This is outside the recommended range.`,
+        howToFix: 'Rewrite your meta description to be 150-160 characters. Focus on clearly describing what users will find on your page and include a call-to-action.'
       });
     }
   } else {
@@ -279,7 +284,8 @@ function calculateSeoScore(data: any) {
       type: 'error',
       priority: 'high',
       title: 'Missing Meta Description',
-      description: 'Your page is missing a meta description, which is important for search results.'
+      description: 'Your page is missing a meta description, which is important for search results.',
+      howToFix: 'Add a meta description in your <head> section: <meta name="description" content="Your compelling 150-160 character description that includes your main keyword and entices users to click">'
     });
   }
 
@@ -296,7 +302,8 @@ function calculateSeoScore(data: any) {
         type: 'success',
         priority: 'low',
         title: 'Well Done: Complete Open Graph Tags',
-        description: 'All essential Open Graph tags are present for optimal social media sharing.'
+        description: 'All essential Open Graph tags are present for optimal social media sharing.',
+        howToFix: 'Already implemented correctly'
       });
     } else {
       score += 10;
@@ -305,7 +312,8 @@ function calculateSeoScore(data: any) {
         type: 'warning',
         priority: 'medium',
         title: 'Incomplete Open Graph Tags',
-        description: `Missing Open Graph tags: ${missingOgTags.join(', ')}`
+        description: `Missing Open Graph tags: ${missingOgTags.join(', ')}`,
+        howToFix: `Add the missing Open Graph tags to your <head> section: ${missingOgTags.map(tag => `<meta property="${tag}" content="Your content here">`).join(', ')}. Ensure og:image is at least 1200x630 pixels.`
       });
     }
   } else {
@@ -314,7 +322,8 @@ function calculateSeoScore(data: any) {
       type: 'error',
       priority: 'high',
       title: 'Missing Open Graph Tags',
-      description: 'Open Graph tags are missing. These are essential for social media sharing.'
+      description: 'Open Graph tags are missing. These are essential for social media sharing.',
+      howToFix: 'Add Open Graph tags to your <head>: <meta property="og:title" content="Page Title">, <meta property="og:description" content="Page description">, <meta property="og:image" content="https://yoursite.com/image.jpg">, <meta property="og:url" content="https://yoursite.com/current-page">'
     });
   }
 
@@ -326,7 +335,8 @@ function calculateSeoScore(data: any) {
       type: 'success',
       priority: 'low',
       title: 'Well Done: Twitter Cards Present',
-      description: 'Twitter Card tags are present for optimal Twitter sharing.'
+      description: 'Twitter Card tags are present for optimal Twitter sharing.',
+      howToFix: 'Already implemented correctly'
     });
   } else {
     errors++;
@@ -334,7 +344,8 @@ function calculateSeoScore(data: any) {
       type: 'error',
       priority: 'high',
       title: 'Missing Twitter Cards',
-      description: 'Twitter Card tags are missing. These optimize how your content appears on Twitter.'
+      description: 'Twitter Card tags are missing. These optimize how your content appears on Twitter.',
+      howToFix: 'Add Twitter Card tags to your <head>: <meta name="twitter:card" content="summary_large_image">, <meta name="twitter:title" content="Page Title">, <meta name="twitter:description" content="Description">, <meta name="twitter:image" content="https://yoursite.com/image.jpg">'
     });
   }
 
@@ -383,7 +394,8 @@ function calculateSeoScore(data: any) {
         type: 'success',
         priority: 'low',
         title: `✓ ${check.title}`,
-        description: check.description
+        description: check.description,
+        howToFix: 'Already implemented correctly'
       });
     } else {
       if (criticalChecks.some(c => c.key === check.key)) {
@@ -392,7 +404,8 @@ function calculateSeoScore(data: any) {
           type: 'error',
           priority: 'high',
           title: `Missing: ${check.title}`,
-          description: check.description
+          description: check.description,
+          howToFix: getFixGuideline(check.key)
         });
       } else {
         techWarnings++;
@@ -400,7 +413,8 @@ function calculateSeoScore(data: any) {
           type: 'warning',
           priority: 'medium',
           title: `Improve: ${check.title}`,
-          description: check.description
+          description: check.description,
+          howToFix: getFixGuideline(check.key)
         });
       }
     }
@@ -412,12 +426,60 @@ function calculateSeoScore(data: any) {
   warnings += techWarnings;
   errors += techErrors;
 
+  // Calculate more balanced score (penalize warnings and errors more)
+  const maxPossibleScore = 100;
+  const warningPenalty = warnings * 3; // 3 points per warning
+  const errorPenalty = errors * 8; // 8 points per error
+  const finalScore = Math.max(0, Math.min(maxPossibleScore, score - warningPenalty - errorPenalty));
+
   return {
-    score: Math.min(score, 100),
+    score: finalScore,
     passed,
     warnings,
     errors,
     recommendations,
     technicalSeoChecks,
   };
+}
+
+// Function to provide comprehensive fix guidelines
+function getFixGuideline(checkKey: string): string {
+  const guidelines: Record<string, string> = {
+    // Critical checks
+    'hasSSL': 'Install an SSL certificate on your server. For free certificates, use Let\'s Encrypt or contact your hosting provider. Update all URLs to use https:// instead of http://.',
+    'hasViewportMeta': 'Add this meta tag to your <head> section: <meta name="viewport" content="width=device-width, initial-scale=1.0">. This ensures proper mobile display.',
+    'hasH1Tag': 'Add exactly one <h1> tag per page containing your main heading. Example: <h1>Your Main Page Title</h1>. Only use one H1 per page.',
+    'hasMetaDescription': 'Add a meta description tag: <meta name="description" content="Your 150-160 character description here">. Write compelling, unique descriptions for each page.',
+    
+    // Important checks
+    'hasCharset': 'Add character encoding to your <head>: <meta charset="UTF-8">. This prevents character display issues across different browsers.',
+    'hasLangAttribute': 'Add language attribute to your <html> tag: <html lang="en"> (replace "en" with your content\'s language code).',
+    'hasCanonicalURL': 'Add canonical URL: <link rel="canonical" href="https://yoursite.com/page-url">. This prevents duplicate content issues.',
+    'hasSchemaMarkup': 'Add JSON-LD structured data to help search engines understand your content. Use Google\'s Structured Data Markup Helper or Schema.org guidelines.',
+    'imagesHaveAltText': 'Add descriptive alt attributes to all images: <img src="image.jpg" alt="Descriptive text about the image">. Alt text helps accessibility and SEO.',
+    'hasMultipleHeadings': 'Use proper heading hierarchy (H1, H2, H3, etc.) to structure your content. Start with H1, then use H2 for main sections, H3 for subsections.',
+    
+    // Performance checks
+    'minifiedHTML': 'Minify your HTML by removing unnecessary spaces, comments, and line breaks. Use build tools like Webpack, Gulp, or online minifiers.',
+    'noInlineStyles': 'Move all CSS to external stylesheet files instead of using style="" attributes or <style> tags. Link with: <link rel="stylesheet" href="styles.css">.',
+    'responsiveImages': 'Use responsive images with srcset: <img src="image.jpg" srcset="image-480w.jpg 480w, image-800w.jpg 800w" sizes="(max-width: 600px) 480px, 800px" alt="Description">.',
+    'hasInternalLinks': 'Add internal links to other relevant pages on your website. Use descriptive anchor text that tells users what they\'ll find on the linked page.',
+    'sufficientContent': 'Add more valuable, unique content to your page. Aim for at least 300 words of high-quality, relevant text that provides value to your visitors.',
+    
+    // Social media checks
+    'hasOpenGraph': 'Add Open Graph tags: <meta property="og:title" content="Page Title">, <meta property="og:description" content="Page description">, <meta property="og:image" content="image-url">, <meta property="og:url" content="page-url">.',
+    'hasTwitterCards': 'Add Twitter Card tags: <meta name="twitter:card" content="summary_large_image">, <meta name="twitter:title" content="Page Title">, <meta name="twitter:description" content="Description">.',
+    'hasOGImage': 'Add Open Graph image: <meta property="og:image" content="https://yoursite.com/image.jpg">. Use images at least 1200x630 pixels for best results.',
+    
+    // Technical configuration
+    'hasRobotsMeta': 'Add robots meta tag: <meta name="robots" content="index, follow"> for pages you want indexed, or <meta name="robots" content="noindex, nofollow"> for pages you don\'t.',
+    'sitemap': 'Create and submit an XML sitemap to search engines. Use tools like XML-Sitemaps.com or SEO plugins if using WordPress.',
+    'robotsTxt': 'Create a robots.txt file in your website root directory. Example content: User-agent: *\\nAllow: /\\nSitemap: https://yoursite.com/sitemap.xml',
+    'touchFriendlyElements': 'Ensure interactive elements are at least 44x44 pixels and have adequate spacing. Remove onclick handlers in favor of proper buttons and links.',
+    'hasTwitterSite': 'Add Twitter site tag: <meta name="twitter:site" content="@yourusername"> to associate content with your Twitter account.',
+    'externalLinksOptimized': 'Add rel="nofollow" to external links you don\'t want to endorse: <a href="external-site.com" rel="nofollow">Link text</a>.',
+    'imagesHaveDimensions': 'Add width and height attributes to images: <img src="image.jpg" width="800" height="600" alt="Description">. This prevents layout shift.',
+  };
+
+  return guidelines[checkKey] || 'Please review this item and implement according to SEO best practices.';
 }

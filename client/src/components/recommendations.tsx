@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Lightbulb, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { Lightbulb, AlertTriangle, CheckCircle, XCircle, Wrench } from "lucide-react";
 import { Recommendation } from "@/types/seo";
 
 interface RecommendationsProps {
@@ -99,7 +99,19 @@ export default function Recommendations({ recommendations }: RecommendationsProp
                   </span>
                   {rec.title}
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{rec.description}</p>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-2">{rec.description}</p>
+                
+                {rec.howToFix && rec.howToFix !== 'Already implemented correctly' && (
+                  <div className="mt-3 p-3 bg-white/60 rounded-md border border-slate-200">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Wrench className="w-4 h-4 text-slate-600" />
+                      <span className="text-sm font-medium text-slate-800">How to Fix:</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-mono bg-slate-50 p-2 rounded border">
+                      {rec.howToFix}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           ))}

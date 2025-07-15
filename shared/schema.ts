@@ -46,6 +46,7 @@ export const seoAnalysisResultSchema = z.object({
     priority: z.enum(['high', 'medium', 'low']),
     title: z.string(),
     description: z.string(),
+    howToFix: z.string().optional(),
   })),
   technicalSeoChecks: z.record(z.boolean()),
 });
