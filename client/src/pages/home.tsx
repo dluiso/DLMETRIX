@@ -6,6 +6,9 @@ import { Bookmark, HelpCircle, Search } from "lucide-react";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
 import MetaTagAnalysis from "@/components/meta-tag-analysis";
+import MetaDescriptionAnalysis from "@/components/meta-description-analysis";
+import OpenGraphAnalysis from "@/components/open-graph-analysis";
+import TwitterCardsAnalysis from "@/components/twitter-cards-analysis";
 import Recommendations from "@/components/recommendations";
 import PreviewTabs from "@/components/preview-tabs";
 import TechnicalSeo from "@/components/technical-seo";
@@ -82,22 +85,29 @@ export default function Home() {
 
         {seoData && (
           <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-            {/* SEO Score and Meta Tag Analysis */}
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-              <SeoScore data={seoData} />
-              <MetaTagAnalysis data={seoData} />
-            </div>
+            {/* SEO Score Overview */}
+            <SeoScore data={seoData} />
 
-            {/* Preview Tabs - below SEO summary */}
+            {/* Preview Tabs */}
             <PreviewTabs data={seoData} />
 
-            {/* Recommendations and Technical SEO */}
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2">
-                <Recommendations recommendations={seoData.recommendations} />
-              </div>
-              <TechnicalSeo checks={seoData.technicalSeoChecks} />
+            {/* Meta Tags Analysis */}
+            <MetaTagAnalysis data={seoData} />
+
+            {/* Meta Description Analysis */}
+            <MetaDescriptionAnalysis data={seoData} />
+
+            {/* Open Graph and Twitter Cards */}
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+              <OpenGraphAnalysis data={seoData} />
+              <TwitterCardsAnalysis data={seoData} />
             </div>
+
+            {/* Recommendations */}
+            <Recommendations recommendations={seoData.recommendations} />
+
+            {/* Technical SEO */}
+            <TechnicalSeo checks={seoData.technicalSeoChecks} />
           </div>
         )}
       </main>
