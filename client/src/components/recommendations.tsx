@@ -76,28 +76,30 @@ export default function Recommendations({ recommendations }: RecommendationsProp
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          <Lightbulb className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold text-slate-900">Recommendations</h3>
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex items-center space-x-2 mb-4 sm:mb-6">
+          <Lightbulb className="w-5 h-5 text-primary flex-shrink-0" />
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Recommendations</h3>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {sortedRecommendations.map((rec, index) => (
-            <div key={index} className={`flex items-start space-x-3 p-4 rounded-lg border ${getRecommendationBg(rec.type)}`}>
-              <div className={`w-6 h-6 ${getPriorityBg(rec.type)} rounded-full flex items-center justify-center flex-shrink-0 mt-0.5`}>
-                <span className={`text-sm font-bold ${getPriorityText(rec.type)}`}>
+            <div key={index} className={`flex items-start space-x-2 sm:space-x-3 p-3 sm:p-4 rounded-lg border ${getRecommendationBg(rec.type)}`}>
+              <div className={`w-5 h-5 sm:w-6 sm:h-6 ${getPriorityBg(rec.type)} rounded-full flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                <span className={`text-xs sm:text-sm font-bold ${getPriorityText(rec.type)}`}>
                   {getPriorityIcon(rec.type)}
                 </span>
               </div>
-              <div className="flex-1">
-                <h4 className="font-medium text-slate-900 mb-1">
-                  {rec.priority === 'high' && 'High Priority: '}
-                  {rec.priority === 'medium' && 'Medium Priority: '}
-                  {rec.priority === 'low' && 'Low Priority: '}
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-slate-900 mb-1 text-sm sm:text-base">
+                  <span className="hidden sm:inline">
+                    {rec.priority === 'high' && 'High Priority: '}
+                    {rec.priority === 'medium' && 'Medium Priority: '}
+                    {rec.priority === 'low' && 'Low Priority: '}
+                  </span>
                   {rec.title}
                 </h4>
-                <p className="text-sm text-slate-600">{rec.description}</p>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{rec.description}</p>
               </div>
             </div>
           ))}

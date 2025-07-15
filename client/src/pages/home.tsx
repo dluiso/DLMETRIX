@@ -41,23 +41,24 @@ export default function Home() {
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="bg-primary text-white p-2 rounded-lg">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-0 sm:h-16 gap-4 sm:gap-0">
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <div className="bg-primary text-white p-2 rounded-lg flex-shrink-0">
                 <Search className="w-5 h-5" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-slate-900">SEO Tag Analyzer</h1>
-                <p className="text-sm text-slate-600">Analyze and optimize your website's meta tags</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900 truncate">SEO Tag Analyzer</h1>
+                <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Analyze and optimize your website's meta tags</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
+            <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
+              <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <HelpCircle className="w-4 h-4" />
               </Button>
-              <Button className="bg-primary hover:bg-blue-700">
-                <Bookmark className="w-4 h-4 mr-2" />
-                Save Report
+              <Button className="bg-primary hover:bg-blue-700 text-sm">
+                <Bookmark className="w-4 h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Save Report</span>
+                <span className="sm:hidden">Save</span>
               </Button>
             </div>
           </div>
@@ -65,14 +66,14 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} />
         
         {error && (
-          <Card className="p-6 mb-8 border-red-200 bg-red-50">
+          <Card className="p-4 sm:p-6 mb-6 sm:mb-8 border-red-200 bg-red-50">
             <div className="text-red-800">
-              <h3 className="font-semibold mb-2">Analysis Error</h3>
-              <p className="text-sm">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Analysis Error</h3>
+              <p className="text-xs sm:text-sm leading-relaxed">
                 {error}
               </p>
             </div>
@@ -80,16 +81,16 @@ export default function Home() {
         )}
 
         {seoData && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Left Column - SEO Analysis */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="xl:col-span-2 space-y-4 sm:space-y-6">
               <SeoScore data={seoData} />
               <MetaTagAnalysis data={seoData} />
               <Recommendations recommendations={seoData.recommendations} />
             </div>
 
             {/* Right Column - Previews */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <Previews data={seoData} />
               <TechnicalSeo checks={seoData.technicalSeoChecks} />
             </div>
@@ -99,12 +100,12 @@ export default function Home() {
 
       {/* Loading Overlay */}
       {analyzeMutation.isPending && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="p-8 max-w-md mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">Analyzing Website</h3>
-              <p className="text-slate-600">Fetching HTML and parsing meta tags...</p>
+              <div className="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary mb-4"></div>
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Analyzing Website</h3>
+              <p className="text-sm sm:text-base text-slate-600">Fetching HTML and parsing meta tags...</p>
             </div>
           </Card>
         </div>

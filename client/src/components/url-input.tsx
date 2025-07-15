@@ -45,28 +45,28 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
   };
 
   return (
-    <Card className="mb-8">
-      <CardContent className="p-6">
+    <Card className="mb-6 sm:mb-8">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4">
-          <Globe className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold text-slate-900">Website URL Analysis</h2>
+          <Globe className="w-5 h-5 text-primary flex-shrink-0" />
+          <h2 className="text-base sm:text-lg font-semibold text-slate-900">Website URL Analysis</h2>
         </div>
         
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
           <div className="flex-1 relative">
             <Input
               type="url"
               placeholder="Enter website URL (e.g., https://example.com)"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="pl-4 pr-10"
+              className="pl-4 pr-10 text-sm sm:text-base h-10 sm:h-11"
               disabled={isLoading}
             />
             <Link className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
           </div>
           <Button 
             type="submit" 
-            className="bg-primary hover:bg-blue-700"
+            className="bg-primary hover:bg-blue-700 h-10 sm:h-11 text-sm sm:text-base w-full sm:w-auto"
             disabled={isLoading}
           >
             <Search className="w-4 h-4 mr-2" />

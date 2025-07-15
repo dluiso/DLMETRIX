@@ -61,29 +61,29 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          <Code className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold text-slate-900">Meta Tags Analysis</h3>
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex items-center space-x-2 mb-4 sm:mb-6">
+          <Code className="w-5 h-5 text-primary flex-shrink-0" />
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Meta Tags Analysis</h3>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Title Tag */}
-          <div className="border border-slate-200 rounded-lg p-4">
-            <div className="flex items-start justify-between mb-2">
+          <div className="border border-slate-200 rounded-lg p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
               <div className="flex items-center space-x-2">
                 {getStatusIcon(getTitleStatus())}
-                <span className="font-medium text-slate-900">Title Tag</span>
+                <span className="font-medium text-slate-900 text-sm sm:text-base">Title Tag</span>
               </div>
               {getStatusBadge(getTitleStatus())}
             </div>
             
             {data.title ? (
               <>
-                <div className="bg-slate-50 p-3 rounded font-mono text-sm text-slate-700 mb-2">
+                <div className="bg-slate-50 p-2 sm:p-3 rounded font-mono text-xs sm:text-sm text-slate-700 mb-2 overflow-x-auto">
                   &lt;title&gt;{data.title}&lt;/title&gt;
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-slate-600">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
                   <span>Length: {data.title.length} characters</span>
                   <span className={getTitleStatus() === 'good' ? 'text-green-600' : getTitleStatus() === 'warning' ? 'text-yellow-600' : 'text-red-600'}>
                     {getTitleStatus() === 'good' ? '✓ Within recommended range (50-60)' : 
@@ -93,28 +93,28 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
                 </div>
               </>
             ) : (
-              <div className="text-sm text-slate-600">
+              <div className="text-xs sm:text-sm text-slate-600">
                 Title tag is missing. This is crucial for SEO.
               </div>
             )}
           </div>
 
           {/* Meta Description */}
-          <div className="border border-slate-200 rounded-lg p-4">
-            <div className="flex items-start justify-between mb-2">
+          <div className="border border-slate-200 rounded-lg p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
               <div className="flex items-center space-x-2">
                 {getStatusIcon(getDescriptionStatus())}
-                <span className="font-medium text-slate-900">Meta Description</span>
+                <span className="font-medium text-slate-900 text-sm sm:text-base">Meta Description</span>
               </div>
               {getStatusBadge(getDescriptionStatus())}
             </div>
             
             {data.description ? (
               <>
-                <div className="bg-slate-50 p-3 rounded font-mono text-sm text-slate-700 mb-2">
+                <div className="bg-slate-50 p-2 sm:p-3 rounded font-mono text-xs sm:text-sm text-slate-700 mb-2 overflow-x-auto break-all">
                   &lt;meta name="description" content="{data.description}"&gt;
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-slate-600">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
                   <span>Length: {data.description.length} characters</span>
                   <span className={getDescriptionStatus() === 'good' ? 'text-green-600' : getDescriptionStatus() === 'warning' ? 'text-yellow-600' : 'text-red-600'}>
                     {getDescriptionStatus() === 'good' ? '✓ Within recommended range (150-160)' : 
@@ -124,7 +124,7 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
                 </div>
               </>
             ) : (
-              <div className="text-sm text-slate-600">
+              <div className="text-xs sm:text-sm text-slate-600">
                 Meta description is missing. This is important for search results.
               </div>
             )}

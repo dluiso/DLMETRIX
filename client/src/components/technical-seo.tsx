@@ -27,24 +27,24 @@ export default function TechnicalSeo({ checks }: TechnicalSeoProps) {
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4">
-          <Settings className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold text-slate-900">Technical SEO</h3>
+          <Settings className="w-5 h-5 text-primary flex-shrink-0" />
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Technical SEO</h3>
         </div>
         
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {Object.entries(checks).map(([key, status]) => (
-            <div key={key} className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">{formatCheckName(key)}</span>
+            <div key={key} className="flex items-center justify-between py-1">
+              <span className="text-xs sm:text-sm text-slate-600 pr-2">{formatCheckName(key)}</span>
               {getCheckIcon(status)}
             </div>
           ))}
           
           {Object.keys(checks).length === 0 && (
             <div className="text-center py-4 text-slate-500">
-              <AlertTriangle className="w-6 h-6 mx-auto mb-2" />
-              <p className="text-sm">No technical SEO data available</p>
+              <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-2" />
+              <p className="text-xs sm:text-sm">No technical SEO data available</p>
             </div>
           )}
         </div>
