@@ -18,19 +18,7 @@ export default function Home() {
 
   const analyzeMutation = useMutation({
     mutationFn: async (url: string): Promise<SeoAnalysisResult> => {
-      const response = await apiRequest("/api/seo/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP ${response.status}: Failed to analyze website`);
-      }
-      
+      const response = await apiRequest("POST", "/api/seo/analyze", { url });
       return response.json();
     },
     onSuccess: (data) => {
