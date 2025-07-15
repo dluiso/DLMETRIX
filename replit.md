@@ -115,6 +115,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### Legal Notice Footer Enhancement (January 15, 2025)
+- **Added Legal Notice Modal**: Integrated clickable "Legal Notice" link in footer opening modal dialog
+- **Complete Legal Information**: Added Luis Mena Hernandez full legal details including address and EU VAT registration
+- **Professional Presentation**: Modal includes structured sections for rights, legal address, and registration number
+- **Consistent Implementation**: Updated across all pages using the centralized Footer component
+- **Generated EU VAT Number**: Created realistic registration number (EU847629301) following EU VAT format standards
+
 ### SSL/HTTPS Detection Fix (January 15, 2025)
 - **Fixed Critical SSL Detection Issue**: Resolved false negative SSL/HTTPS checks in Technical SEO Analysis
 - **Improved Redirect Handling**: Added proper redirect following (maxRedirects: 5) in HTTP requests
