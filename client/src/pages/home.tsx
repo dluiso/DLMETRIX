@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bookmark, HelpCircle, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Monitor, Smartphone, Globe } from "lucide-react";
+import { Bookmark, HelpCircle, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Monitor, Smartphone, Globe, Moon, Sun, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
@@ -31,6 +31,8 @@ export default function Home() {
   const [compareData, setCompareData] = useState<WebAnalysisResult | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState<'en' | 'es'>('en');
   const { toast } = useToast();
 
   const analyzeMutation = useMutation({
@@ -59,6 +61,73 @@ export default function Home() {
       setSeoData(null);
     },
   });
+
+  // Translation texts
+  const translations = {
+    en: {
+      title: "Web Performance Analyzer",
+      subtitle: "Comprehensive website analysis with Core Web Vitals, SEO, and performance insights",
+      history: "History",
+      settings: "Settings",
+      saveReport: "Save Report",
+      generating: "Generating...",
+      analyzingWebsite: "Analyzing Website",
+      analysisHistory: "Analysis History",
+      clearAll: "Clear All",
+      noAnalysisHistory: "No analysis history yet",
+      analyzeWebsite: "Analyze a website to see it here",
+      analysisLoaded: "Analysis loaded",
+      viewingResults: "Viewing results for",
+      comparing: "Comparing",
+      exitComparison: "Exit Comparison",
+      analysisSettings: "Analysis Settings",
+      desktopAnalysis: "Desktop Analysis",
+      mobileAnalysis: "Mobile Analysis",
+      seoAnalysis: "SEO Analysis",
+      analysisFeatures: "Analysis Features",
+      darkMode: "Dark Mode",
+      language: "Language",
+      english: "English",
+      spanish: "Spanish"
+    },
+    es: {
+      title: "Analizador de Rendimiento Web",
+      subtitle: "Análisis integral de sitios web con Core Web Vitals, SEO e insights de rendimiento",
+      history: "Historial",
+      settings: "Configuración",
+      saveReport: "Guardar Reporte",
+      generating: "Generando...",
+      analyzingWebsite: "Analizando Sitio Web",
+      analysisHistory: "Historial de Análisis",
+      clearAll: "Limpiar Todo",
+      noAnalysisHistory: "No hay historial de análisis",
+      analyzeWebsite: "Analiza un sitio web para verlo aquí",
+      analysisLoaded: "Análisis cargado",
+      viewingResults: "Viendo resultados para",
+      comparing: "Comparando",
+      exitComparison: "Salir de Comparación",
+      analysisSettings: "Configuración de Análisis",
+      desktopAnalysis: "Análisis de Escritorio",
+      mobileAnalysis: "Análisis Móvil", 
+      seoAnalysis: "Análisis SEO",
+      analysisFeatures: "Características del Análisis",
+      darkMode: "Modo Oscuro",
+      language: "Idioma",
+      english: "Inglés",
+      spanish: "Español"
+    }
+  };
+
+  const t = translations[language];
+
+  // Apply dark mode to document
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   const handleAnalyze = async (url: string) => {
     setError(null);
@@ -178,9 +247,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-0 sm:h-16 gap-4 sm:gap-0">
             <div className="flex items-center space-x-3 w-full sm:w-auto">
@@ -188,8 +257,8 @@ export default function Home() {
                 <Search className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl font-bold text-slate-900 truncate">Web Performance Analyzer</h1>
-                <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Comprehensive website analysis with Core Web Vitals, SEO, and performance insights</p>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">{t.title}</h1>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden sm:block">{t.subtitle}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
@@ -205,7 +274,7 @@ export default function Home() {
                     {analysisHistory.length}
                   </span>
                 )}
-                <span className="hidden sm:inline ml-2">History</span>
+                <span className="hidden sm:inline ml-2">{t.history}</span>
               </Button>
               <Button 
                 variant="ghost" 
@@ -213,7 +282,7 @@ export default function Home() {
                 onClick={() => setShowSettings(!showSettings)}
               >
                 <Settings className="w-4 h-4" />
-                <span className="hidden sm:inline ml-2">Settings</span>
+                <span className="hidden sm:inline ml-2">{t.settings}</span>
               </Button>
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <HelpCircle className="w-4 h-4" />
@@ -240,10 +309,10 @@ export default function Home() {
                   <Bookmark className="w-4 h-4 mr-1 sm:mr-2" />
                 )}
                 <span className="hidden sm:inline">
-                  {isExporting ? "Generating..." : "Save Report"}
+                  {isExporting ? t.generating : t.saveReport}
                 </span>
                 <span className="sm:hidden">
-                  {isExporting ? "..." : "Save"}
+                  {isExporting ? "..." : t.saveReport.split(' ')[0]}
                 </span>
               </Button>
             </div>
@@ -255,54 +324,104 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Settings Panel */}
         {showSettings && (
-          <Card className="mb-6 bg-slate-50 border-slate-200">
+          <Card className="mb-6 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Settings className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold">Analysis Settings</h3>
+                  <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.analysisSettings}</h3>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
+              {/* Theme and Language Settings */}
+              <div className="grid gap-4 sm:grid-cols-2 mb-6">
+                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      {darkMode ? <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{t.darkMode}</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDarkMode(!darkMode)}
+                      className="h-8 w-16 bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500"
+                    >
+                      <div className={`w-4 h-4 rounded-full bg-white transition-transform ${darkMode ? 'translate-x-2' : '-translate-x-2'}`} />
+                    </Button>
+                  </div>
+                </div>
+                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <Languages className="w-4 h-4 text-blue-600" />
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{t.language}</span>
+                    </div>
+                    <select
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value as 'en' | 'es')}
+                      className="px-3 py-1 bg-slate-100 dark:bg-slate-600 text-slate-900 dark:text-slate-100 rounded border border-slate-300 dark:border-slate-500 text-sm"
+                    >
+                      <option value="en">{t.english}</option>
+                      <option value="es">{t.spanish}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Analysis Types */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="p-4 bg-white rounded-lg border">
+                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
                   <div className="flex items-center space-x-2 mb-2">
                     <Monitor className="w-4 h-4 text-blue-600" />
-                    <span className="font-medium">Desktop Analysis</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{t.desktopAnalysis}</span>
                   </div>
-                  <p className="text-sm text-slate-600">
-                    Full Lighthouse audit for desktop performance, accessibility, and SEO
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {language === 'en' ? 'Full Lighthouse audit for desktop performance, accessibility, and SEO' : 'Auditoría completa de Lighthouse para rendimiento, accesibilidad y SEO de escritorio'}
                   </p>
                 </div>
-                <div className="p-4 bg-white rounded-lg border">
+                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
                   <div className="flex items-center space-x-2 mb-2">
                     <Smartphone className="w-4 h-4 text-green-600" />
-                    <span className="font-medium">Mobile Analysis</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{t.mobileAnalysis}</span>
                   </div>
-                  <p className="text-sm text-slate-600">
-                    Mobile-optimized performance testing with Core Web Vitals measurement
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {language === 'en' ? 'Mobile-optimized performance testing with Core Web Vitals measurement' : 'Pruebas de rendimiento optimizadas para móviles con medición de Core Web Vitals'}
                   </p>
                 </div>
-                <div className="p-4 bg-white rounded-lg border">
+                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
                   <div className="flex items-center space-x-2 mb-2">
                     <Globe className="w-4 h-4 text-purple-600" />
-                    <span className="font-medium">SEO Analysis</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{t.seoAnalysis}</span>
                   </div>
-                  <p className="text-sm text-slate-600">
-                    Comprehensive meta tag analysis, social media optimization, and technical SEO
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {language === 'en' ? 'Comprehensive meta tag analysis, social media optimization, and technical SEO' : 'Análisis integral de meta tags, optimización para redes sociales y SEO técnico'}
                   </p>
                 </div>
               </div>
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="font-medium text-blue-900 mb-1">Analysis Features</h4>
-                <div className="text-sm text-blue-700 grid gap-1">
-                  <span>✓ Real-time Core Web Vitals measurement</span>
-                  <span>✓ Mobile and desktop screenshot capture</span>
-                  <span>✓ Comprehensive performance diagnostics</span>
-                  <span>✓ SEO recommendations with fix instructions</span>
-                  <span>✓ Social media optimization analysis</span>
-                  <span>✓ PDF and CSV export capabilities</span>
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-1">{t.analysisFeatures}</h4>
+                <div className="text-sm text-blue-700 dark:text-blue-300 grid gap-1">
+                  {language === 'en' ? (
+                    <>
+                      <span>✓ Real-time Core Web Vitals measurement</span>
+                      <span>✓ Mobile and desktop screenshot capture</span>
+                      <span>✓ Comprehensive performance diagnostics</span>
+                      <span>✓ SEO recommendations with fix instructions</span>
+                      <span>✓ Social media optimization analysis</span>
+                      <span>✓ PDF and CSV export capabilities</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>✓ Medición en tiempo real de Core Web Vitals</span>
+                      <span>✓ Captura de pantalla móvil y escritorio</span>
+                      <span>✓ Diagnósticos completos de rendimiento</span>
+                      <span>✓ Recomendaciones SEO con instrucciones de corrección</span>
+                      <span>✓ Análisis de optimización para redes sociales</span>
+                      <span>✓ Capacidades de exportación a PDF y CSV</span>
+                    </>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -316,7 +435,7 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <History className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold">Analysis History</h3>
+                  <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.analysisHistory}</h3>
                 </div>
                 {analysisHistory.length > 0 && (
                   <Button 
@@ -325,17 +444,17 @@ export default function Home() {
                     onClick={() => setAnalysisHistory([])}
                   >
                     <Trash2 className="w-4 h-4 mr-1" />
-                    Clear All
+                    {t.clearAll}
                   </Button>
                 )}
               </div>
             </CardHeader>
             <CardContent>
               {analysisHistory.length === 0 ? (
-                <div className="text-center py-8 text-slate-500">
+                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                   <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>No analysis history yet</p>
-                  <p className="text-sm">Analyze a website to see it here</p>
+                  <p>{t.noAnalysisHistory}</p>
+                  <p className="text-sm">{t.analyzeWebsite}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -347,8 +466,8 @@ export default function Home() {
                         setSeoData(item);
                         setShowHistory(false);
                         toast({
-                          title: "Analysis loaded",
-                          description: `Viewing results for ${item.url}`,
+                          title: t.analysisLoaded,
+                          description: `${t.viewingResults} ${item.url}`,
                         });
                       }}
                     >
@@ -429,8 +548,8 @@ export default function Home() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <BarChart3 className="w-5 h-5 text-blue-600" />
-                      <span className="font-medium text-blue-900">
-                        Comparing: {seoData.url} vs {compareData.url}
+                      <span className="font-medium text-blue-900 dark:text-blue-100">
+                        {t.comparing}: {seoData.url} vs {compareData.url}
                       </span>
                     </div>
                     <Button 
@@ -441,7 +560,7 @@ export default function Home() {
                         setCompareData(null);
                       }}
                     >
-                      Exit Comparison
+                      {t.exitComparison}
                     </Button>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
@@ -517,9 +636,9 @@ export default function Home() {
           <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full">
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary mb-4"></div>
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Analyzing Website</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">{t.analyzingWebsite}</h3>
               <p className="text-sm sm:text-base text-slate-600 mb-4">
-                {analysisProgress || 'Running comprehensive web performance analysis...'}
+                {analysisProgress || (language === 'en' ? 'Running comprehensive web performance analysis...' : 'Ejecutando análisis integral de rendimiento web...')}
               </p>
               <div className="bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div 
@@ -530,15 +649,15 @@ export default function Home() {
               <div className="mt-3 text-xs text-slate-500 space-y-1">
                 <div className="flex items-center justify-center space-x-2">
                   <Monitor className="w-3 h-3" />
-                  <span>Desktop Analysis</span>
+                  <span>{t.desktopAnalysis}</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <Smartphone className="w-3 h-3" />
-                  <span>Mobile Analysis</span>
+                  <span>{t.mobileAnalysis}</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <Globe className="w-3 h-3" />
-                  <span>SEO Analysis</span>
+                  <span>{t.seoAnalysis}</span>
                 </div>
               </div>
             </div>
