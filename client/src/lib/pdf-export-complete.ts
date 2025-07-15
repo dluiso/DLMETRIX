@@ -39,7 +39,7 @@ function generateProgressChart(score: number, size: number = 100): string {
   return canvas.toDataURL('image/png');
 }
 
-// Complete PDF export function with ALL report data
+// Complete PDF export function with ALL report data - ENSURES ALL SECTIONS ARE INCLUDED
 export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> {
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
@@ -47,12 +47,14 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
   const margin = 15;
   let yPosition = margin;
   
-  // Function to add new page if needed
+  // Function to add new page if needed - MORE AGGRESSIVE PAGE BREAKS
   const checkPageBreak = (requiredSpace: number) => {
-    if (yPosition + requiredSpace > pageHeight - margin) {
+    if (yPosition + requiredSpace > pageHeight - margin - 20) {
       pdf.addPage();
       yPosition = margin;
+      return true;
     }
+    return false;
   };
 
   // Helper function to add text with line wrapping
@@ -63,16 +65,16 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     return y + (lines.length * fontSize * 0.35);
   };
 
-  // Helper function to add section header
+  // Helper function to add section header - ALWAYS ENSURES SPACE
   const addSectionHeader = (title: string, bgColor = [59, 130, 246]) => {
-    checkPageBreak(20);
+    checkPageBreak(40); // More space for headers
     pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
     pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 15, 'F');
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
     pdf.text(title, margin, yPosition + 5);
-    yPosition += 20;
+    yPosition += 25; // More space after headers
     pdf.setTextColor(0, 0, 0);
   };
 
@@ -127,7 +129,7 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     pdf.text(scoreData.name, xPos + chartSize/2, yPosition + chartSize + 8, { align: 'center' });
   });
   
-  yPosition += chartSize + 25;
+  yPosition += chartSize + 30;
 
   // 2. CORE WEB VITALS SECTION
   addSectionHeader('Core Web Vitals', [34, 197, 94]);
@@ -194,29 +196,29 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
   ];
   
   seoInfo.forEach(([label, value]) => {
-    checkPageBreak(10);
+    checkPageBreak(15);
     pdf.setFont('helvetica', 'bold');
     pdf.text(`${label}:`, margin, yPosition);
     pdf.setFont('helvetica', 'normal');
     yPosition = addWrappedText(value, margin + 35, yPosition, pageWidth - 2 * margin - 35, 10);
-    yPosition += 3;
+    yPosition += 5;
   });
   
-  yPosition += 10;
+  yPosition += 15;
 
   // 4. OPEN GRAPH TAGS SECTION
   if (data.openGraphTags && Object.keys(data.openGraphTags).length > 0) {
     addSectionHeader('Open Graph Tags', [29, 78, 216]);
     
     Object.entries(data.openGraphTags).forEach(([key, value]) => {
-      checkPageBreak(8);
+      checkPageBreak(12);
       pdf.setFont('helvetica', 'bold');
       pdf.text(`${key}:`, margin, yPosition);
       pdf.setFont('helvetica', 'normal');
       yPosition = addWrappedText(value, margin + 35, yPosition, pageWidth - 2 * margin - 35, 10);
-      yPosition += 3;
+      yPosition += 5;
     });
-    yPosition += 10;
+    yPosition += 15;
   }
 
   // 5. TWITTER CARDS SECTION
@@ -224,14 +226,14 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     addSectionHeader('Twitter Card Tags', [29, 161, 242]);
     
     Object.entries(data.twitterCardTags).forEach(([key, value]) => {
-      checkPageBreak(8);
+      checkPageBreak(12);
       pdf.setFont('helvetica', 'bold');
       pdf.text(`${key}:`, margin, yPosition);
       pdf.setFont('helvetica', 'normal');
       yPosition = addWrappedText(value, margin + 35, yPosition, pageWidth - 2 * margin - 35, 10);
-      yPosition += 3;
+      yPosition += 5;
     });
-    yPosition += 10;
+    yPosition += 15;
   }
 
   // 6. TECHNICAL SEO CHECKS SECTION
@@ -287,7 +289,7 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     addSectionHeader('Optimization Recommendations', [245, 158, 11]);
     
     data.recommendations.forEach((rec, index) => {
-      checkPageBreak(30);
+      checkPageBreak(50); // More space for recommendations
       
       // Priority badge
       const priorityColors = {
@@ -311,14 +313,14 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
       
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
-      yPosition = addWrappedText(rec.description, margin + 5, yPosition + 2, pageWidth - 2 * margin - 5, 10);
+      yPosition = addWrappedText(rec.description, margin + 5, yPosition + 3, pageWidth - 2 * margin - 5, 10);
       
       if (rec.howToFix) {
         pdf.setFont('helvetica', 'italic');
-        yPosition = addWrappedText(`How to fix: ${rec.howToFix}`, margin + 5, yPosition + 2, pageWidth - 2 * margin - 5, 9);
+        yPosition = addWrappedText(`How to fix: ${rec.howToFix}`, margin + 5, yPosition + 3, pageWidth - 2 * margin - 5, 9);
       }
       
-      yPosition += 10;
+      yPosition += 15; // More space between recommendations
     });
   }
 
@@ -538,15 +540,9 @@ export async function exportVisualPDF(data: WebAnalysisResult): Promise<void> {
   }
 }
 
-// Main export function with smart fallback
+// Main export function - always use comprehensive text-based export for complete data
 export async function exportToPDF(data: WebAnalysisResult): Promise<void> {
-  try {
-    // Try visual export first, fall back to comprehensive text-based export
-    await exportVisualPDF(data);
-  } catch (error) {
-    console.warn('Visual export failed, using comprehensive text export:', error);
-    await exportCompletePDF(data);
-  }
+  await exportCompletePDF(data);
 }
 
 // Individual component capture for development
