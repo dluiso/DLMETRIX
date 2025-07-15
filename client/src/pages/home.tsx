@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bookmark, HelpCircle, Search } from "lucide-react";
+import { Bookmark, HelpCircle, Search, Download } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
 import SeoSummaryCards from "@/components/seo-summary-cards";
@@ -18,10 +19,13 @@ import PerformanceOverview from "@/components/performance-overview";
 import ScreenshotsView from "@/components/screenshots-view";
 import { WebAnalysisResult } from "@/types/seo";
 import { apiRequest } from "@/lib/queryClient";
+import { exportToPDF } from "@/lib/pdf-export";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const { toast } = useToast();
 
   const analyzeMutation = useMutation({
     mutationFn: async (url: string): Promise<WebAnalysisResult> => {
@@ -43,6 +47,35 @@ export default function Home() {
     analyzeMutation.mutate(url);
   };
 
+  const handleExportPDF = async () => {
+    if (!seoData) {
+      toast({
+        title: "No data to export",
+        description: "Please analyze a website first to generate a report.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      await exportToPDF(seoData);
+      toast({
+        title: "Report exported successfully",
+        description: "Your PDF report has been downloaded.",
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export failed",
+        description: "There was an error generating the PDF report. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -62,10 +95,22 @@ export default function Home() {
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <HelpCircle className="w-4 h-4" />
               </Button>
-              <Button className="bg-primary hover:bg-blue-700 text-sm">
-                <Bookmark className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Save Report</span>
-                <span className="sm:hidden">Save</span>
+              <Button 
+                className="bg-primary hover:bg-blue-700 text-sm"
+                onClick={handleExportPDF}
+                disabled={!seoData || isExporting}
+              >
+                {isExporting ? (
+                  <Download className="w-4 h-4 mr-1 sm:mr-2 animate-spin" />
+                ) : (
+                  <Bookmark className="w-4 h-4 mr-1 sm:mr-2" />
+                )}
+                <span className="hidden sm:inline">
+                  {isExporting ? "Generating..." : "Save Report"}
+                </span>
+                <span className="sm:hidden">
+                  {isExporting ? "..." : "Save"}
+                </span>
               </Button>
             </div>
           </div>
