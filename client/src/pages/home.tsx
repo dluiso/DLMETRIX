@@ -196,7 +196,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors relative">
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -268,7 +268,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <main className={seoData ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8" : ""}>
         {/* Settings Panel */}
         {showSettings && (
           <Card className="mb-6 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
@@ -420,7 +420,90 @@ export default function Home() {
           </Card>
         )}
 
-        <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} />
+        {/* URL Input - Centered when no data, normal when data exists */}
+        {!seoData ? (
+          <div className="fixed inset-0 flex items-center justify-center">
+            {/* Elegant Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.1),rgba(255,255,255,0))]" />
+            
+            {/* Performance Analytics Background Pattern */}
+            <div className="absolute inset-0 opacity-5 dark:opacity-10">
+              <svg width="100%" height="100%" viewBox="0 0 1000 1000" className="absolute inset-0">
+                <defs>
+                  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="currentColor" strokeWidth="1"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" className="text-slate-400 dark:text-slate-600" />
+              </svg>
+              
+              {/* Floating Analytics Icons */}
+              <div className="absolute top-1/4 left-1/4 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>
+                <BarChart3 className="w-8 h-8 text-blue-300 dark:text-blue-500" />
+              </div>
+              <div className="absolute top-1/3 right-1/4 animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}>
+                <Monitor className="w-6 h-6 text-green-300 dark:text-green-500" />
+              </div>
+              <div className="absolute bottom-1/4 left-1/3 animate-bounce" style={{ animationDelay: '2s', animationDuration: '3.5s' }}>
+                <Smartphone className="w-7 h-7 text-purple-300 dark:text-purple-500" />
+              </div>
+              <div className="absolute bottom-1/3 right-1/3 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.8s' }}>
+                <Globe className="w-5 h-5 text-indigo-300 dark:text-indigo-500" />
+              </div>
+            </div>
+            
+            {/* Centered Content */}
+            <div className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Hero Section */}
+              <div className="text-center mb-8 animate-fade-in">
+                <div className="flex items-center justify-center space-x-3 mb-4">
+                  <div className="p-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 shadow-elegant backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                    <Search className="w-8 h-8 text-primary" />
+                  </div>
+                  <div className="p-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-elegant">
+                    <BarChart3 className="w-6 h-6" />
+                  </div>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4">
+                  {t.title}
+                </h1>
+                <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl mx-auto">
+                  {t.subtitle}
+                </p>
+              </div>
+              
+              {/* Centered URL Input */}
+              <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} />
+              </div>
+              
+              {/* Features Preview */}
+              <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <Monitor className="w-6 h-6 text-blue-500 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Desktop Analysis</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <Smartphone className="w-6 h-6 text-green-500 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Mobile Analysis</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <BarChart3 className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Performance</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+                  <Globe className="w-6 h-6 text-indigo-500 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">SEO Analysis</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+            <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} />
+          </div>
+        )}
         
         {error && (
           <Card className="p-4 sm:p-6 mb-6 sm:mb-8 border-red-200 bg-red-50">
