@@ -70,7 +70,7 @@ export default function TwitterCardsAnalysis({ data }: TwitterCardsAnalysisProps
                 <div className="flex items-start justify-between mb-1">
                   <div className="flex items-center space-x-2">
                     {getStatusIcon(hasValue ? 'good' : 'error')}
-                    <span className="font-medium text-slate-900 dark:text-slate-100 text-sm">{tag.label}</span>
+                    <span className="font-medium text-slate-900 dark:text-white text-sm">{tag.label}</span>
                   </div>
                   <code className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
                     {tag.key}
