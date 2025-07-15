@@ -465,7 +465,7 @@ export default function Home() {
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4">
                   {t.title}
                 </h1>
-                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto">
                   {t.subtitle}
                 </p>
               </div>
@@ -477,35 +477,35 @@ export default function Home() {
               
               {/* Features List */}
               <div className="mt-12 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <div className="flex flex-wrap items-center justify-center gap-4 text-slate-600 dark:text-slate-400">
-                  <div className="flex items-center gap-2">
-                    <Monitor className="w-4 h-4 text-blue-500" />
-                    <span className="text-sm font-medium">Desktop</span>
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
+                  <div className="flex items-center gap-1.5">
+                    <Monitor className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
+                    <span className="font-medium">Desktop</span>
                   </div>
                   <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-2">
-                    <Smartphone className="w-4 h-4 text-green-500" />
-                    <span className="text-sm font-medium">Mobile</span>
+                  <div className="flex items-center gap-1.5">
+                    <Smartphone className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
+                    <span className="font-medium">Mobile</span>
                   </div>
                   <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-purple-500" />
-                    <span className="text-sm font-medium">Performance</span>
+                  <div className="flex items-center gap-1.5">
+                    <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 text-purple-500" />
+                    <span className="font-medium">Performance</span>
                   </div>
                   <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-indigo-500" />
-                    <span className="text-sm font-medium">SEO</span>
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-500" />
+                    <span className="font-medium">SEO</span>
                   </div>
                   <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-2">
-                    <Search className="w-4 h-4 text-orange-500" />
-                    <span className="text-sm font-medium">AI Search</span>
+                  <div className="flex items-center gap-1.5">
+                    <Search className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" />
+                    <span className="font-medium">AI Search</span>
                   </div>
                   <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-pink-500" />
-                    <span className="text-sm font-medium">Keywords</span>
+                  <div className="flex items-center gap-1.5">
+                    <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-pink-500" />
+                    <span className="font-medium">Keywords</span>
                   </div>
                 </div>
               </div>
