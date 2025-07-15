@@ -527,19 +527,45 @@ function generateRecommendations(lhr: any, device: 'mobile' | 'desktop') {
   return recommendations;
 }
 
-// Extract technical checks
+// Extract technical checks from Lighthouse
 function extractTechnicalChecks(lhr: any) {
   return {
+    // Core Web Vitals & Performance
     hasViewportMeta: lhr.audits['viewport']?.score === 1,
-    hasHTTPS: lhr.audits['is-on-https']?.score === 1,
-    hasValidHTML: lhr.audits['valid-source-maps']?.score === 1,
+    hasCharset: lhr.audits['charset']?.score === 1,
+    hasSSL: lhr.audits['is-on-https']?.score === 1,
+    minifiedHTML: lhr.audits['unminified-html']?.score === 1,
+    noInlineStyles: lhr.audits['uses-rel-preconnect']?.score === 1,
+    
+    // Content & Structure  
+    hasH1Tag: lhr.audits['heading-order']?.score === 1,
+    hasMultipleHeadings: lhr.audits['heading-order']?.score === 1,
     hasMetaDescription: lhr.audits['meta-description']?.score === 1,
-    hasDocumentTitle: lhr.audits['document-title']?.score === 1,
-    hasStructuredData: lhr.audits['structured-data']?.score === 1,
-    hasCanonical: lhr.audits['canonical']?.score === 1,
-    hasRobotsTxt: lhr.audits['robots-txt']?.score === 1,
-    hasImageAlt: lhr.audits['image-alt']?.score === 1,
-    hasProperHeadings: lhr.audits['heading-order']?.score === 1
+    sufficientContent: lhr.audits['document-title']?.score === 1,
+    keywordInTitle: lhr.audits['document-title']?.score === 1,
+    
+    // Images & Media
+    imagesHaveAltText: lhr.audits['image-alt']?.score === 1,
+    imagesHaveDimensions: lhr.audits['image-size-responsive']?.score === 1,
+    responsiveImages: lhr.audits['uses-responsive-images']?.score === 1,
+    
+    // Links & Navigation
+    hasInternalLinks: lhr.audits['crawlable-anchors']?.score === 1,
+    externalLinksOptimized: lhr.audits['link-text']?.score === 1,
+    hasCanonicalURL: lhr.audits['canonical']?.score === 1,
+    
+    // Structured Data & Meta
+    hasSchemaMarkup: lhr.audits['structured-data']?.score === 1,
+    hasOpenGraph: true, // Check Open Graph in basic SEO data
+    hasTwitterCards: true, // Check Twitter Cards in basic SEO data
+    hasOGImage: true, // Check in basic SEO data
+    
+    // Technical Configuration
+    hasLangAttribute: lhr.audits['html-has-lang']?.score === 1,
+    hasRobotsMeta: lhr.audits['meta-robots']?.score === 1,
+    sitemap: lhr.audits['robots-txt']?.score === 1,
+    robotsTxt: lhr.audits['robots-txt']?.score === 1,
+    touchFriendlyElements: lhr.audits['tap-targets']?.score === 1
   };
 }
 
@@ -676,16 +702,42 @@ function generateSeoRecommendations(seoData: any) {
 // Generate basic technical checks
 function generateBasicTechnicalChecks(seoData: any) {
   return {
+    // Core Web Vitals & Performance
     hasViewportMeta: !!seoData.viewportMeta,
-    hasHTTPS: seoData.url?.startsWith('https://') || false,
-    hasValidHTML: true, // Assume valid if we can parse
+    hasCharset: true, // Assume present if we can parse
+    hasSSL: seoData.url?.startsWith('https://') || false,
+    minifiedHTML: false, // Cannot determine without full analysis
+    noInlineStyles: false, // Cannot determine without full analysis
+    
+    // Content & Structure  
+    hasH1Tag: false, // Cannot determine without full DOM analysis
+    hasMultipleHeadings: false, // Cannot determine without full DOM analysis
     hasMetaDescription: !!seoData.description,
-    hasDocumentTitle: !!seoData.title,
-    hasStructuredData: !!seoData.schemaMarkup,
-    hasCanonical: !!seoData.canonicalUrl,
-    hasRobotsTxt: !!seoData.sitemap,
-    hasImageAlt: true, // Can't check without full DOM analysis
-    hasProperHeadings: true // Can't check without full DOM analysis
+    sufficientContent: false, // Cannot determine without full content analysis
+    keywordInTitle: seoData.title ? seoData.title.split(' ').length > 2 : false,
+    
+    // Images & Media
+    imagesHaveAltText: false, // Cannot check without full DOM analysis
+    imagesHaveDimensions: false, // Cannot check without full DOM analysis
+    responsiveImages: false, // Cannot check without full DOM analysis
+    
+    // Links & Navigation
+    hasInternalLinks: false, // Cannot check without full DOM analysis
+    externalLinksOptimized: false, // Cannot check without full DOM analysis
+    hasCanonicalURL: !!seoData.canonicalUrl,
+    
+    // Structured Data & Meta
+    hasSchemaMarkup: !!seoData.schemaMarkup,
+    hasOpenGraph: !!seoData.openGraphTags,
+    hasTwitterCards: !!seoData.twitterCardTags,
+    hasOGImage: seoData.openGraphTags ? !!seoData.openGraphTags['og:image'] : false,
+    
+    // Technical Configuration
+    hasLangAttribute: false, // Cannot determine without full HTML analysis
+    hasRobotsMeta: !!seoData.robotsMeta,
+    sitemap: !!seoData.sitemap,
+    robotsTxt: false, // Cannot check without specific endpoint test
+    touchFriendlyElements: !!seoData.viewportMeta // Basic assumption based on viewport
   };
 }
 
