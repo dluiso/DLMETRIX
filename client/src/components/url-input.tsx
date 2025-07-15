@@ -26,22 +26,29 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
       return;
     }
 
+    let finalUrl = url.trim();
+
+    // Auto-add https:// if no protocol is provided
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      finalUrl = 'https://' + finalUrl;
+    }
+
     // Basic URL validation
     try {
-      const urlObj = new URL(url);
+      const urlObj = new URL(finalUrl);
       if (!urlObj.protocol.startsWith('http')) {
         throw new Error('Invalid protocol');
       }
     } catch {
       toast({
         title: "Invalid URL",
-        description: "Please enter a valid website URL (e.g., https://example.com).",
+        description: "Please enter a valid website domain (e.g., example.com).",
         variant: "destructive",
       });
       return;
     }
 
-    onAnalyze(url);
+    onAnalyze(finalUrl);
   };
 
   return (
@@ -55,8 +62,8 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1 relative">
             <Input
-              type="url"
-              placeholder="Enter website URL (e.g., https://example.com)"
+              type="text"
+              placeholder="Enter domain name (e.g., example.com or https://example.com)"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="pl-4 pr-10 text-sm sm:text-base h-10 sm:h-11"
