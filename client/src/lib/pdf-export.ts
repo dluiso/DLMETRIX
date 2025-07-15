@@ -165,32 +165,94 @@ export async function exportToPDF(data: WebAnalysisResult): Promise<void> {
   
   yPosition += 10;
 
-  // Open Graph Tags
-  if (data.openGraphTags && Object.keys(data.openGraphTags).length > 0) {
-    yPosition += 5;
+  // Meta Tags and SEO Details
+  if (data.keywords) {
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Open Graph Tags:', margin, yPosition);
-    yPosition += 6;
+    pdf.text('Keywords:', margin, yPosition);
     pdf.setFont('helvetica', 'normal');
-    
-    Object.entries(data.openGraphTags).forEach(([key, value]) => {
-      yPosition = addWrappedText(`${key}: ${value}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
-      yPosition += 2;
-    });
+    yPosition = addWrappedText(data.keywords, margin + 20, yPosition, pageWidth - 2 * margin - 20, 11);
+    yPosition += 5;
   }
 
-  // Twitter Cards
-  if (data.twitterCardTags && Object.keys(data.twitterCardTags).length > 0) {
-    yPosition += 5;
+  if (data.canonicalUrl) {
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Twitter Card Tags:', margin, yPosition);
-    yPosition += 6;
+    pdf.text('Canonical URL:', margin, yPosition);
     pdf.setFont('helvetica', 'normal');
+    yPosition = addWrappedText(data.canonicalUrl, margin + 30, yPosition, pageWidth - 2 * margin - 30, 11);
+    yPosition += 5;
+  }
+
+  if (data.robotsMeta) {
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Robots Meta:', margin, yPosition);
+    pdf.setFont('helvetica', 'normal');
+    yPosition = addWrappedText(data.robotsMeta, margin + 25, yPosition, pageWidth - 2 * margin - 25, 11);
+    yPosition += 5;
+  }
+
+  yPosition += 10;
+
+  // Social Media Tags Section
+  if ((data.openGraphTags && Object.keys(data.openGraphTags).length > 0) || 
+      (data.twitterCardTags && Object.keys(data.twitterCardTags).length > 0)) {
     
-    Object.entries(data.twitterCardTags).forEach(([key, value]) => {
-      yPosition = addWrappedText(`${key}: ${value}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
-      yPosition += 2;
-    });
+    // Check if we need a new page
+    if (yPosition > pageHeight - 100) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+
+    pdf.setFillColor(245, 247, 250);
+    pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 80, 'F');
+    
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(30, 41, 59);
+    pdf.text('Social Media Optimization', margin, yPosition + 5);
+    yPosition += 15;
+
+    // Open Graph Tags
+    if (data.openGraphTags && Object.keys(data.openGraphTags).length > 0) {
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 65, 85);
+      pdf.text('Open Graph Tags:', margin, yPosition);
+      yPosition += 8;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      
+      Object.entries(data.openGraphTags).forEach(([key, value]) => {
+        if (yPosition > pageHeight - 20) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        yPosition = addWrappedText(`• ${key}: ${value}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+        yPosition += 3;
+      });
+      yPosition += 5;
+    }
+
+    // Twitter Cards
+    if (data.twitterCardTags && Object.keys(data.twitterCardTags).length > 0) {
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 65, 85);
+      pdf.text('Twitter Card Tags:', margin, yPosition);
+      yPosition += 8;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      
+      Object.entries(data.twitterCardTags).forEach(([key, value]) => {
+        if (yPosition > pageHeight - 20) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        yPosition = addWrappedText(`• ${key}: ${value}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+        yPosition += 3;
+      });
+    }
+    
+    yPosition += 10;
   }
 
   // Check if we need a new page
@@ -398,6 +460,162 @@ export async function exportToPDF(data: WebAnalysisResult): Promise<void> {
         pdf.text(`... and ${failedChecks.length - 8} more issues`, margin + 5, yPosition);
         yPosition += 4;
       }
+      yPosition += 10;
+    }
+
+    // Passed checks summary
+    if (passedChecks.length > 0) {
+      pdf.setFillColor(240, 253, 244); // Light green background
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, Math.min(passedChecks.length * 3 + 15, 40), 'F');
+      
+      pdf.setTextColor(22, 101, 52);
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Passed Checks:', margin, yPosition + 5);
+      yPosition += 10;
+      
+      pdf.setTextColor(22, 163, 74);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+
+      passedChecks.slice(0, 10).forEach(([checkName]) => {
+        const formattedName = checkName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        pdf.text(`✓ ${formattedName}`, margin + 5, yPosition);
+        yPosition += 3;
+      });
+      
+      if (passedChecks.length > 10) {
+        pdf.text(`... and ${passedChecks.length - 10} more passed checks`, margin + 5, yPosition);
+        yPosition += 3;
+      }
+    }
+  }
+
+  // Add Diagnostics Section if available
+  if (data.diagnostics) {
+    yPosition += 15;
+    
+    // Check if we need a new page
+    if (yPosition > pageHeight - 80) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+
+    pdf.setTextColor(30, 41, 59);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Performance Diagnostics', margin, yPosition);
+    yPosition += 12;
+
+    // Performance diagnostics
+    if (data.diagnostics.performance && data.diagnostics.performance.length > 0) {
+      pdf.setFillColor(248, 250, 252);
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 60, 'F');
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 65, 85);
+      pdf.text('Performance Issues', margin, yPosition + 5);
+      yPosition += 12;
+
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      
+      data.diagnostics.performance.slice(0, 5).forEach((diagnostic) => {
+        if (yPosition > pageHeight - 30) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        
+        pdf.setFont('helvetica', 'bold');
+        yPosition = addWrappedText(`• ${diagnostic.title}`, margin, yPosition, pageWidth - 2 * margin, 10);
+        pdf.setFont('helvetica', 'normal');
+        yPosition = addWrappedText(`  ${diagnostic.description}`, margin + 5, yPosition + 2, pageWidth - 2 * margin - 5, 9);
+        yPosition += 8;
+      });
+      yPosition += 10;
+    }
+
+    // SEO diagnostics
+    if (data.diagnostics.seo && data.diagnostics.seo.length > 0) {
+      if (yPosition > pageHeight - 60) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+
+      pdf.setFillColor(245, 247, 250);
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 50, 'F');
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 65, 85);
+      pdf.text('SEO Diagnostics', margin, yPosition + 5);
+      yPosition += 12;
+
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      
+      data.diagnostics.seo.slice(0, 5).forEach((diagnostic) => {
+        if (yPosition > pageHeight - 30) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        
+        pdf.setFont('helvetica', 'bold');
+        yPosition = addWrappedText(`• ${diagnostic.title}`, margin, yPosition, pageWidth - 2 * margin, 10);
+        pdf.setFont('helvetica', 'normal');
+        yPosition = addWrappedText(`  ${diagnostic.description}`, margin + 5, yPosition + 2, pageWidth - 2 * margin - 5, 9);
+        yPosition += 8;
+      });
+    }
+  }
+
+  // Add Insights Section if available
+  if (data.insights && (data.insights.opportunities.length > 0 || data.insights.diagnostics.length > 0)) {
+    yPosition += 15;
+    
+    // Check if we need a new page
+    if (yPosition > pageHeight - 80) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+
+    pdf.setTextColor(30, 41, 59);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Performance Insights & Opportunities', margin, yPosition);
+    yPosition += 12;
+
+    // Opportunities
+    if (data.insights.opportunities.length > 0) {
+      pdf.setFillColor(255, 251, 235); // Light amber
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 50, 'F');
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(146, 64, 14);
+      pdf.text('Optimization Opportunities', margin, yPosition + 5);
+      yPosition += 12;
+
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(92, 45, 14);
+      
+      data.insights.opportunities.slice(0, 5).forEach((opportunity) => {
+        if (yPosition > pageHeight - 30) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        
+        pdf.setFont('helvetica', 'bold');
+        yPosition = addWrappedText(`• ${opportunity.title}`, margin, yPosition, pageWidth - 2 * margin, 10);
+        pdf.setFont('helvetica', 'normal');
+        if (opportunity.displayValue) {
+          yPosition = addWrappedText(`  Potential savings: ${opportunity.displayValue}`, margin + 5, yPosition + 2, pageWidth - 2 * margin - 5, 9);
+        }
+        yPosition = addWrappedText(`  ${opportunity.description}`, margin + 5, yPosition + 2, pageWidth - 2 * margin - 5, 9);
+        yPosition += 8;
+      });
     }
   }
 
@@ -423,6 +641,14 @@ export async function exportVisualPDF(data: WebAnalysisResult): Promise<void> {
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 15;
   let yPosition = margin;
+
+  // Helper function for text wrapping in visual PDF
+  const addWrappedTextVisual = (text: string, x: number, y: number, maxWidth: number, fontSize = 10): number => {
+    pdf.setFontSize(fontSize);
+    const lines = pdf.splitTextToSize(text, maxWidth);
+    pdf.text(lines, x, y);
+    return y + (lines.length * fontSize * 0.35);
+  };
 
   // Header with styling
   pdf.setFillColor(59, 130, 246);
@@ -504,17 +730,104 @@ export async function exportVisualPDF(data: WebAnalysisResult): Promise<void> {
     yPosition = margin;
   }
 
-  // Recommendations section
+  // Complete SEO Analysis section
+  if (yPosition > pageHeight - 60) {
+    pdf.addPage();
+    yPosition = margin;
+  }
+
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setTextColor(30, 41, 59);
+  pdf.text('Complete SEO Analysis', margin, yPosition);
+  yPosition += 12;
+
+  // Basic SEO info
+  pdf.setFillColor(248, 250, 252);
+  pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 40, 'F');
+  
+  pdf.setFontSize(11);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setTextColor(51, 65, 85);
+  
+  if (data.title) {
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Title:', margin, yPosition + 5);
+    pdf.setFont('helvetica', 'normal');
+    yPosition = addWrappedTextVisual(data.title, margin + 15, yPosition + 5, pageWidth - 2 * margin - 15, 10);
+    yPosition += 3;
+  }
+  
+  if (data.description) {
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Description:', margin, yPosition);
+    pdf.setFont('helvetica', 'normal');
+    yPosition = addWrappedTextVisual(data.description, margin + 25, yPosition, pageWidth - 2 * margin - 25, 10);
+  }
+  
+  yPosition += 20;
+
+  // Social Media section
+  if ((data.openGraphTags && Object.keys(data.openGraphTags).length > 0) || 
+      (data.twitterCardTags && Object.keys(data.twitterCardTags).length > 0)) {
+    
+    if (yPosition > pageHeight - 60) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(30, 41, 59);
+    pdf.text('Social Media Optimization', margin, yPosition);
+    yPosition += 10;
+
+    if (data.openGraphTags && Object.keys(data.openGraphTags).length > 0) {
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Open Graph:', margin, yPosition);
+      yPosition += 5;
+      
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      Object.entries(data.openGraphTags).slice(0, 3).forEach(([key, value]) => {
+        yPosition = addWrappedTextVisual(`${key}: ${value}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+        yPosition += 2;
+      });
+      yPosition += 5;
+    }
+
+    if (data.twitterCardTags && Object.keys(data.twitterCardTags).length > 0) {
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Twitter Cards:', margin, yPosition);
+      yPosition += 5;
+      
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      Object.entries(data.twitterCardTags).slice(0, 3).forEach(([key, value]) => {
+        yPosition = addWrappedTextVisual(`${key}: ${value}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+        yPosition += 2;
+      });
+    }
+    yPosition += 10;
+  }
+
+  // All Recommendations section
   if (data.recommendations && data.recommendations.length > 0) {
+    if (yPosition > pageHeight - 80) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(30, 41, 59);
-    pdf.text('Key Recommendations', margin, yPosition);
-    yPosition += 10;
+    pdf.text('Complete Recommendations', margin, yPosition);
+    yPosition += 12;
 
-    const topRecommendations = data.recommendations.slice(0, 5);
-    topRecommendations.forEach((rec, index) => {
-      if (yPosition > pageHeight - 40) {
+    data.recommendations.forEach((rec, index) => {
+      if (yPosition > pageHeight - 35) {
         pdf.addPage();
         yPosition = margin;
       }
@@ -523,7 +836,7 @@ export async function exportVisualPDF(data: WebAnalysisResult): Promise<void> {
                      rec.priority === 'medium' ? [255, 251, 235] : [240, 253, 244];
       
       pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 25, 'F');
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 30, 'F');
       
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'bold');
@@ -531,15 +844,56 @@ export async function exportVisualPDF(data: WebAnalysisResult): Promise<void> {
                        rec.priority === 'high' ? 28 : rec.priority === 'medium' ? 64 : 197,
                        rec.priority === 'high' ? 28 : rec.priority === 'medium' ? 14 : 94);
       
-      pdf.text(`${index + 1}. ${rec.title}`, margin, yPosition + 5);
+      pdf.text(`${index + 1}. ${rec.priority.toUpperCase()} - ${rec.title}`, margin, yPosition + 5);
       
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(9);
-      const descLines = pdf.splitTextToSize(rec.description, pageWidth - 2 * margin);
-      pdf.text(descLines.slice(0, 2), margin, yPosition + 12);
+      yPosition = addWrappedTextVisual(rec.description, margin, yPosition + 12, pageWidth - 2 * margin, 9);
       
-      yPosition += 30;
+      if (rec.howToFix) {
+        pdf.setFont('helvetica', 'italic');
+        yPosition = addWrappedTextVisual(`Fix: ${rec.howToFix}`, margin, yPosition + 2, pageWidth - 2 * margin, 8);
+      }
+      
+      yPosition += 15;
     });
+  }
+
+  // Technical checks summary
+  if (data.technicalChecks) {
+    if (yPosition > pageHeight - 60) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(30, 41, 59);
+    pdf.text('Technical SEO Summary', margin, yPosition);
+    yPosition += 10;
+
+    const checks = Object.entries(data.technicalChecks);
+    const passedChecks = checks.filter(([_, passed]) => passed);
+    const failedChecks = checks.filter(([_, passed]) => !passed);
+
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Passed: ${passedChecks.length}/${checks.length} checks`, margin, yPosition);
+    yPosition += 8;
+
+    if (failedChecks.length > 0) {
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Issues to fix:', margin, yPosition);
+      yPosition += 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+
+      failedChecks.slice(0, 8).forEach(([checkName]) => {
+        const formattedName = checkName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        pdf.text(`• ${formattedName}`, margin + 5, yPosition);
+        yPosition += 4;
+      });
+    }
   }
 
   // Add footer
