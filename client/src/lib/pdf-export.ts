@@ -60,7 +60,7 @@ function generateProgressChart(score: number, size: number = 100): string {
   return canvas.toDataURL('image/png');
 }
 
-export async function exportToPDF(data: WebAnalysisResult): Promise<void> {
+export async function exportComprehensivePDF(data: WebAnalysisResult): Promise<void> {
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();

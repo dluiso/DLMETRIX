@@ -22,9 +22,9 @@ import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
 import KeywordAnalysis from "@/components/keyword-analysis";
 import Footer from "@/components/footer";
 import HelpDialog from "@/components/help-dialog";
-import { WebAnalysisResult } from "@/types/seo";
+import { WebAnalysisResult } from "@/shared/schema";
 import { apiRequest } from "@/lib/queryClient";
-import { exportToPDF, exportVisualPDF } from "@/lib/pdf-export";
+import { exportToPDF } from "@/lib/pdf-export-complete";
 import { getTranslations } from "@/lib/translations";
 
 export default function Home() {
