@@ -64,7 +64,7 @@ export default function PerformanceOverview({
   const overallScore = Math.round((performanceScore + accessibilityScore + bestPracticesScore + seoScore) / 4);
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6" data-component="performance-overview">
       {/* Overall Score */}
       <Card>
         <CardHeader>

@@ -101,7 +101,7 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
   ];
 
   return (
-    <Card>
+    <Card data-component="core-web-vitals">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Activity className="w-5 h-5 text-primary" />

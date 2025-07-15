@@ -19,7 +19,7 @@ import PerformanceOverview from "@/components/performance-overview";
 import ScreenshotsView from "@/components/screenshots-view";
 import { WebAnalysisResult } from "@/types/seo";
 import { apiRequest } from "@/lib/queryClient";
-import { exportToPDF } from "@/lib/pdf-export";
+import { exportToPDF, exportVisualPDF } from "@/lib/pdf-export";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -59,7 +59,14 @@ export default function Home() {
 
     setIsExporting(true);
     try {
-      await exportToPDF(seoData);
+      // Try visual export first (with web component captures), fallback to standard PDF
+      try {
+        await exportVisualPDF(seoData);
+      } catch (visualError) {
+        console.warn('Visual export failed, using standard PDF:', visualError);
+        await exportToPDF(seoData);
+      }
+      
       toast({
         title: "Report exported successfully",
         description: "Your PDF report has been downloaded.",
