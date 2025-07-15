@@ -100,6 +100,27 @@ export const aiContentRecommendationSchema = z.object({
   implementationTip: z.string()
 });
 
+export const keywordTrendDataSchema = z.object({
+  keyword: z.string(),
+  volume: z.number(),
+  difficulty: z.number(),
+  trend: z.enum(['rising', 'falling', 'stable']),
+  position: z.number().nullable(),
+  competition: z.enum(['low', 'medium', 'high']),
+  opportunity: z.number(), // 0-100 score
+  relatedKeywords: z.array(z.string())
+});
+
+export const seoKeywordAnalysisSchema = z.object({
+  primaryKeywords: z.array(keywordTrendDataSchema),
+  secondaryKeywords: z.array(keywordTrendDataSchema),
+  longTailKeywords: z.array(keywordTrendDataSchema),
+  keywordDensity: z.record(z.number()),
+  competitorKeywords: z.array(z.string()),
+  missedOpportunities: z.array(z.string()),
+  overallKeywordScore: z.number()
+});
+
 export const aiSearchAnalysisSchema = z.object({
   overallScore: z.number(), // 0-100 AI readiness score
   contentQuality: z.number(), // 0-100
@@ -174,6 +195,9 @@ export const webAnalysisResultSchema = z.object({
   
   // AI Search Analysis
   aiSearchAnalysis: aiSearchAnalysisSchema.nullable(),
+  
+  // SEO Keyword Analysis
+  keywordAnalysis: seoKeywordAnalysisSchema.nullable(),
 });
 
 export type WebAnalysisResult = z.infer<typeof webAnalysisResultSchema>;
@@ -183,3 +207,5 @@ export type Insight = z.infer<typeof insightSchema>;
 export type AiSearchAnalysis = z.infer<typeof aiSearchAnalysisSchema>;
 export type AiContentInsight = z.infer<typeof aiContentInsightSchema>;
 export type AiContentRecommendation = z.infer<typeof aiContentRecommendationSchema>;
+export type KeywordTrendData = z.infer<typeof keywordTrendDataSchema>;
+export type SeoKeywordAnalysis = z.infer<typeof seoKeywordAnalysisSchema>;

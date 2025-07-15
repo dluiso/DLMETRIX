@@ -18,6 +18,7 @@ import CoreWebVitalsComponent from "@/components/core-web-vitals";
 import PerformanceOverview from "@/components/performance-overview";
 import ScreenshotsView from "@/components/screenshots-view";
 import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
+import KeywordAnalysis from "@/components/keyword-analysis";
 import { WebAnalysisResult } from "@/types/seo";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF, exportVisualPDF } from "@/lib/pdf-export";
@@ -627,6 +628,11 @@ export default function Home() {
               {/* AI Search Content Analysis */}
               {seoData.aiSearchAnalysis && (
                 <AiSearchAnalysisComponent data={seoData.aiSearchAnalysis} />
+              )}
+
+              {/* SEO Keyword Analysis */}
+              {seoData.keywordAnalysis && (
+                <KeywordAnalysis data={seoData.keywordAnalysis} />
               )}
 
               {/* Technical Checks */}
