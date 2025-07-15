@@ -150,6 +150,22 @@ export default function HelpDialog({ language }: HelpDialogProps) {
                   <span className="text-green-600 dark:text-green-400">✓</span>
                   <span className="text-sm text-green-700 dark:text-green-300">{t.feature6}</span>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-600 dark:text-green-400">✓</span>
+                  <span className="text-sm text-green-700 dark:text-green-300">{t.feature7}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-600 dark:text-green-400">✓</span>
+                  <span className="text-sm text-green-700 dark:text-green-300">{t.feature8}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-600 dark:text-green-400">✓</span>
+                  <span className="text-sm text-green-700 dark:text-green-300">{t.feature9}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-600 dark:text-green-400">✓</span>
+                  <span className="text-sm text-green-700 dark:text-green-300">{t.feature10}</span>
+                </div>
               </div>
             </div>
           </div>

@@ -55,7 +55,7 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en' }: UrlI
   };
 
   return (
-    <Card className="mb-6 sm:mb-8 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+    <Card className="mb-6 sm:mb-8 shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4">
           <Globe className="w-5 h-5 text-primary flex-shrink-0" />
@@ -78,7 +78,7 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en' }: UrlI
           </div>
           <Button 
             type="submit" 
-            className="bg-primary hover:bg-blue-700 h-10 sm:h-11 text-sm sm:text-base w-full sm:w-auto sm:px-6"
+            className="gradient-button h-10 sm:h-11 text-sm sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200"
             disabled={isLoading}
           >
             <Search className="w-4 h-4 mr-2" />

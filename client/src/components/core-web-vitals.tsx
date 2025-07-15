@@ -104,7 +104,7 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
   ];
 
   return (
-    <Card data-component="core-web-vitals" className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+    <Card data-component="core-web-vitals" className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
       <CardHeader className="pb-3">
         <div className="flex items-center space-x-2">
           <Activity className="w-5 h-5 text-primary" />
@@ -140,7 +140,7 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
               {vitalsConfig.map((vital) => {
                 const value = data.mobile[vital.key as keyof typeof data.mobile];
                 return (
-                  <div key={vital.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 gap-2">
+                  <div key={vital.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 gap-2 hover:shadow-md transition-all duration-200">
                     <div className="flex items-center space-x-3">
                       <div className="text-slate-600 dark:text-slate-400">
                         {vital.icon}

@@ -45,6 +45,10 @@ export interface Translations {
   feature4: string;
   feature5: string;
   feature6: string;
+  feature7: string;
+  feature8: string;
+  feature9: string;
+  feature10: string;
   howToUse: string;
   step1: string;
   step2: string;
@@ -160,12 +164,16 @@ export const translations: Record<'en' | 'es', Translations> = {
     seoAnalysis: "SEO Analysis",
     seoAnalysisDesc: "Comprehensive meta tag analysis, social media optimization, and technical SEO",
     analysisFeatures: "Analysis Features",
-    feature1: "Real-time Core Web Vitals measurement",
-    feature2: "Mobile and desktop screenshot capture",
+    feature1: "Real-time Core Web Vitals measurement (LCP, FID, CLS)",
+    feature2: "Mobile and desktop screenshot capture", 
     feature3: "Comprehensive performance diagnostics",
     feature4: "SEO recommendations with fix instructions",
     feature5: "Social media optimization analysis",
     feature6: "PDF and CSV export capabilities",
+    feature7: "AI Search Content Analysis for search engine indexing",
+    feature8: "SEO Keyword Analysis with trend visualization",
+    feature9: "Social media preview optimization (Open Graph, Twitter Cards)",
+    feature10: "Technical SEO auditing with detailed fix guides",
     howToUse: "How to Use",
     step1: "Enter a website URL in the search box above",
     step2: "Click 'Analyze' to start the comprehensive analysis",
@@ -279,12 +287,16 @@ export const translations: Record<'en' | 'es', Translations> = {
     seoAnalysis: "Análisis SEO",
     seoAnalysisDesc: "Análisis integral de meta tags, optimización para redes sociales y SEO técnico",
     analysisFeatures: "Características del Análisis",
-    feature1: "Medición en tiempo real de Core Web Vitals",
+    feature1: "Medición en tiempo real de Core Web Vitals (LCP, FID, CLS)",
     feature2: "Captura de pantalla móvil y escritorio",
-    feature3: "Diagnósticos completos de rendimiento",
+    feature3: "Diagnósticos completos de rendimiento", 
     feature4: "Recomendaciones SEO con instrucciones de corrección",
     feature5: "Análisis de optimización para redes sociales",
     feature6: "Capacidades de exportación a PDF y CSV",
+    feature7: "Análisis de Contenido IA para indexación en motores de búsqueda",
+    feature8: "Análisis de Palabras Clave SEO con visualización de tendencias",
+    feature9: "Optimización de previsualizaciones en redes sociales (Open Graph, Twitter Cards)",
+    feature10: "Auditoría técnica de SEO con guías detalladas de corrección",
     howToUse: "Cómo Usar",
     step1: "Ingresa una URL de sitio web en el cuadro de búsqueda arriba",
     step2: "Haz clic en 'Analizar' para iniciar el análisis integral",

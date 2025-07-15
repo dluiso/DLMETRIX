@@ -70,7 +70,7 @@ export default function PerformanceOverview({
   return (
     <div className="grid gap-4 sm:gap-6" data-component="performance-overview">
       {/* Overall Score */}
-      <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+      <Card className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">{t.performanceOverview}</CardTitle>
@@ -119,7 +119,7 @@ export default function PerformanceOverview({
       {/* Individual Categories */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {categories.map((category) => (
-          <Card key={category.title} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <Card key={category.title} className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:shadow-xl hover:scale-105 transition-all duration-300 animate-fade-in">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
                 <div className="flex items-center space-x-3">
