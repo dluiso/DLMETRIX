@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bookmark, HelpCircle, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Monitor, Smartphone, Globe, Moon, Sun, Languages } from "lucide-react";
+import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
@@ -20,9 +20,11 @@ import ScreenshotsView from "@/components/screenshots-view";
 import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
 import KeywordAnalysis from "@/components/keyword-analysis";
 import Footer from "@/components/footer";
+import HelpDialog from "@/components/help-dialog";
 import { WebAnalysisResult } from "@/types/seo";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF, exportVisualPDF } from "@/lib/pdf-export";
+import { getTranslations } from "@/lib/translations";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -65,63 +67,7 @@ export default function Home() {
     },
   });
 
-  // Translation texts
-  const translations = {
-    en: {
-      title: "Web Performance Analyzer",
-      subtitle: "Comprehensive website analysis with Core Web Vitals, SEO, and performance insights",
-      history: "History",
-      settings: "Settings",
-      saveReport: "Save Report",
-      generating: "Generating...",
-      analyzingWebsite: "Analyzing Website",
-      analysisHistory: "Analysis History",
-      clearAll: "Clear All",
-      noAnalysisHistory: "No analysis history yet",
-      analyzeWebsite: "Analyze a website to see it here",
-      analysisLoaded: "Analysis loaded",
-      viewingResults: "Viewing results for",
-      comparing: "Comparing",
-      exitComparison: "Exit Comparison",
-      analysisSettings: "Analysis Settings",
-      desktopAnalysis: "Desktop Analysis",
-      mobileAnalysis: "Mobile Analysis",
-      seoAnalysis: "SEO Analysis",
-      analysisFeatures: "Analysis Features",
-      darkMode: "Dark Mode",
-      language: "Language",
-      english: "English",
-      spanish: "Spanish"
-    },
-    es: {
-      title: "Analizador de Rendimiento Web",
-      subtitle: "Análisis integral de sitios web con Core Web Vitals, SEO e insights de rendimiento",
-      history: "Historial",
-      settings: "Configuración",
-      saveReport: "Guardar Reporte",
-      generating: "Generando...",
-      analyzingWebsite: "Analizando Sitio Web",
-      analysisHistory: "Historial de Análisis",
-      clearAll: "Limpiar Todo",
-      noAnalysisHistory: "No hay historial de análisis",
-      analyzeWebsite: "Analiza un sitio web para verlo aquí",
-      analysisLoaded: "Análisis cargado",
-      viewingResults: "Viendo resultados para",
-      comparing: "Comparando",
-      exitComparison: "Salir de Comparación",
-      analysisSettings: "Configuración de Análisis",
-      desktopAnalysis: "Análisis de Escritorio",
-      mobileAnalysis: "Análisis Móvil", 
-      seoAnalysis: "Análisis SEO",
-      analysisFeatures: "Características del Análisis",
-      darkMode: "Modo Oscuro",
-      language: "Idioma",
-      english: "Inglés",
-      spanish: "Español"
-    }
-  };
-
-  const t = translations[language];
+  const t = getTranslations(language);
 
   // Apply dark mode to document
   useEffect(() => {
@@ -186,14 +132,14 @@ export default function Home() {
       }
       
       toast({
-        title: "Report exported successfully",
-        description: "Your PDF report has been downloaded.",
+        title: t.reportExported,
+        description: t.pdfDownloaded,
       });
     } catch (error) {
       console.error('Export error:', error);
       toast({
-        title: "Export failed",
-        description: "There was an error generating the PDF report. Please try again.",
+        title: t.exportFailed,
+        description: t.tryAgain,
         variant: "destructive",
       });
     } finally {
@@ -234,8 +180,8 @@ export default function Home() {
     URL.revokeObjectURL(url);
 
     toast({
-      title: "CSV exported!",
-      description: "Analysis data has been exported to CSV format.",
+      title: t.csvExported,
+      description: t.csvDescription,
     });
   };
 
@@ -244,8 +190,8 @@ export default function Home() {
     setCompareMode(true);
     setShowHistory(false);
     toast({
-      title: "Comparison mode enabled",
-      description: `Comparing current analysis with ${data.url}`,
+      title: t.comparisonEnabled,
+      description: `${t.comparingWith} ${data.url}`,
     });
   };
 
@@ -287,9 +233,7 @@ export default function Home() {
                 <Settings className="w-4 h-4" />
                 <span className="hidden sm:inline ml-2">{t.settings}</span>
               </Button>
-              <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-                <HelpCircle className="w-4 h-4" />
-              </Button>
+              <HelpDialog language={language} />
               {seoData && (
                 <Button 
                   variant="ghost" 
@@ -373,60 +317,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Analysis Types */}
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Monitor className="w-4 h-4 text-blue-600" />
-                    <span className="font-medium text-slate-900 dark:text-slate-100">{t.desktopAnalysis}</span>
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {language === 'en' ? 'Full Lighthouse audit for desktop performance, accessibility, and SEO' : 'Auditoría completa de Lighthouse para rendimiento, accesibilidad y SEO de escritorio'}
-                  </p>
-                </div>
-                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Smartphone className="w-4 h-4 text-green-600" />
-                    <span className="font-medium text-slate-900 dark:text-slate-100">{t.mobileAnalysis}</span>
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {language === 'en' ? 'Mobile-optimized performance testing with Core Web Vitals measurement' : 'Pruebas de rendimiento optimizadas para móviles con medición de Core Web Vitals'}
-                  </p>
-                </div>
-                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Globe className="w-4 h-4 text-purple-600" />
-                    <span className="font-medium text-slate-900 dark:text-slate-100">{t.seoAnalysis}</span>
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {language === 'en' ? 'Comprehensive meta tag analysis, social media optimization, and technical SEO' : 'Análisis integral de meta tags, optimización para redes sociales y SEO técnico'}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-1">{t.analysisFeatures}</h4>
-                <div className="text-sm text-blue-700 dark:text-blue-300 grid gap-1">
-                  {language === 'en' ? (
-                    <>
-                      <span>✓ Real-time Core Web Vitals measurement</span>
-                      <span>✓ Mobile and desktop screenshot capture</span>
-                      <span>✓ Comprehensive performance diagnostics</span>
-                      <span>✓ SEO recommendations with fix instructions</span>
-                      <span>✓ Social media optimization analysis</span>
-                      <span>✓ PDF and CSV export capabilities</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>✓ Medición en tiempo real de Core Web Vitals</span>
-                      <span>✓ Captura de pantalla móvil y escritorio</span>
-                      <span>✓ Diagnósticos completos de rendimiento</span>
-                      <span>✓ Recomendaciones SEO con instrucciones de corrección</span>
-                      <span>✓ Análisis de optimización para redes sociales</span>
-                      <span>✓ Capacidades de exportación a PDF y CSV</span>
-                    </>
-                  )}
-                </div>
-              </div>
+
             </CardContent>
           </Card>
         )}
@@ -529,7 +420,7 @@ export default function Home() {
           </Card>
         )}
 
-        <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} />
+        <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} />
         
         {error && (
           <Card className="p-4 sm:p-6 mb-6 sm:mb-8 border-red-200 bg-red-50">
@@ -594,10 +485,11 @@ export default function Home() {
               accessibilityScore={seoData.accessibilityScore}
               bestPracticesScore={seoData.bestPracticesScore}
               seoScore={seoData.seoScore}
+              language={language}
             />
 
             {/* Core Web Vitals */}
-            <CoreWebVitalsComponent data={seoData.coreWebVitals} />
+            <CoreWebVitalsComponent data={seoData.coreWebVitals} language={language} />
 
             {/* Screenshots */}
             <ScreenshotsView 

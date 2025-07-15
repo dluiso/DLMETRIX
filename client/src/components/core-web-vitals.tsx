@@ -3,12 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Clock, Zap, TrendingUp } from "lucide-react";
 import { CoreWebVitals } from "@/types/seo";
+import { getTranslations } from "@/lib/translations";
 
 interface CoreWebVitalsProps {
   data: CoreWebVitals;
+  language?: 'en' | 'es';
 }
 
-export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
+export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWebVitalsProps) {
+  const t = getTranslations(language);
   // Check if we have any real Core Web Vitals data
   const hasRealData = data.mobile.lcp !== null || data.mobile.fid !== null || 
                      data.desktop.lcp !== null || data.desktop.fid !== null;
@@ -105,7 +108,7 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
       <CardHeader className="pb-3">
         <div className="flex items-center space-x-2">
           <Activity className="w-5 h-5 text-primary" />
-          <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">Core Web Vitals</CardTitle>
+          <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">{t.coreWebVitals}</CardTitle>
         </div>
         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
           Essential metrics for user experience and search ranking
@@ -128,8 +131,8 @@ export default function CoreWebVitalsComponent({ data }: CoreWebVitalsProps) {
         )}
         <Tabs defaultValue="mobile" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6">
-            <TabsTrigger value="mobile" className="text-xs sm:text-sm px-2 py-2">Mobile</TabsTrigger>
-            <TabsTrigger value="desktop" className="text-xs sm:text-sm px-2 py-2">Desktop</TabsTrigger>
+            <TabsTrigger value="mobile" className="text-xs sm:text-sm px-2 py-2">{t.mobile}</TabsTrigger>
+            <TabsTrigger value="desktop" className="text-xs sm:text-sm px-2 py-2">{t.desktop}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="mobile" className="space-y-3 sm:space-y-4">

@@ -4,23 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Globe, Link, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getTranslations } from "@/lib/translations";
 
 interface UrlInputProps {
   onAnalyze: (url: string) => void;
   isLoading: boolean;
+  language?: 'en' | 'es';
 }
 
-export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
+export default function UrlInput({ onAnalyze, isLoading, language = 'en' }: UrlInputProps) {
   const [url, setUrl] = useState("");
   const { toast } = useToast();
+  const t = getTranslations(language);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!url.trim()) {
       toast({
-        title: "URL Required",
-        description: "Please enter a website URL to analyze.",
+        title: language === 'en' ? "URL Required" : "URL Requerida",
+        description: language === 'en' ? "Please enter a website URL to analyze." : "Por favor ingresa una URL de sitio web para analizar.",
         variant: "destructive",
       });
       return;
@@ -41,8 +44,8 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
       }
     } catch {
       toast({
-        title: "Invalid URL",
-        description: "Please enter a valid website domain (e.g., example.com).",
+        title: language === 'en' ? "Invalid URL" : "URL Inválida",
+        description: language === 'en' ? "Please enter a valid website domain (e.g., example.com)." : "Por favor ingresa un dominio de sitio web válido (ej., ejemplo.com).",
         variant: "destructive",
       });
       return;
@@ -56,14 +59,16 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4">
           <Globe className="w-5 h-5 text-primary flex-shrink-0" />
-          <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">Website URL Analysis</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">
+            {language === 'en' ? 'Website URL Analysis' : 'Análisis de URL del Sitio Web'}
+          </h2>
         </div>
         
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1 relative">
             <Input
               type="text"
-              placeholder="Enter domain name (e.g., example.com or https://example.com)"
+              placeholder={t.enterUrl}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="pl-4 pr-10 text-sm sm:text-base h-10 sm:h-11"
@@ -77,7 +82,7 @@ export default function UrlInput({ onAnalyze, isLoading }: UrlInputProps) {
             disabled={isLoading}
           >
             <Search className="w-4 h-4 mr-2" />
-            {isLoading ? "Analyzing..." : "Analyze SEO"}
+            {isLoading ? t.analyzing : t.analyze}
           </Button>
         </form>
       </CardContent>

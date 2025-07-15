@@ -2,20 +2,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Shield, CheckCircle, Search, Monitor, Smartphone } from "lucide-react";
+import { getTranslations } from "@/lib/translations";
 
 interface PerformanceOverviewProps {
   performanceScore: number;
   accessibilityScore: number;
   bestPracticesScore: number;
   seoScore: number;
+  language?: 'en' | 'es';
 }
 
 export default function PerformanceOverview({ 
   performanceScore, 
   accessibilityScore, 
   bestPracticesScore, 
-  seoScore 
+  seoScore,
+  language = 'en'
 }: PerformanceOverviewProps) {
+  const t = getTranslations(language);
   const getScoreColor = (score: number) => {
     if (score >= 90) return "text-green-600 dark:text-green-400";
     if (score >= 50) return "text-yellow-600 dark:text-yellow-400";
@@ -36,28 +40,28 @@ export default function PerformanceOverview({
 
   const categories = [
     {
-      title: "Performance",
+      title: t.performance,
       score: performanceScore,
       icon: <TrendingUp className="w-5 h-5" />,
-      description: "Load speed and runtime performance"
+      description: language === 'en' ? "Load speed and runtime performance" : "Velocidad de carga y rendimiento en tiempo de ejecución"
     },
     {
-      title: "Accessibility",
+      title: t.accessibility,
       score: accessibilityScore,
       icon: <Shield className="w-5 h-5" />,
-      description: "Usability for people with disabilities"
+      description: language === 'en' ? "Usability for people with disabilities" : "Usabilidad para personas con discapacidades"
     },
     {
-      title: "Best Practices",
+      title: t.bestPractices,
       score: bestPracticesScore,
       icon: <CheckCircle className="w-5 h-5" />,
-      description: "Modern web development standards"
+      description: language === 'en' ? "Modern web development standards" : "Estándares modernos de desarrollo web"
     },
     {
-      title: "SEO",
+      title: t.seo,
       score: seoScore,
       icon: <Search className="w-5 h-5" />,
-      description: "Search engine optimization"
+      description: language === 'en' ? "Search engine optimization" : "Optimización para motores de búsqueda"
     }
   ];
 
@@ -69,7 +73,7 @@ export default function PerformanceOverview({
       <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">Overall Performance</CardTitle>
+            <CardTitle className="text-base sm:text-lg text-slate-900 dark:text-slate-100">{t.performanceOverview}</CardTitle>
             <Badge variant={getBadgeVariant(overallScore)} className="text-sm sm:text-lg px-2 sm:px-3 py-1 w-fit">
               {overallScore}
             </Badge>
