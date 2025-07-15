@@ -90,6 +90,16 @@ export const aiContentInsightSchema = z.object({
   aiOptimizationTip: z.string()
 });
 
+export const aiContentRecommendationSchema = z.object({
+  type: z.enum(['heading', 'paragraph', 'meta_description', 'title', 'content_section']),
+  currentContent: z.string(),
+  suggestedContent: z.string(),
+  reason: z.string(),
+  impact: z.enum(['high', 'medium', 'low']),
+  location: z.string(),
+  implementationTip: z.string()
+});
+
 export const aiSearchAnalysisSchema = z.object({
   overallScore: z.number(), // 0-100 AI readiness score
   contentQuality: z.number(), // 0-100
@@ -104,6 +114,7 @@ export const aiSearchAnalysisSchema = z.object({
   // Content analysis
   bestContent: z.array(aiContentInsightSchema),
   improvements: z.array(z.string()),
+  contentRecommendations: z.array(aiContentRecommendationSchema),
   aiRecommendations: z.array(z.object({
     category: z.enum(['content_structure', 'semantic_markup', 'factual_accuracy', 'context_clarity']),
     title: z.string(),
@@ -171,3 +182,4 @@ export type Diagnostic = z.infer<typeof diagnosticSchema>;
 export type Insight = z.infer<typeof insightSchema>;
 export type AiSearchAnalysis = z.infer<typeof aiSearchAnalysisSchema>;
 export type AiContentInsight = z.infer<typeof aiContentInsightSchema>;
+export type AiContentRecommendation = z.infer<typeof aiContentRecommendationSchema>;

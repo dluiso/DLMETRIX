@@ -780,6 +780,9 @@ async function generateAiSearchAnalysis(url: string, seoData: any) {
     // Calculate overall AI readiness score
     const overallScore = Math.round((contentQuality + structuredDataScore + semanticClarityScore) / 3);
     
+    // Generate content recommendations
+    const contentRecommendations = generateContentRecommendations(seoData, headings, paragraphs, contentQuality, structuredDataScore);
+
     return {
       overallScore,
       contentQuality,
@@ -790,6 +793,7 @@ async function generateAiSearchAnalysis(url: string, seoData: any) {
       factualClaims,
       bestContent,
       improvements: generateImprovements(contentQuality, structuredDataScore, semanticClarityScore),
+      contentRecommendations,
       aiRecommendations
     };
     
@@ -809,6 +813,17 @@ async function generateAiSearchAnalysis(url: string, seoData: any) {
         'Unable to analyze page content - ensure URL is accessible',
         'Add structured data markup for better AI understanding',
         'Improve content organization with clear headings'
+      ],
+      contentRecommendations: [
+        {
+          type: 'title' as const,
+          currentContent: seoData.title || 'No title found',
+          suggestedContent: 'Add a descriptive, keyword-rich title that clearly explains your page content',
+          reason: 'Page title is crucial for AI understanding and search visibility',
+          impact: 'high' as const,
+          location: '<title> tag in HTML head',
+          implementationTip: 'Use 30-60 characters with your main keyword near the beginning'
+        }
       ],
       aiRecommendations: [
         {
@@ -1121,6 +1136,193 @@ function countContextualPhrases(text: string): number {
   });
   
   return count;
+}
+
+// Generate specific content recommendations
+function generateContentRecommendations(seoData: any, headings: string[], paragraphs: string[], contentQuality: number, structuredDataScore: number): any[] {
+  const recommendations: any[] = [];
+
+  // Title recommendations
+  if (!seoData.title || seoData.title.length < 30 || seoData.title.length > 60) {
+    recommendations.push({
+      type: 'title',
+      currentContent: seoData.title || 'No title found',
+      suggestedContent: `${seoData.title ? 'Optimize: ' : 'Add: '}"${generateOptimizedTitle(seoData.title, headings)}"`,
+      reason: 'Title should be 30-60 characters and clearly describe the page content for AI engines',
+      impact: 'high',
+      location: '<title> tag in HTML head section',
+      implementationTip: 'Include your main keyword near the beginning and make it compelling for users'
+    });
+  }
+
+  // Meta description recommendations
+  if (!seoData.description || seoData.description.length < 120 || seoData.description.length > 160) {
+    recommendations.push({
+      type: 'meta_description',
+      currentContent: seoData.description || 'No meta description found',
+      suggestedContent: generateOptimizedMetaDescription(seoData.description, seoData.title, headings),
+      reason: 'Meta descriptions help AI engines understand page content and improve click-through rates',
+      impact: 'high',
+      location: '<meta name="description" content="..."> in HTML head',
+      implementationTip: 'Write 120-160 characters that summarize your page content and include key topics'
+    });
+  }
+
+  // Heading structure recommendations
+  if (headings.length === 0) {
+    recommendations.push({
+      type: 'heading',
+      currentContent: 'No headings found',
+      suggestedContent: generateSuggestedHeadings(seoData.title, paragraphs),
+      reason: 'Clear heading structure helps AI engines understand content hierarchy and topics',
+      impact: 'high',
+      location: 'Add <h1>, <h2>, <h3> tags throughout your content',
+      implementationTip: 'Use one H1 for the main topic, H2 for sections, and H3 for subsections'
+    });
+  } else if (headings.length < 3) {
+    recommendations.push({
+      type: 'heading',
+      currentContent: `Only ${headings.length} heading${headings.length === 1 ? '' : 's'} found: ${headings.join(', ')}`,
+      suggestedContent: `Add more headings: ${generateAdditionalHeadings(headings, paragraphs)}`,
+      reason: 'More headings improve content structure and AI understanding',
+      impact: 'medium',
+      location: 'Add more <h2> and <h3> tags to break up content sections',
+      implementationTip: 'Each major section should have a descriptive heading'
+    });
+  }
+
+  // Content quality recommendations
+  if (contentQuality < 70) {
+    const wordCount = paragraphs.join(' ').split(/\s+/).length;
+    if (wordCount < 300) {
+      recommendations.push({
+        type: 'content_section',
+        currentContent: `Current content: ~${wordCount} words`,
+        suggestedContent: generateContentExpansionSuggestions(seoData.title, headings),
+        reason: 'AI engines prefer comprehensive content with detailed information',
+        impact: 'high',
+        location: 'Expand existing paragraphs or add new content sections',
+        implementationTip: 'Aim for at least 500-1000 words with detailed explanations and examples'
+      });
+    }
+  }
+
+  // Paragraph improvement recommendations
+  const shortParagraphs = paragraphs.filter(p => p.length < 100);
+  if (shortParagraphs.length > 2) {
+    recommendations.push({
+      type: 'paragraph',
+      currentContent: `${shortParagraphs.length} paragraphs are too brief (under 100 characters)`,
+      suggestedContent: generateParagraphImprovements(shortParagraphs, seoData.title),
+      reason: 'Detailed paragraphs provide more context for AI engines to understand your content',
+      impact: 'medium',
+      location: 'Expand existing short paragraphs',
+      implementationTip: 'Add specific details, examples, or explanations to make paragraphs more informative'
+    });
+  }
+
+  // Structured data recommendations
+  if (structuredDataScore < 60) {
+    recommendations.push({
+      type: 'content_section',
+      currentContent: 'Limited structured data markup',
+      suggestedContent: generateStructuredDataSuggestions(seoData.title, headings),
+      reason: 'Structured data helps AI engines categorize and understand your content type',
+      impact: 'high',
+      location: 'Add JSON-LD structured data in the HTML head section',
+      implementationTip: 'Use schema.org vocabulary to mark up your content type (Article, Organization, etc.)'
+    });
+  }
+
+  return recommendations.slice(0, 6); // Limit to top 6 recommendations
+}
+
+// Helper functions for content recommendations
+function generateOptimizedTitle(currentTitle: string | null, headings: string[]): string {
+  if (currentTitle && currentTitle.length >= 30 && currentTitle.length <= 60) {
+    return currentTitle;
+  }
+  
+  const mainTopic = currentTitle || headings[0] || 'Your Main Topic';
+  const optimized = `${mainTopic} - Complete Guide & Best Practices`;
+  
+  if (optimized.length > 60) {
+    return `${mainTopic} - Expert Guide`;
+  }
+  
+  return optimized;
+}
+
+function generateOptimizedMetaDescription(currentDesc: string | null, title: string | null, headings: string[]): string {
+  const topic = title || headings[0] || 'this topic';
+  
+  if (currentDesc && currentDesc.length >= 120 && currentDesc.length <= 160) {
+    return currentDesc;
+  }
+  
+  return `Comprehensive guide to ${topic.toLowerCase()}. Learn best practices, expert tips, and actionable strategies to achieve better results.`;
+}
+
+function generateSuggestedHeadings(title: string | null, paragraphs: string[]): string {
+  const suggestions = [
+    `<h1>${title || 'Main Topic'}</h1>`,
+    '<h2>Overview</h2>',
+    '<h2>Key Benefits</h2>',
+    '<h2>Best Practices</h2>',
+    '<h2>Getting Started</h2>',
+    '<h2>Conclusion</h2>'
+  ];
+  
+  return suggestions.join('\n');
+}
+
+function generateAdditionalHeadings(existingHeadings: string[], paragraphs: string[]): string {
+  const suggestions = [
+    'Key Features',
+    'Benefits',
+    'How It Works',
+    'Best Practices',
+    'Common Questions',
+    'Next Steps'
+  ].filter(suggestion => !existingHeadings.some(heading => heading.toLowerCase().includes(suggestion.toLowerCase())));
+  
+  return suggestions.slice(0, 3).map(h => `<h2>${h}</h2>`).join(', ');
+}
+
+function generateContentExpansionSuggestions(title: string | null, headings: string[]): string {
+  const topic = title || 'your topic';
+  
+  return `Add detailed sections covering:
+• What is ${topic} and why it matters
+• Step-by-step implementation guide
+• Real-world examples and case studies
+• Common challenges and solutions
+• Expert tips and best practices
+• Frequently asked questions`;
+}
+
+function generateParagraphImprovements(shortParagraphs: string[], title: string | null): string {
+  const topic = title || 'your topic';
+  
+  return `Expand paragraphs with:
+• Specific examples related to ${topic}
+• Statistical data or research findings
+• Step-by-step explanations
+• Benefits and outcomes
+• Common mistakes to avoid
+• Expert insights and quotes`;
+}
+
+function generateStructuredDataSuggestions(title: string | null, headings: string[]): string {
+  const topic = title || 'your content';
+  
+  return `Add structured data markup for:
+• Article schema with headline, author, datePublished
+• Organization schema with name, logo, contactPoint
+• BreadcrumbList for navigation structure
+• FAQ schema if you have questions/answers
+• HowTo schema for step-by-step guides
+• Review schema for product/service reviews`;
 }
 
 // Combine recommendations from mobile and desktop

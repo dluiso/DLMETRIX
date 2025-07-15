@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -13,7 +14,10 @@ import {
   Info,
   TrendingUp,
   Zap,
-  Eye
+  Eye,
+  Edit,
+  ArrowRight,
+  Copy
 } from "lucide-react";
 import type { AiSearchAnalysis } from "../../../shared/schema";
 
@@ -77,9 +81,10 @@ export default function AiSearchAnalysisComponent({ data }: AiSearchAnalysisProp
 
       <CardContent>
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="content">Best Content</TabsTrigger>
+            <TabsTrigger value="improvements">Content Ideas</TabsTrigger>
             <TabsTrigger value="insights">AI Insights</TabsTrigger>
             <TabsTrigger value="recommendations">Optimize</TabsTrigger>
           </TabsList>
@@ -246,6 +251,104 @@ export default function AiSearchAnalysisComponent({ data }: AiSearchAnalysisProp
                 <div className="text-center py-8 bg-slate-50 dark:bg-slate-700 rounded-lg">
                   <FileText className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                   <p className="text-sm text-slate-500 dark:text-slate-400">No optimized content found for AI analysis</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="improvements" className="space-y-6">
+            <div className="space-y-4">
+              <h4 className="font-medium text-slate-900 dark:text-slate-100 flex items-center space-x-2">
+                <Edit className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span>Content Improvement Recommendations</span>
+              </h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                AI-powered suggestions to improve your current content with specific replacement text and implementation guidance
+              </p>
+
+              {data.contentRecommendations && data.contentRecommendations.length > 0 ? (
+                <div className="space-y-4">
+                  {data.contentRecommendations.map((rec, index) => (
+                    <div key={index} className="border dark:border-slate-600 rounded-lg p-4 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-1">
+                            {rec.type === 'title' && <FileText className="w-4 h-4 text-blue-600" />}
+                            {rec.type === 'heading' && <Database className="w-4 h-4 text-green-600" />}
+                            {rec.type === 'paragraph' && <Edit className="w-4 h-4 text-purple-600" />}
+                            {rec.type === 'meta_description' && <Info className="w-4 h-4 text-orange-600" />}
+                            {rec.type === 'content_section' && <TrendingUp className="w-4 h-4 text-indigo-600" />}
+                            <span className="font-medium text-slate-900 dark:text-slate-100 capitalize">
+                              {rec.type.replace('_', ' ')}
+                            </span>
+                          </div>
+                          <Badge variant={rec.impact === 'high' ? 'destructive' : rec.impact === 'medium' ? 'secondary' : 'outline'} className="text-xs">
+                            {rec.impact} impact
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {/* Current Content */}
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium text-slate-700 dark:text-slate-300">Current Content:</h5>
+                          <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded border-l-4 border-red-400">
+                            <p className="text-sm text-red-800 dark:text-red-200 font-mono whitespace-pre-wrap">
+                              {rec.currentContent}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Suggested Content */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h5 className="text-sm font-medium text-slate-700 dark:text-slate-300">AI-Suggested Content:</h5>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => navigator.clipboard.writeText(rec.suggestedContent)}
+                              className="text-xs"
+                            >
+                              <Copy className="w-3 h-3 mr-1" />
+                              Copy
+                            </Button>
+                          </div>
+                          <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded border-l-4 border-green-400">
+                            <p className="text-sm text-green-800 dark:text-green-200 font-mono whitespace-pre-wrap">
+                              {rec.suggestedContent}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Implementation Details */}
+                        <div className="grid gap-3 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <h6 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Why Change This?</h6>
+                            <p className="text-sm text-slate-700 dark:text-slate-300">{rec.reason}</p>
+                          </div>
+                          <div className="space-y-2">
+                            <h6 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Where to Implement</h6>
+                            <p className="text-sm text-slate-700 dark:text-slate-300">{rec.location}</p>
+                          </div>
+                        </div>
+
+                        {/* Implementation Tip */}
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded border-l-4 border-blue-400">
+                          <p className="text-sm text-blue-700 dark:text-blue-300">
+                            <Lightbulb className="w-3 h-3 inline mr-1" />
+                            <strong>Implementation Tip:</strong> {rec.implementationTip}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                  <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Great! Your content is well-optimized. No major improvements needed.
+                  </p>
                 </div>
               )}
             </div>
