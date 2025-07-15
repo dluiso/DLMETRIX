@@ -183,7 +183,7 @@ async function performEnhancedSeoAnalysis(url: string): Promise<WebAnalysisResul
       opportunities: [],
       diagnostics: []
     },
-    technicalChecks: generateBasicTechnicalChecks(basicSeoData),
+    technicalChecks: generateBasicTechnicalChecks(basicSeoData, url),
     aiSearchAnalysis: await generateAiSearchAnalysis(url, basicSeoData),
     keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null)
   };
@@ -341,7 +341,9 @@ async function fetchBasicSeoData(url: string) {
       openGraphTags: Object.keys(openGraphTags).length > 0 ? openGraphTags : null,
       twitterCardTags: Object.keys(twitterCardTags).length > 0 ? twitterCardTags : null,
       schemaMarkup: $('script[type="application/ld+json"]').length > 0,
-      sitemap: html.includes('sitemap') || html.includes('robots.txt')
+      sitemap: html.includes('sitemap') || html.includes('robots.txt'),
+      finalUrl: response.request.res.responseUrl || url, // Track final URL after redirects
+      hasSSL: (response.request.res.responseUrl || url).startsWith('https://') // Check if final URL uses HTTPS
     };
   } catch (error) {
     console.error('Error fetching basic SEO data:', error);
@@ -704,12 +706,12 @@ function generateSeoRecommendations(seoData: any) {
 }
 
 // Generate basic technical checks
-function generateBasicTechnicalChecks(seoData: any) {
+function generateBasicTechnicalChecks(seoData: any, originalUrl: string) {
   return {
     // Core Web Vitals & Performance
     hasViewportMeta: !!seoData.viewportMeta,
     hasCharset: true, // Assume present if we can parse
-    hasSSL: seoData.url?.startsWith('https://') || false,
+    hasSSL: seoData.hasSSL !== undefined ? seoData.hasSSL : originalUrl.startsWith('https://'),
     minifiedHTML: false, // Cannot determine without full analysis
     noInlineStyles: false, // Cannot determine without full analysis
     
@@ -753,7 +755,8 @@ async function generateAiSearchAnalysis(url: string, seoData: any) {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       },
-      timeout: 10000
+      timeout: 10000,
+      maxRedirects: 5
     });
 
     const $ = cheerio.load(response.data);

@@ -115,6 +115,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### SSL/HTTPS Detection Fix (January 15, 2025)
+- **Fixed Critical SSL Detection Issue**: Resolved false negative SSL/HTTPS checks in Technical SEO Analysis
+- **Improved Redirect Handling**: Added proper redirect following (maxRedirects: 5) in HTTP requests
+- **Enhanced Final URL Detection**: Now checks the final URL after redirects for HTTPS, not just the input URL
+- **Better Certificate Support**: Properly detects Let's Encrypt and other SSL certificates even when sites redirect
+- **User Impact**: Technical SEO Analysis now correctly shows "Pass" for HTTPS/SSL on sites with valid certificates
+
 ### Major Architecture Expansion
 - **Transformed from SEO-focused to comprehensive web performance analyzer**
 - **Lighthouse Integration**: Full Google Lighthouse analysis engine implementation
