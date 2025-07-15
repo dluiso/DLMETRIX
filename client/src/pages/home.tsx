@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bookmark, HelpCircle, Search } from "lucide-react";
@@ -10,24 +10,42 @@ import Recommendations from "@/components/recommendations";
 import Previews from "@/components/previews";
 import TechnicalSeo from "@/components/technical-seo";
 import { SeoAnalysisResult } from "@/types/seo";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Home() {
-  const [analyzedUrl, setAnalyzedUrl] = useState<string>("");
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [seoData, setSeoData] = useState<SeoAnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: seoData, isLoading, error } = useQuery<SeoAnalysisResult>({
-    queryKey: ["/api/seo/analyze", analyzedUrl],
-    enabled: !!analyzedUrl,
+  const analyzeMutation = useMutation({
+    mutationFn: async (url: string): Promise<SeoAnalysisResult> => {
+      const response = await apiRequest("/api/seo/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: Failed to analyze website`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setSeoData(data);
+      setError(null);
+    },
+    onError: (error) => {
+      setError(error instanceof Error ? error.message : "Failed to analyze website");
+      setSeoData(null);
+    },
   });
 
   const handleAnalyze = async (url: string) => {
-    setIsAnalyzing(true);
-    setAnalyzedUrl(url);
-    
-    // The query will automatically trigger due to the enabled condition
-    setTimeout(() => {
-      setIsAnalyzing(false);
-    }, 1000);
+    setError(null);
+    analyzeMutation.mutate(url);
   };
 
   return (
@@ -60,14 +78,14 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <UrlInput onAnalyze={handleAnalyze} isLoading={isAnalyzing || isLoading} />
+        <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} />
         
         {error && (
           <Card className="p-6 mb-8 border-red-200 bg-red-50">
             <div className="text-red-800">
               <h3 className="font-semibold mb-2">Analysis Error</h3>
               <p className="text-sm">
-                {error instanceof Error ? error.message : "Failed to analyze the website. Please check the URL and try again."}
+                {error}
               </p>
             </div>
           </Card>
@@ -92,7 +110,7 @@ export default function Home() {
       </main>
 
       {/* Loading Overlay */}
-      {(isAnalyzing || isLoading) && (
+      {analyzeMutation.isPending && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <Card className="p-8 max-w-md mx-4">
             <div className="text-center">
