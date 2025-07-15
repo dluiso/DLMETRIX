@@ -62,9 +62,9 @@ export default function SeoSummaryCards({ data }: SeoSummaryCardsProps) {
   };
 
   const getStatusColor = (percentage: number) => {
-    if (percentage >= 80) return { bg: 'bg-green-100', text: 'text-green-800', icon: Check };
-    if (percentage >= 50) return { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: AlertTriangle };
-    return { bg: 'bg-red-100', text: 'text-red-800', icon: X };
+    if (percentage >= 80) return { bg: 'bg-green-100 dark:bg-green-900/20', text: 'text-green-800 dark:text-green-400', icon: Check };
+    if (percentage >= 50) return { bg: 'bg-yellow-100 dark:bg-yellow-900/20', text: 'text-yellow-800 dark:text-yellow-400', icon: AlertTriangle };
+    return { bg: 'bg-red-100 dark:bg-red-900/20', text: 'text-red-800 dark:text-red-400', icon: X };
   };
 
   const getStatusText = (percentage: number) => {
@@ -117,10 +117,10 @@ export default function SeoSummaryCards({ data }: SeoSummaryCardsProps) {
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-xs sm:text-sm text-slate-900">
+                  <h3 className="font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100">
                     {card.title}
                   </h3>
-                  <span className="text-xs font-bold text-slate-700">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
                     {card.summary.score}/{card.summary.total}
                   </span>
                 </div>
@@ -134,12 +134,12 @@ export default function SeoSummaryCards({ data }: SeoSummaryCardsProps) {
                   <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColor.bg} ${statusColor.text}`}>
                     {getStatusText(card.summary.percentage)}
                   </span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
                     {card.summary.percentage}%
                   </span>
                 </div>
                 
-                <p className="text-xs text-slate-600 leading-tight">
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                   {card.description}
                 </p>
               </div>
