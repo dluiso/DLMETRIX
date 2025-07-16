@@ -183,6 +183,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createSharedReport(insertReport: InsertSharedReport): Promise<SharedReport> {
+    console.log('💾 Attempting to save shared report to database...');
     const { db } = await getDatabase();
     
     if (!db) {
@@ -192,24 +193,39 @@ export class DatabaseStorage implements IStorage {
       return await memStorage.createSharedReport(insertReport);
     }
     
-    console.log(`💾 Saving shared report to database with token: ${insertReport.shareToken}`);
-    
-    const [result] = await db.insert(sharedReports).values({
-      ...insertReport,
-      createdAt: new Date()
-    }).execute();
-    
-    const report: SharedReport = {
-      id: result.insertId as number,
-      ...insertReport,
-      createdAt: new Date()
-    };
-    
-    console.log(`✅ Shared report saved to database with ID: ${report.id}`);
-    return report;
+    try {
+      console.log(`🔧 Database available, inserting shared report for URL: ${insertReport.url}`);
+      
+      const [result] = await db.insert(sharedReports).values({
+        ...insertReport,
+        createdAt: new Date()
+      }).execute();
+      
+      const report: SharedReport = {
+        id: result.insertId as number,
+        ...insertReport,
+        createdAt: new Date()
+      };
+      
+      console.log(`✅ Shared report saved to database with ID: ${report.id} for token: ${insertReport.shareToken}`);
+      return report;
+      
+    } catch (error) {
+      console.error('❌ Database insert failed:', error.message);
+      console.error('🔍 Error details:', {
+        code: error.code,
+        errno: error.errno,
+        sqlMessage: error.sqlMessage
+      });
+      
+      // Fallback to memory storage
+      const memStorage = new MemStorage();
+      return await memStorage.createSharedReport(insertReport);
+    }
   }
 
   async getSharedReport(shareToken: string): Promise<SharedReport | undefined> {
+    console.log(`🔍 Looking for shared report with token: ${shareToken}`);
     const { db } = await getDatabase();
     
     if (!db) {
@@ -219,26 +235,35 @@ export class DatabaseStorage implements IStorage {
       return await memStorage.getSharedReport(shareToken);
     }
     
-    console.log(`🔍 Searching for shared report with token: ${shareToken}`);
-    
-    const [report] = await db.select().from(sharedReports)
-      .where(eq(sharedReports.shareToken, shareToken));
-    
-    if (report) {
-      console.log(`📄 Found shared report: ${report.url} (expires: ${report.expiresAt})`);
+    try {
+      console.log(`🔧 Database available, querying for token: ${shareToken}`);
       
-      // Check if expired
-      if (report.expiresAt <= new Date()) {
-        console.log(`⏰ Report expired, deleting...`);
-        await db.delete(sharedReports).where(eq(sharedReports.shareToken, shareToken));
-        return undefined;
+      const [report] = await db.select().from(sharedReports)
+        .where(eq(sharedReports.shareToken, shareToken));
+      
+      if (report) {
+        console.log(`📄 Found shared report in database: ${report.url} (expires: ${report.expiresAt})`);
+        
+        // Check if expired
+        if (report.expiresAt <= new Date()) {
+          console.log(`⏰ Report expired, deleting from database...`);
+          await db.delete(sharedReports).where(eq(sharedReports.shareToken, shareToken));
+          return undefined;
+        }
+        
+        return report;
       }
       
-      return report;
+      console.log(`❌ No shared report found in database with token: ${shareToken}`);
+      return undefined;
+      
+    } catch (error) {
+      console.error('❌ Database query failed:', error.message);
+      
+      // Fallback to memory storage
+      const memStorage = new MemStorage();
+      return await memStorage.getSharedReport(shareToken);
     }
-    
-    console.log(`❌ No shared report found with token: ${shareToken}`);
-    return undefined;
   }
 
   async cleanExpiredSharedReports(): Promise<void> {
