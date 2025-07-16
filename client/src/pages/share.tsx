@@ -173,7 +173,16 @@ export default function SharePage() {
       charset: sharedReport.analysisData?.seoAnalysis?.charset || null,
       langAttribute: sharedReport.analysisData?.seoAnalysis?.langAttribute || null,
       openGraphTags: sharedReport.analysisData?.seoAnalysis?.openGraphTags || {},
-      twitterCardTags: sharedReport.analysisData?.seoAnalysis?.twitterCardTags || {}
+      twitterCardTags: sharedReport.analysisData?.seoAnalysis?.twitterCardTags || {},
+      headings: {
+        h1: sharedReport.analysisData?.seoAnalysis?.headings?.h1 || [],
+        h2: sharedReport.analysisData?.seoAnalysis?.headings?.h2 || [],
+        h3: sharedReport.analysisData?.seoAnalysis?.headings?.h3 || [],
+        h4: sharedReport.analysisData?.seoAnalysis?.headings?.h4 || [],
+        h5: sharedReport.analysisData?.seoAnalysis?.headings?.h5 || [],
+        h6: sharedReport.analysisData?.seoAnalysis?.headings?.h6 || []
+      },
+      headingStructure: sharedReport.analysisData?.seoAnalysis?.headingStructure || []
     },
     technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis || [],
     recommendations: sharedReport.analysisData?.recommendations || [],
@@ -333,7 +342,14 @@ export default function SharePage() {
           {/* Heading Structure */}
           <HeadingStructureAnalysis 
             data={{
-              headings: analysisData.seoAnalysis.headings || {},
+              headings: {
+                h1: analysisData.seoAnalysis.headings?.h1 || [],
+                h2: analysisData.seoAnalysis.headings?.h2 || [],
+                h3: analysisData.seoAnalysis.headings?.h3 || [],
+                h4: analysisData.seoAnalysis.headings?.h4 || [],
+                h5: analysisData.seoAnalysis.headings?.h5 || [],
+                h6: analysisData.seoAnalysis.headings?.h6 || []
+              },
               headingStructure: analysisData.seoAnalysis.headingStructure || []
             }}
             language="en"

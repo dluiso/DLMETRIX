@@ -1,0 +1,102 @@
+Uncaught TypeError: can't access property "length", r.h1 is undefined
+    iN https://dlmetrix.com/assets/index-6C7-kBQC.js:377
+    Tw https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    cC https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    aC https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    MU https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    L0 https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    W1 https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    my https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ha https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    Yr https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Yr https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    ss https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    S4 https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    N4 https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    batchCalls https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    A https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    r https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    setTimeout handler*n https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    batch https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    Zs https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    setData https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    onSuccess https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    f https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    promise callback*B https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    start https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    fetch https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    Qu https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    onSubscribe https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    subscribe https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    ak https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    N4 https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    lp https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ol https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    my https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ha https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    KU https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ja https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    nC https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    T https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+    L https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+    EventHandlerNonNull* https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+    <anonymous> https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+index-6C7-kBQC.js:377:35524
+    iN https://dlmetrix.com/assets/index-6C7-kBQC.js:377
+    Tw https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    cC https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    aC https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    MU https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    L0 https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    W1 https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    my https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ha https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    Yr https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    (Async: VoidFunction)
+    Yr https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    ss https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    S4 https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    N4 https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    batchCalls https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    A https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    forEach self-hosted:157
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    r https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    (Async: setTimeout handler)
+    n https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    i https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    batch https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    Zs https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    setData https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    onSuccess https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    f https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    (Async: promise callback)
+    B https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    start https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    fetch https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    Qu https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    onSubscribe https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    subscribe https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    ak https://dlmetrix.com/assets/index-6C7-kBQC.js:48
+    N4 https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    lp https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ol https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    my https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ha https://dlmetrix.com/assets/index-6C7-kBQC.js:38
+    KU https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    Ja https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    nC https://dlmetrix.com/assets/index-6C7-kBQC.js:40
+    T https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+    L https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+    (Async: EventHandlerNonNull)
+    <anonymous> https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+    <anonymous> https://dlmetrix.com/assets/index-6C7-kBQC.js:25
+
+​
+
