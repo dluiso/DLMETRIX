@@ -42,30 +42,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           return res.status(423).json({
             error: 'SITE_PROTECTION_ACTIVE',
-            message: 'El sitio web tiene protecciones activas que impiden el análisis automatizado',
+            message: 'Cloudflare está bloqueando el análisis automatizado y requiere verificación humana',
             protections: protectionData.protections,
             pageInfo: {
               title: protectionData.pageTitle,
               snippet: protectionData.bodySnippet
             },
             recommendations: [
-              'Desactiva temporalmente las protecciones anti-bot durante el análisis',
-              'Agrega la IP de DLMETRIX a la lista blanca de tu firewall',
-              'Configura excepciones para herramientas de análisis SEO',
-              'Contacta al administrador del sitio para permitir el análisis'
+              'Desactiva temporalmente "Bot Fight Mode" en Cloudflare durante el análisis',
+              'Agrega DLMETRIX a la lista de bots permitidos en tu panel de Cloudflare',
+              'Configura una regla de página para permitir herramientas de análisis SEO',
+              'Contacta al administrador para configurar excepciones de Cloudflare'
             ]
           });
         } catch (parseError) {
           // Fallback if JSON parsing fails
           return res.status(423).json({
             error: 'SITE_PROTECTION_ACTIVE',
-            message: 'El sitio web tiene protecciones activas que impiden el análisis automatizado',
+            message: 'Cloudflare está bloqueando el análisis automatizado',
             protections: [
               {
-                name: 'Sistema de Protección Detectado',
-                type: 'Anti-Bot Protection',
-                description: 'Se detectó un sistema de protección activo',
-                action: 'Contacta al administrador para permitir el análisis'
+                name: 'Cloudflare',
+                type: 'Bot Protection',
+                description: 'Se detectó protección de Cloudflare activa',
+                action: 'Desactivar Bot Fight Mode o contactar al administrador'
               }
             ]
           });
@@ -689,107 +689,48 @@ async function fetchSeoDataWithPuppeteer(url: string) {
       timeout: 45000 
     });
     
-    // Detect protection services that require human verification
+    // Detect Cloudflare protection specifically
     try {
-      const protectionData = await page.evaluate(() => {
+      const cloudflareDetected = await page.evaluate(() => {
         const bodyText = document.body.textContent.toLowerCase();
         const title = document.title.toLowerCase();
         
-        const protections = [];
+        // Only detect Cloudflare challenges that require human interaction
+        const isCloudflareChallenge = title.includes('just a moment') || 
+                                     bodyText.includes('checking your browser') ||
+                                     bodyText.includes('verify you are human') ||
+                                     (bodyText.includes('cloudflare') && bodyText.includes('security')) ||
+                                     document.querySelector('[data-ray]') ||
+                                     (title.includes('attention required') && bodyText.includes('cloudflare'));
         
-        // Cloudflare detection
-        if (title.includes('just a moment') || 
-            bodyText.includes('checking your browser') ||
-            bodyText.includes('cloudflare') ||
-            bodyText.includes('ray id:') ||
-            document.querySelector('[data-ray]')) {
-          protections.push({
-            name: 'Cloudflare',
-            type: 'Bot Protection',
-            description: 'Cloudflare bot protection is active',
-            action: 'Disable "Bot Fight Mode" or add DLMETRIX to allowed bots'
-          });
+        if (isCloudflareChallenge) {
+          return {
+            hasCloudflareProtection: true,
+            protections: [{
+              name: 'Cloudflare',
+              type: 'Bot Protection',
+              description: 'Cloudflare bot protection is active and requires human verification',
+              action: 'Disable "Bot Fight Mode" or add DLMETRIX to allowed bots in Cloudflare dashboard'
+            }],
+            pageTitle: document.title,
+            bodySnippet: document.body.textContent.substring(0, 500)
+          };
         }
         
-        // reCAPTCHA detection
-        if (document.querySelector('.g-recaptcha') ||
-            document.querySelector('#recaptcha') ||
-            bodyText.includes('recaptcha') ||
-            document.querySelector('iframe[src*="recaptcha"]')) {
-          protections.push({
-            name: 'Google reCAPTCHA',
-            type: 'Human Verification',
-            description: 'reCAPTCHA verification is required',
-            action: 'Temporarily disable reCAPTCHA during analysis'
-          });
-        }
-        
-        // hCaptcha detection
-        if (document.querySelector('.h-captcha') ||
-            bodyText.includes('hcaptcha') ||
-            document.querySelector('iframe[src*="hcaptcha"]')) {
-          protections.push({
-            name: 'hCaptcha',
-            type: 'Human Verification', 
-            description: 'hCaptcha verification is required',
-            action: 'Temporarily disable hCaptcha during analysis'
-          });
-        }
-        
-        // Sucuri detection
-        if (bodyText.includes('sucuri') ||
-            bodyText.includes('website firewall') ||
-            bodyText.includes('access denied') && bodyText.includes('suspicious activity')) {
-          protections.push({
-            name: 'Sucuri WAF',
-            type: 'Web Application Firewall',
-            description: 'Sucuri firewall is blocking automated access',
-            action: 'Whitelist DLMETRIX IP or temporarily disable WAF'
-          });
-        }
-        
-        // WordFence detection
-        if (bodyText.includes('wordfence') ||
-            bodyText.includes('security plugin') ||
-            (bodyText.includes('blocked') && bodyText.includes('security'))) {
-          protections.push({
-            name: 'WordFence',
-            type: 'WordPress Security Plugin',
-            description: 'WordFence security plugin is blocking access',
-            action: 'Add DLMETRIX to WordFence whitelist or disable rate limiting'
-          });
-        }
-        
-        // Generic bot detection
-        if (bodyText.includes('bot detected') ||
-            bodyText.includes('automated traffic') ||
-            bodyText.includes('verify you are human') ||
-            bodyText.includes('prove you are not a robot')) {
-          protections.push({
-            name: 'Generic Bot Protection',
-            type: 'Anti-Bot System',
-            description: 'Automated traffic detection system is active',
-            action: 'Disable bot protection or add user-agent whitelist'
-          });
-        }
-        
-        return {
-          hasProtection: protections.length > 0,
-          protections,
-          pageTitle: document.title,
-          bodySnippet: document.body.textContent.substring(0, 500)
-        };
+        return { hasCloudflareProtection: false };
       });
       
-      if (protectionData.hasProtection) {
+      if (cloudflareDetected.hasCloudflareProtection) {
+        console.log('DEBUG fetchSeoDataWithPuppeteer - Cloudflare protection detected, stopping analysis');
         await browser.close();
         throw new Error(JSON.stringify({
           type: 'PROTECTION_DETECTED',
-          data: protectionData
+          data: cloudflareDetected
         }));
       }
       
-      // If no protection detected, continue with normal extraction
+      console.log('DEBUG fetchSeoDataWithPuppeteer - No Cloudflare protection detected, continuing extraction');
+      // If no Cloudflare protection detected, continue with normal extraction
     } catch (e) {
       if (e.message.includes('PROTECTION_DETECTED')) {
         throw e; // Re-throw protection errors
@@ -1219,17 +1160,18 @@ async function fetchBasicSeoData(url: string) {
     try {
       return await fetchSeoDataWithPuppeteer(url);
     } catch (puppeteerError) {
-      // Check if it's a protection detection error
+      // Check if it's a Cloudflare protection detection error
       if (puppeteerError.message.includes('PROTECTION_DETECTED')) {
         try {
           const errorMessage = puppeteerError.message.replace('Error: ', '');
           const protectionData = JSON.parse(errorMessage);
+          console.log('DEBUG fetchBasicSeoData - Cloudflare protection detected, blocking analysis');
           throw new Error(JSON.stringify({
             type: 'SITE_PROTECTION_ACTIVE',
             ...protectionData.data
           }));
         } catch (parseError) {
-          console.log('DEBUG fetchBasicSeoData - Protection data parsing failed, using defaults');
+          console.log('DEBUG fetchBasicSeoData - Protection data parsing failed, continuing with normal flow');
         }
       }
       console.log('DEBUG fetchBasicSeoData - Puppeteer fallback also failed, using defaults');
