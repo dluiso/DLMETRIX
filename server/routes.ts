@@ -39,9 +39,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           technical: seoData.technicalAnalysis ? 'Present' : 'Missing'
         },
         versions: {
-          axios: require('axios/package.json').version,
-          cheerio: require('cheerio/package.json').version,
-          node: process.version
+          node: process.version,
+          platform: process.platform,
+          timestamp: new Date().toISOString()
         }
       });
     } catch (error) {
