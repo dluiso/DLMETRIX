@@ -1742,10 +1742,16 @@ function generateSeoRecommendations(seoData: any) {
 
 // Generate basic technical checks
 function generateBasicTechnicalChecks(seoData: any, originalUrl: string) {
-  // Real analysis based on extracted DOM data
-  const hasH1 = seoData.headings?.h1?.length > 0;
-  const hasMultipleHeadingTypes = Object.values(seoData.headings || {}).filter(arr => arr.length > 0).length > 1;
+  // Debug logging for production troubleshooting
+  console.log('DEBUG generateBasicTechnicalChecks - seoData keys:', Object.keys(seoData || {}));
+  console.log('DEBUG headings data:', seoData?.headings);
+  
+  // Real analysis based on extracted DOM data with explicit checks
+  const hasH1 = !!(seoData?.headings?.h1 && Array.isArray(seoData.headings.h1) && seoData.headings.h1.length > 0);
+  const hasMultipleHeadingTypes = Object.values(seoData?.headings || {}).filter(arr => Array.isArray(arr) && arr.length > 0).length > 1;
   const hasProperHeadingStructure = hasH1 && seoData.headings?.h1?.length === 1; // Single H1 is best practice
+  
+  console.log('DEBUG heading analysis:', { hasH1, hasMultipleHeadingTypes, h1Count: seoData?.headings?.h1?.length });
   
   // Image analysis
   const imageStats = seoData.imageAnalysis || {};
