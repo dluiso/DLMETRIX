@@ -575,6 +575,40 @@ async function fetchBasicSeoData(url: string) {
     const externalCSS = $('link[rel="stylesheet"]').length;
     const externalJS = $('script[src]').length;
 
+    // Advanced technical checks
+    const hasMetaRobots = $('meta[name="robots"]').length > 0;
+    const hasMetaKeywords = $('meta[name="keywords"]').length > 0;
+    const hasMetaAuthor = $('meta[name="author"]').length > 0;
+    const hasMetaGenerator = $('meta[name="generator"]').length > 0;
+    
+    // Check for favicon
+    const hasFavicon = $('link[rel="icon"], link[rel="shortcut icon"]').length > 0;
+    
+    // Check for preload/prefetch optimizations
+    const hasPreloadResources = $('link[rel="preload"], link[rel="prefetch"]').length > 0;
+    
+    // Check for proper heading hierarchy
+    const headingLevels = [1, 2, 3, 4, 5, 6].map(level => $(`h${level}`).length);
+    const hasProperHeadingHierarchy = headingLevels[0] === 1 && headingLevels.slice(1).some(count => count > 0);
+    
+    // Check for ARIA attributes and accessibility
+    const hasAriaLabels = $('[aria-label], [aria-labelledby], [aria-describedby]').length > 0;
+    const hasSkipLinks = $('a[href^="#"]').filter((_, el) => $(el).text().toLowerCase().includes('skip')).length > 0;
+    
+    // Check for forms and their labels
+    const forms = $('form');
+    const formInputs = $('input, textarea, select');
+    const labeledInputs = formInputs.filter((_, input) => {
+      const id = $(input).attr('id');
+      const hasLabel = id ? $(`label[for="${id}"]`).length > 0 : false;
+      const hasAriaLabel = $(input).attr('aria-label') || $(input).attr('aria-labelledby');
+      return hasLabel || hasAriaLabel;
+    });
+    
+    // Security checks
+    const hasCSPMeta = $('meta[http-equiv="Content-Security-Policy"]').length > 0;
+    const hasXFrameOptions = $('meta[http-equiv="X-Frame-Options"]').length > 0;
+
     // Extract Open Graph tags
     const openGraphTags: Record<string, string> = {};
     $('meta[property^="og:"]').each((_, element) => {
@@ -631,7 +665,24 @@ async function fetchBasicSeoData(url: string) {
         inlineScripts,
         externalCSS,
         externalJS,
-        hasMinifiedContent: html.length < html.replace(/\s+/g, ' ').length * 0.7 // Basic minification check
+        hasMinifiedContent: html.length < html.replace(/\s+/g, ' ').length * 0.7, // Basic minification check
+        hasMetaRobots,
+        hasMetaKeywords,
+        hasMetaAuthor,
+        hasMetaGenerator,
+        hasFavicon,
+        hasPreloadResources,
+        hasProperHeadingHierarchy,
+        hasAriaLabels,
+        hasSkipLinks,
+        hasCSPMeta,
+        hasXFrameOptions,
+        formAccessibility: {
+          totalForms: forms.length,
+          totalInputs: formInputs.length,
+          labeledInputs: labeledInputs.length,
+          accessibilityScore: formInputs.length > 0 ? (labeledInputs.length / formInputs.length) * 100 : 100
+        }
       },
       openGraphTags: Object.keys(openGraphTags).length > 0 ? openGraphTags : null,
       twitterCardTags: Object.keys(twitterCardTags).length > 0 ? twitterCardTags : null,
@@ -656,7 +707,25 @@ async function fetchBasicSeoData(url: string) {
       imageAnalysis: { total: 0, withAlt: 0, withDimensions: 0, withSrcset: 0 },
       linkAnalysis: { total: 0, internal: 0, external: 0 },
       contentAnalysis: { wordCount: 0, paragraphCount: 0, bodyText: '' },
-      technicalAnalysis: { inlineStyles: 0, inlineScripts: 0, externalCSS: 0, externalJS: 0, hasMinifiedContent: false },
+      technicalAnalysis: { 
+        inlineStyles: 0, 
+        inlineScripts: 0, 
+        externalCSS: 0, 
+        externalJS: 0, 
+        hasMinifiedContent: false,
+        hasMetaRobots: false,
+        hasMetaKeywords: false,
+        hasMetaAuthor: false,
+        hasMetaGenerator: false,
+        hasFavicon: false,
+        hasPreloadResources: false,
+        hasProperHeadingHierarchy: false,
+        hasAriaLabels: false,
+        hasSkipLinks: false,
+        hasCSPMeta: false,
+        hasXFrameOptions: false,
+        formAccessibility: { totalForms: 0, totalInputs: 0, labeledInputs: 0, accessibilityScore: 100 }
+      },
       openGraphTags: null,
       twitterCardTags: null,
       schemaMarkup: false,
@@ -1176,6 +1245,80 @@ function generateSeoRecommendations(seoData: any) {
     });
   }
 
+  // Favicon check
+  if (!techStats.hasFavicon) {
+    recommendations.push({
+      type: 'info' as const,
+      priority: 'low' as const,
+      title: 'Missing Favicon',
+      description: 'Your website is missing a favicon icon.',
+      category: 'technical' as const,
+      howToFix: 'Add a favicon.ico file to your root directory and link it with <link rel="icon" href="/favicon.ico">.'
+    });
+  }
+
+  // Accessibility checks
+  if (techStats.formAccessibility && techStats.formAccessibility.totalInputs > 0 && techStats.formAccessibility.accessibilityScore < 80) {
+    recommendations.push({
+      type: 'warning' as const,
+      priority: 'medium' as const,
+      title: 'Form Accessibility Issues',
+      description: `${techStats.formAccessibility.totalInputs - techStats.formAccessibility.labeledInputs} out of ${techStats.formAccessibility.totalInputs} form inputs lack proper labels.`,
+      category: 'accessibility' as const,
+      howToFix: 'Add proper labels to all form inputs using <label for="input-id"> or aria-label attributes.'
+    });
+  }
+
+  if (!techStats.hasAriaLabels && (imageStats.total > 0 || techStats.formAccessibility?.totalInputs > 0)) {
+    recommendations.push({
+      type: 'info' as const,
+      priority: 'low' as const,
+      title: 'Consider ARIA Labels',
+      description: 'Your page could benefit from ARIA labels for better accessibility.',
+      category: 'accessibility' as const,
+      howToFix: 'Add aria-label, aria-labelledby, or aria-describedby attributes to improve screen reader compatibility.'
+    });
+  }
+
+  // Performance optimizations
+  if (!techStats.hasPreloadResources && (techStats.externalCSS > 0 || techStats.externalJS > 0)) {
+    recommendations.push({
+      type: 'info' as const,
+      priority: 'low' as const,
+      title: 'Consider Resource Preloading',
+      description: 'Your page could benefit from preloading critical resources.',
+      category: 'performance' as const,
+      howToFix: 'Use <link rel="preload"> for critical CSS and JavaScript files to improve loading performance.'
+    });
+  }
+
+  // Security headers
+  if (!techStats.hasCSPMeta && !techStats.hasXFrameOptions) {
+    recommendations.push({
+      type: 'info' as const,
+      priority: 'low' as const,
+      title: 'Consider Security Headers',
+      description: 'Your page lacks security headers that could protect against attacks.',
+      category: 'security' as const,
+      howToFix: 'Add Content-Security-Policy and X-Frame-Options headers to improve security.'
+    });
+  }
+
+  // Heading structure
+  if (!techStats.hasProperHeadingHierarchy && headings.h1 && headings.h1.length > 0) {
+    const totalHeadings = Object.values(headings).flat().length;
+    if (totalHeadings === headings.h1.length) {
+      recommendations.push({
+        type: 'warning' as const,
+        priority: 'medium' as const,
+        title: 'Poor Heading Structure',
+        description: 'Your page only uses H1 tags without proper heading hierarchy.',
+        category: 'seo' as const,
+        howToFix: 'Use H2, H3, H4 tags hierarchically to structure your content properly for SEO and accessibility.'
+      });
+    }
+  }
+
   return recommendations;
 }
 
@@ -1207,6 +1350,9 @@ function generateBasicTechnicalChecks(seoData: any, originalUrl: string) {
   const hasMinimalInlineStyles = techStats.inlineStyles <= 2;
   const hasExternalCSS = techStats.externalCSS > 0;
   const isWellStructured = hasExternalCSS && hasMinimalInlineStyles;
+  const hasGoodFormAccessibility = techStats.formAccessibility?.accessibilityScore >= 80;
+  const hasPerformanceOptimizations = techStats.hasPreloadResources;
+  const hasSecurityHeaders = techStats.hasCSPMeta || techStats.hasXFrameOptions;
   
   // Keyword analysis in title
   const titleHasKeywords = seoData.title && seoData.keywords ? 
@@ -1250,7 +1396,15 @@ function generateBasicTechnicalChecks(seoData: any, originalUrl: string) {
     hasRobotsMeta: !!seoData.robotsMeta,
     sitemap: seoData.sitemapExists,
     robotsTxt: seoData.robotsTxtExists,
-    touchFriendlyElements: !!seoData.viewportMeta && seoData.viewportMeta.includes('width=device-width')
+    touchFriendlyElements: !!seoData.viewportMeta && seoData.viewportMeta.includes('width=device-width'),
+    
+    // Advanced Technical Checks
+    hasFavicon: techStats.hasFavicon,
+    hasAccessibilityFeatures: techStats.hasAriaLabels || techStats.hasSkipLinks || hasGoodFormAccessibility,
+    hasPerformanceOptimizations: hasPerformanceOptimizations,
+    hasSecurityHeaders: hasSecurityHeaders,
+    formAccessibility: hasGoodFormAccessibility,
+    properHeadingStructure: techStats.hasProperHeadingHierarchy
   };
 }
 
