@@ -48,15 +48,24 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
 
   const getOpenGraphStatus = () => {
     if (!data.openGraphTags) return 'error';
-    const requiredTags = ['og:title', 'og:description', 'og:image', 'og:url'];
+    const requiredTags = ['og:title', 'og:description', 'og:image', 'og:url', 'og:type'];
     const presentTags = Object.keys(data.openGraphTags);
     const hasAllRequired = requiredTags.every(tag => presentTags.includes(tag));
-    return hasAllRequired ? 'good' : 'warning';
+    
+    if (hasAllRequired) return 'good';
+    if (presentTags.length > 0) return 'warning';
+    return 'error';
   };
 
   const getTwitterStatus = () => {
     if (!data.twitterCardTags) return 'error';
-    return Object.keys(data.twitterCardTags).length > 0 ? 'good' : 'error';
+    const requiredTags = ['twitter:card', 'twitter:title', 'twitter:description'];
+    const presentTags = Object.keys(data.twitterCardTags);
+    const hasAllRequired = requiredTags.every(tag => presentTags.includes(tag));
+    
+    if (hasAllRequired) return 'good';
+    if (presentTags.length > 0) return 'warning';
+    return 'error';
   };
 
   return (

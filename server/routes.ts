@@ -966,9 +966,9 @@ function extractTechnicalChecks(lhr: any) {
     
     // Structured Data & Meta
     hasSchemaMarkup: lhr.audits['structured-data']?.score === 1,
-    hasOpenGraph: true, // Check Open Graph in basic SEO data
-    hasTwitterCards: true, // Check Twitter Cards in basic SEO data
-    hasOGImage: true, // Check in basic SEO data
+    hasOpenGraph: false, // Will be set correctly in generateBasicTechnicalChecks
+    hasTwitterCards: false, // Will be set correctly in generateBasicTechnicalChecks  
+    hasOGImage: false, // Will be set correctly in generateBasicTechnicalChecks
     
     // Technical Configuration
     hasLangAttribute: lhr.audits['html-has-lang']?.score === 1,
@@ -1008,7 +1008,9 @@ function calculateSeoScore(seoData: any): number {
   totalChecks += 20;
   if (seoData.openGraphTags) {
     const ogKeys = Object.keys(seoData.openGraphTags);
-    if (ogKeys.includes('og:title') && ogKeys.includes('og:description')) {
+    const requiredOgTags = ['og:title', 'og:description', 'og:image', 'og:url', 'og:type'];
+    const hasAllRequired = requiredOgTags.every(tag => ogKeys.includes(tag));
+    if (hasAllRequired) {
       score += 20;
     } else if (ogKeys.length > 0) {
       score += 10;
@@ -1019,7 +1021,9 @@ function calculateSeoScore(seoData: any): number {
   totalChecks += 15;
   if (seoData.twitterCardTags) {
     const twitterKeys = Object.keys(seoData.twitterCardTags);
-    if (twitterKeys.includes('twitter:card') && twitterKeys.includes('twitter:title')) {
+    const requiredTwitterTags = ['twitter:card', 'twitter:title', 'twitter:description'];
+    const hasAllRequired = requiredTwitterTags.every(tag => twitterKeys.includes(tag));
+    if (hasAllRequired) {
       score += 15;
     } else if (twitterKeys.length > 0) {
       score += 8;
@@ -1801,8 +1805,18 @@ function generateBasicTechnicalChecks(seoData: any, originalUrl: string) {
     
     // Structured Data & Meta
     hasSchemaMarkup: !!seoData.schemaMarkup,
-    hasOpenGraph: !!seoData.openGraphTags && Object.keys(seoData.openGraphTags).length >= 3,
-    hasTwitterCards: !!seoData.twitterCardTags && Object.keys(seoData.twitterCardTags).length >= 2,
+    hasOpenGraph: (() => {
+      if (!seoData.openGraphTags) return false;
+      const requiredOgTags = ['og:title', 'og:description', 'og:image', 'og:url', 'og:type'];
+      const presentTags = Object.keys(seoData.openGraphTags);
+      return requiredOgTags.every(tag => presentTags.includes(tag));
+    })(),
+    hasTwitterCards: (() => {
+      if (!seoData.twitterCardTags) return false;
+      const requiredTwitterTags = ['twitter:card', 'twitter:title', 'twitter:description'];
+      const presentTags = Object.keys(seoData.twitterCardTags);
+      return requiredTwitterTags.every(tag => presentTags.includes(tag));
+    })(),
     hasOGImage: seoData.openGraphTags ? !!seoData.openGraphTags['og:image'] : false,
     
     // Technical Configuration

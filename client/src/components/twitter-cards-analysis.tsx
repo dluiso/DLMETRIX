@@ -34,8 +34,9 @@ export default function TwitterCardsAnalysis({ data }: TwitterCardsAnalysisProps
     if (!data.twitterCardTags) return 'error';
     const requiredTags = ['twitter:card', 'twitter:title', 'twitter:description'];
     const presentTags = Object.keys(data.twitterCardTags);
-    const hasRequired = requiredTags.some(tag => presentTags.includes(tag));
-    if (hasRequired && presentTags.length >= 3) return 'good';
+    const hasAllRequired = requiredTags.every(tag => presentTags.includes(tag));
+    
+    if (hasAllRequired) return 'good';
     if (presentTags.length > 0) return 'warning';
     return 'error';
   };

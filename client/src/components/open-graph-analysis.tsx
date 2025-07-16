@@ -32,9 +32,10 @@ export default function OpenGraphAnalysis({ data }: OpenGraphAnalysisProps) {
 
   const getOpenGraphStatus = () => {
     if (!data.openGraphTags) return 'error';
-    const requiredTags = ['og:title', 'og:description', 'og:image', 'og:url'];
+    const requiredTags = ['og:title', 'og:description', 'og:image', 'og:url', 'og:type'];
     const presentTags = Object.keys(data.openGraphTags);
     const hasAllRequired = requiredTags.every(tag => presentTags.includes(tag));
+    
     if (hasAllRequired) return 'good';
     if (presentTags.length > 0) return 'warning';
     return 'error';
