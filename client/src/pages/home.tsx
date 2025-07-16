@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages, Monitor, Smartphone, Globe, Menu, X } from "lucide-react";
+import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages, Monitor, Smartphone, Globe, Menu, X, Info, HelpCircle, Coffee } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
@@ -44,6 +44,10 @@ export default function Home() {
   const [language, setLanguage] = useState<'en' | 'es'>('en');
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showWhyDlmetrix, setShowWhyDlmetrix] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
   const { toast } = useToast();
 
   const analyzeMutation = useMutation({
@@ -408,9 +412,9 @@ export default function Home() {
                 className="p-2"
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
+                  <X className="w-7 h-7" />
                 ) : (
-                  <Menu className="w-6 h-6" />
+                  <Menu className="w-7 h-7" />
                 )}
               </Button>
             </div>
@@ -422,8 +426,31 @@ export default function Home() {
               <div className="flex flex-col space-y-3">
                 {/* Main Navigation */}
                 <div className="grid grid-cols-2 gap-3 px-4">
-                  <WhyDlmetrixDialog language={language} />
-                  <HelpDialog language={language} />
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setShowWhyDlmetrix(true);
+                    }}
+                    className="justify-start"
+                  >
+                    <Info className="w-4 h-4 mr-2" />
+                    {t.whyDlmetrix}
+                  </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setShowHelp(true);
+                    }}
+                    className="justify-start"
+                  >
+                    <HelpCircle className="w-4 h-4 mr-2" />
+                    {t.help}
+                  </Button>
                 </div>
                 
                 {/* Settings and History */}
@@ -497,8 +524,31 @@ export default function Home() {
 
                 {/* Contact and Support */}
                 <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <ContactDialog language={language} />
-                  <SupportDialog language={language} />
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setShowContact(true);
+                    }}
+                    className="justify-start"
+                  >
+                    <Globe className="w-4 h-4 mr-2" />
+                    {t.contact}
+                  </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setShowSupport(true);
+                    }}
+                    className="justify-start"
+                  >
+                    <Coffee className="w-4 h-4 mr-2" />
+                    {t.enjoyingDlmetrix}
+                  </Button>
                 </div>
               </div>
             </div>
