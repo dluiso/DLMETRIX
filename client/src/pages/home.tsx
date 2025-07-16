@@ -423,13 +423,8 @@ export default function Home() {
               <div className="flex flex-col space-y-3">
                 {/* Main Navigation */}
                 <div className="grid grid-cols-2 gap-3 px-4">
-                  <div onClick={() => setIsMobileMenuOpen(false)}>
-                    <WhyDlmetrixDialog language={language} />
-                  </div>
-                  
-                  <div onClick={() => setIsMobileMenuOpen(false)}>
-                    <HelpDialog language={language} />
-                  </div>
+                  <WhyDlmetrixDialog language={language} />
+                  <HelpDialog language={language} />
                 </div>
                 
                 {/* Settings and History */}
@@ -503,13 +498,8 @@ export default function Home() {
 
                 {/* Contact and Support */}
                 <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <div onClick={() => setIsMobileMenuOpen(false)}>
-                    <ContactDialog language={language} />
-                  </div>
-                  
-                  <div onClick={() => setIsMobileMenuOpen(false)}>
-                    <SupportDialog language={language} />
-                  </div>
+                  <ContactDialog language={language} />
+                  <SupportDialog language={language} />
                 </div>
               </div>
             </div>

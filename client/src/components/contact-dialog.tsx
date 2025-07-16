@@ -15,6 +15,10 @@ export default function ContactDialog({ language = 'en' }: ContactDialogProps) {
   const { toast } = useToast();
   const t = getTranslations(language);
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+  };
+
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText('support@dlmetrix.com');
@@ -33,9 +37,14 @@ export default function ContactDialog({ language = 'en' }: ContactDialogProps) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full justify-start md:justify-center">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full justify-start md:justify-center touch-manipulation"
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <Mail className="w-4 h-4" />
           <span className="ml-2 md:hidden lg:inline">{t.contact}</span>
           <span className="hidden md:inline lg:hidden ml-2">{t.contact}</span>

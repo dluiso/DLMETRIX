@@ -12,10 +12,19 @@ export default function SupportDialog({ language = 'en' }: SupportDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const t = getTranslations(language);
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full justify-start md:justify-center text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full justify-start md:justify-center text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 touch-manipulation"
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <Coffee className="w-4 h-4" />
           <span className="ml-2 md:hidden lg:inline">{t.enjoyingDlmetrix}</span>
           <span className="hidden md:inline lg:hidden ml-2">{t.enjoyingDlmetrix}</span>

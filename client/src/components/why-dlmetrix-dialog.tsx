@@ -12,10 +12,19 @@ export default function WhyDlmetrixDialog({ language = 'en' }: WhyDlmetrixDialog
   const [isOpen, setIsOpen] = useState(false);
   const t = getTranslations(language);
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full justify-start md:justify-center">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full justify-start md:justify-center touch-manipulation"
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <Info className="w-4 h-4" />
           <span className="ml-2 md:hidden lg:inline">{t.whyDlmetrix}</span>
           <span className="hidden md:inline lg:hidden ml-2">{t.whyDlmetrix}</span>

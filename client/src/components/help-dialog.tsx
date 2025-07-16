@@ -28,10 +28,19 @@ export default function HelpDialog({ language }: HelpDialogProps) {
   const [open, setOpen] = useState(false);
   const t = getTranslations(language);
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full justify-start md:justify-center">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full justify-start md:justify-center touch-manipulation"
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <HelpCircle className="w-4 h-4" />
           <span className="ml-2 md:hidden lg:inline">{t.help}</span>
           <span className="hidden md:inline lg:hidden ml-2">{t.help}</span>
