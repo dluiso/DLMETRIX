@@ -125,8 +125,12 @@ Preferred communication style: Simple, everyday language.
   - Translation files for both languages
   - Removed subtitle from navigation bar for cleaner appearance
 - **Navigation Enhancement**: Logo and title now clickable to return to homepage with hover effects
+- **New Navigation Elements**:
+  - "Why DLMETRIX" dialog explaining mission and purpose
+  - "Contact" dialog with support email (support@dlmetrix.com)
+  - "Enjoying DLMETRIX?" support button with PayPal donation link
 - **Documentation Updates**: Updated replit.md project title and references
-- **User Impact**: All user-facing text now consistently shows "DLMETRIX" branding with improved navigation
+- **User Impact**: All user-facing text now consistently shows "DLMETRIX" branding with improved navigation and support options
 
 ## Previous Changes
 

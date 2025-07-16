@@ -24,6 +24,7 @@ import Footer from "@/components/footer";
 import HelpDialog from "@/components/help-dialog";
 import WhyDlmetrixDialog from "@/components/why-dlmetrix-dialog";
 import SupportDialog from "@/components/support-dialog";
+import ContactDialog from "@/components/contact-dialog";
 import { WebAnalysisResult } from "@/shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
@@ -266,6 +267,7 @@ export default function Home() {
                   {isExporting ? "..." : t.saveReport.split(' ')[0]}
                 </span>
               </Button>
+              <ContactDialog />
               <SupportDialog />
             </div>
           </div>
