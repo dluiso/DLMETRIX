@@ -67,9 +67,9 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4">
           <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-          <h2 className="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-slate-100">
             {language === 'en' ? 'Website URL Analysis' : 'Análisis de URL del Sitio Web'}
-          </h2>
+          </h3>
         </div>
         
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">

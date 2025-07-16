@@ -445,9 +445,9 @@ export default function Home() {
               <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
                 <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate max-w-[120px] sm:max-w-none">
+              <div className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate max-w-[120px] sm:max-w-none">
                 {t.title}
-              </h1>
+              </div>
             </div>
 
             {/* Desktop Menu */}
@@ -623,7 +623,7 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Settings className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.analysisSettings}</h3>
+                  <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.analysisSettings}</h2>
                 </div>
               </div>
             </CardHeader>
@@ -676,7 +676,7 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <History className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.analysisHistory}</h3>
+                  <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.analysisHistory}</h2>
                 </div>
                 {analysisHistory.length > 0 && (
                   <Button 
@@ -815,9 +815,9 @@ export default function Home() {
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4 px-2">
                   {t.title}
                 </h1>
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4">
+                <h2 className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4 font-medium">
                   {t.subtitle}
-                </p>
+                </h2>
               </div>
               
               {/* Centered URL Input */}
@@ -825,8 +825,11 @@ export default function Home() {
                 <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
-              {/* Features List - Improved Mobile Layout */}
-              <div className="mt-12 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              {/* Features Section - SEO Optimized */}
+              <section className="mt-12 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
+                  {language === 'en' ? 'Comprehensive Website Analysis Features' : 'Características de Análisis Web Integral'}
+                </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-3 sm:gap-4 justify-center items-center text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                   <div className="flex items-center gap-1.5 justify-center">
                     <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
@@ -853,7 +856,58 @@ export default function Home() {
                     <span className="font-medium">Keywords</span>
                   </div>
                 </div>
-              </div>
+              </section>
+
+              {/* About Section - SEO Content */}
+              <article className="mt-16 max-w-4xl mx-auto px-4 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+                <section className="text-center mb-8">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                    {language === 'en' ? 'Free Website SEO Analysis Tool' : 'Herramienta Gratuita de Análisis SEO'}
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {language === 'en' 
+                      ? 'DLMETRIX provides comprehensive website performance analysis including Core Web Vitals, SEO audit, accessibility testing, and technical optimization recommendations. Our free tool helps web developers and SEO professionals identify performance issues and improve search engine rankings.'
+                      : 'DLMETRIX proporciona análisis integral de rendimiento web incluyendo Core Web Vitals, auditoría SEO, pruebas de accesibilidad y recomendaciones de optimización técnica. Nuestra herramienta gratuita ayuda a desarrolladores web y profesionales SEO a identificar problemas de rendimiento y mejorar el ranking en buscadores.'
+                    }
+                  </p>
+                </section>
+
+                <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                      {language === 'en' ? 'Core Web Vitals' : 'Core Web Vitals'}
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      {language === 'en' 
+                        ? 'Measure LCP, FID, CLS and other performance metrics that affect user experience and search rankings.'
+                        : 'Mide LCP, FID, CLS y otras métricas de rendimiento que afectan la experiencia del usuario y el ranking en buscadores.'
+                      }
+                    </p>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                      {language === 'en' ? 'Technical SEO' : 'SEO Técnico'}
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      {language === 'en' 
+                        ? 'Analyze meta tags, heading structure, schema markup, and other technical SEO factors.'
+                        : 'Analiza meta etiquetas, estructura de encabezados, marcado de esquema y otros factores de SEO técnico.'
+                      }
+                    </p>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                      {language === 'en' ? 'Accessibility' : 'Accesibilidad'}
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      {language === 'en' 
+                        ? 'Check website accessibility compliance and get recommendations for inclusive design.'
+                        : 'Verifica el cumplimiento de accesibilidad del sitio web y obtén recomendaciones para diseño inclusivo.'
+                      }
+                    </p>
+                  </div>
+                </section>
+              </article>
               
               {/* Footer for centered layout - Improved Mobile */}
               <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
@@ -990,7 +1044,7 @@ export default function Home() {
         )}
 
         {seoData && (
-          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+          <main className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Comparison Mode Banner */}
             {compareMode && compareData && (
               <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
@@ -1090,7 +1144,7 @@ export default function Home() {
               {/* Technical Checks */}
               <TechnicalSeo checks={seoData.technicalChecks} />
             </div>
-          </div>
+          </main>
         )}
       </main>
 
