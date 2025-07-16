@@ -12,25 +12,14 @@ if (!container) throw new Error("Root container missing in index.html");
 const root = createRoot(container);
 root.render(<App />);
 
-// Initialize obfuscation systems only in production
-if (import.meta.env.PROD && window.location.hostname !== 'localhost') {
+// Only run minimal obfuscation in production if explicitly enabled
+if (import.meta.env.PROD && window.location.hostname === 'dlmetrix.com') {
   setTimeout(() => {
     try {
-      initSimpleObfuscation();
-      initHostingObfuscation();
-      obfuscateUserAgent();
-    } catch (e) {
-      console.error('Obfuscation init failed:', e);
-    }
-  }, 1000);
-
-  // Safe cleanup and storage cleaning
-  setTimeout(() => {
-    try {
+      // Only basic cleanup, nothing that could break React
       safeCleanup();
-      cleanStorageReferences();
     } catch (e) {
-      console.error('Cleanup failed:', e);
+      // Silent fail
     }
-  }, 3000);
+  }, 5000);
 }

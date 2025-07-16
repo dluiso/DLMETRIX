@@ -61,27 +61,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Technology Obfuscation (Production Only) -->
+    <!-- Basic Security Script -->
     <script>
-      // Only run obfuscation when not in development
-      if (window.location.hostname !== 'localhost' && 
-          !window.location.hostname.includes('127.0.0.1') && 
-          window.location.port !== '5000' &&
-          !window.location.hostname.includes('replit.app')) {
-        
-        // Basic technology hiding
+      // Simple security measures without interfering with React
+      (function() {
+        // Only remove source maps, nothing else
         setTimeout(function() {
-          // Remove source maps only
-          document.querySelectorAll('script[src*=".map"], link[href*=".map"]').forEach(function(el) {
-            el.remove();
-          });
-          
-          // Hide React DevTools
-          if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-            delete window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+          var maps = document.querySelectorAll('script[src*=".map"], link[href*=".map"]');
+          for (var i = 0; i < maps.length; i++) {
+            maps[i].remove();
           }
-        }, 1000);
-      }
+        }, 2000);
+      })();
     </script>
     
     <!-- Structured Data -->
