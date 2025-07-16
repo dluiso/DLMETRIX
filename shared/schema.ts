@@ -8,7 +8,6 @@ export const webAnalyses = mysqlTable("web_analyses", {
   
   // Basic SEO fields
   title: text("title"),
-  description: text("description"),
   keywords: text("keywords"),
   canonicalUrl: text("canonical_url"),
   robotsMeta: text("robots_meta"),
@@ -34,6 +33,10 @@ export const webAnalyses = mysqlTable("web_analyses", {
   diagnostics: json("diagnostics"), // Performance, accessibility, best practices diagnostics
   insights: json("insights"), // Key findings and opportunities
   technicalChecks: json("technical_checks"),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const sharedReports = mysqlTable("shared_reports", {

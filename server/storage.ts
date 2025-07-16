@@ -59,7 +59,6 @@ export class MemStorage implements IStorage {
       id,
       url: insertAnalysis.url,
       title: insertAnalysis.title ?? null,
-      description: insertAnalysis.description ?? null,
       keywords: insertAnalysis.keywords ?? null,
       canonicalUrl: insertAnalysis.canonicalUrl ?? null,
       robotsMeta: insertAnalysis.robotsMeta ?? null,
@@ -79,6 +78,8 @@ export class MemStorage implements IStorage {
       diagnostics: insertAnalysis.diagnostics ?? null,
       insights: insertAnalysis.insights ?? null,
       technicalChecks: insertAnalysis.technicalChecks ?? null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     this.webAnalyses.set(id, analysis);
     return analysis;
@@ -210,7 +211,7 @@ export class DatabaseStorage implements IStorage {
       console.log(`✅ Shared report saved to database with ID: ${report.id} for token: ${insertReport.shareToken}`);
       return report;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Database insert failed:', error.message);
       console.error('🔍 Error details:', {
         code: error.code,
@@ -257,7 +258,7 @@ export class DatabaseStorage implements IStorage {
       console.log(`❌ No shared report found in database with token: ${shareToken}`);
       return undefined;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Database query failed:', error.message);
       
       // Fallback to memory storage

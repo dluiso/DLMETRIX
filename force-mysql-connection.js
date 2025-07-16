@@ -121,12 +121,19 @@ DATABASE_URL=${databaseUrl}
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
     
+    // Check existing table structure
+    try {
+      const [columns] = await connection.execute('DESCRIBE web_analyses');
+      console.log('📊 Current web_analyses columns:', columns.map(col => col.Field));
+    } catch (error) {
+      console.log('⚠️ web_analyses table does not exist, will create it');
+    }
+
     await connection.execute(`
       CREATE TABLE IF NOT EXISTS web_analyses (
         id INT AUTO_INCREMENT PRIMARY KEY,
         url TEXT NOT NULL,
         title TEXT,
-        description TEXT,
         keywords TEXT,
         canonical_url TEXT,
         robots_meta TEXT,
@@ -150,6 +157,42 @@ DATABASE_URL=${databaseUrl}
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
+
+    // Add missing columns if they don't exist
+    const columnsToAdd = [
+      { name: 'keywords', definition: 'TEXT' },
+      { name: 'canonical_url', definition: 'TEXT' },
+      { name: 'robots_meta', definition: 'TEXT' },
+      { name: 'viewport_meta', definition: 'TEXT' },
+      { name: 'open_graph_tags', definition: 'JSON' },
+      { name: 'twitter_card_tags', definition: 'JSON' },
+      { name: 'schema_markup', definition: 'BOOLEAN DEFAULT FALSE' },
+      { name: 'sitemap', definition: 'BOOLEAN DEFAULT FALSE' },
+      { name: 'core_web_vitals', definition: 'JSON' },
+      { name: 'performance_score', definition: 'INT DEFAULT 0' },
+      { name: 'accessibility_score', definition: 'INT DEFAULT 0' },
+      { name: 'best_practices_score', definition: 'INT DEFAULT 0' },
+      { name: 'seo_score', definition: 'INT DEFAULT 0' },
+      { name: 'mobile_screenshot', definition: 'MEDIUMTEXT' },
+      { name: 'desktop_screenshot', definition: 'MEDIUMTEXT' },
+      { name: 'recommendations', definition: 'JSON' },
+      { name: 'diagnostics', definition: 'JSON' },
+      { name: 'insights', definition: 'JSON' },
+      { name: 'technical_checks', definition: 'JSON' }
+    ];
+
+    for (const column of columnsToAdd) {
+      try {
+        await connection.execute(`ALTER TABLE web_analyses ADD COLUMN ${column.name} ${column.definition}`);
+        console.log(`✅ Added column: ${column.name}`);
+      } catch (error) {
+        if (error.code === 'ER_DUP_FIELDNAME') {
+          console.log(`📝 Column ${column.name} already exists`);
+        } else {
+          console.log(`⚠️ Could not add column ${column.name}:`, error.message);
+        }
+      }
+    }
     
     console.log('✅ Tables verified/created');
     await connection.end();
