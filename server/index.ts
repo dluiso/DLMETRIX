@@ -3,6 +3,32 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Technology Obfuscation Headers Middleware
+app.use((req, res, next) => {
+  // Remove standard technology headers
+  res.removeHeader('X-Powered-By');
+  
+  // Add obfuscated headers to hide real technology stack
+  res.setHeader('X-Powered-By', 'DLMETRIX Enterprise Server v2.5');
+  res.setHeader('Server', 'DLM-Server/2.5.0');
+  res.setHeader('X-Framework', 'DLMETRIX Custom Solution');
+  res.setHeader('X-Runtime', 'DLM-Runtime/Advanced');
+  res.setHeader('X-Technology', 'Proprietary Enterprise Stack');
+  res.setHeader('X-Engine', 'DLMETRIX Core Engine');
+  res.setHeader('X-Generator', 'DLMETRIX Custom Framework');
+  
+  // Additional security headers that help hide technology fingerprints
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

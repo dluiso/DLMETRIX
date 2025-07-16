@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     
+    <!-- Technology Obfuscation -->
+    <meta name="generator" content="DLMETRIX Custom Framework v2.5" />
+    <meta name="powered-by" content="DLM Advanced Engine" />
+    <meta name="framework" content="DLMETRIX Core Technology" />
+    <meta name="X-Powered-By" content="DLM-Server/2.5" />
+    <meta name="X-Framework" content="Custom Enterprise Solution" />
+    
     <!-- Primary Meta Tags -->
     <title>DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker</title>
     <meta name="title" content="DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker">
@@ -50,6 +57,55 @@
     <!-- Preconnect to important domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Anti-Detection Script -->
+    <script>
+      // Technology Fingerprint Obfuscation
+      (function() {
+        // Remove React/Framework indicators
+        if (typeof window !== 'undefined') {
+          delete window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+          delete window.React;
+          delete window.ReactDOM;
+          delete window.__vite__;
+          delete window.__VITE_HMR_PORT__;
+          delete window.Vue;
+          delete window.Angular;
+          delete window.$;
+          delete window.jQuery;
+          
+          // Mask framework globals
+          const frameworks = ['React', 'Vue', 'Angular', 'Vite', 'webpack', 'Babel'];
+          frameworks.forEach(fw => {
+            try {
+              Object.defineProperty(window, fw, {
+                value: undefined,
+                writable: false,
+                enumerable: false,
+                configurable: false
+              });
+            } catch(e) {}
+          });
+          
+          // Hide source maps
+          const hideSourceMaps = () => {
+            document.querySelectorAll('script[src*=".map"], link[href*=".map"]').forEach(el => el.remove());
+          };
+          
+          // Override console to hide framework logs
+          const originalConsole = console.log;
+          console.log = (...args) => {
+            const msg = args.join(' ');
+            if (msg.includes('React') || msg.includes('Vite') || msg.includes('HMR')) return;
+            originalConsole.apply(console, args);
+          };
+          
+          // Run cleanup
+          setTimeout(hideSourceMaps, 100);
+          setInterval(hideSourceMaps, 5000);
+        }
+      })();
+    </script>
     
     <!-- Structured Data -->
     <script type="application/ld+json">
