@@ -21,6 +21,7 @@ import ScreenshotsView from "@/components/screenshots-view";
 import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
 import KeywordAnalysis from "@/components/keyword-analysis";
 import Footer from "@/components/footer";
+import { trackEvent } from "@/lib/analytics";
 import HelpDialog from "@/components/help-dialog";
 import WhyDlmetrixDialog from "@/components/why-dlmetrix-dialog";
 import SupportDialog from "@/components/support-dialog";
@@ -68,6 +69,9 @@ export default function Home() {
       setSeoData(data);
       setError(null);
       setProtectionError(null);
+      
+      // Track analysis completion event
+      trackEvent('analysis_completed', 'seo_analysis', data.url, data.seoScore);
       
       // Add to history (avoid duplicates)
       setAnalysisHistory(prev => {
@@ -117,6 +121,9 @@ export default function Home() {
     setProtectionError(null);
     setAnalysisProgress('Initializing analysis...');
     
+    // Track analysis start event
+    trackEvent('analysis_started', 'seo_analysis', url);
+    
     // Simulate progress updates
     const progressSteps = [
       'Launching browser automation...',
@@ -157,6 +164,9 @@ export default function Home() {
     }
 
     setIsExporting(true);
+    // Track PDF export event
+    trackEvent('pdf_export', 'report_export', seoData.url);
+    
     try {
       // Try visual export first (with web component captures), fallback to standard PDF
       try {
@@ -184,6 +194,9 @@ export default function Home() {
 
   const handleExportCSV = () => {
     if (!seoData) return;
+    
+    // Track CSV export event
+    trackEvent('csv_export', 'report_export', seoData.url);
 
     const csvData = [
       // Header
@@ -375,6 +388,9 @@ export default function Home() {
     if (!seoData) return;
 
     setIsSharing(true);
+    // Track share creation event
+    trackEvent('share_created', 'report_sharing', seoData.url);
+    
     try {
       const response = await apiRequest("POST", "/api/share/create", { analysisData: seoData });
       const data = await response.json();
@@ -407,6 +423,9 @@ export default function Home() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
       
+      // Track copy event
+      trackEvent('link_copied', 'report_sharing', 'clipboard');
+      
       toast({
         title: language === 'es' ? "Copiado" : "Copied",
         description: language === 'es' 
@@ -428,6 +447,10 @@ export default function Home() {
     setCompareData(data);
     setCompareMode(true);
     setShowHistory(false);
+    
+    // Track comparison event
+    trackEvent('comparison_started', 'comparison', `${seoData?.url} vs ${data.url}`);
+    
     toast({
       title: t.comparisonEnabled,
       description: `${t.comparingWith} ${data.url}`,
@@ -639,7 +662,10 @@ export default function Home() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setDarkMode(!darkMode)}
+                      onClick={() => {
+                        setDarkMode(!darkMode);
+                        trackEvent('theme_changed', 'settings', darkMode ? 'light' : 'dark');
+                      }}
                       className="h-8 w-16 bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500"
                     >
                       <div className={`w-4 h-4 rounded-full bg-white transition-transform ${darkMode ? 'translate-x-2' : '-translate-x-2'}`} />
@@ -654,7 +680,10 @@ export default function Home() {
                     </div>
                     <select
                       value={language}
-                      onChange={(e) => setLanguage(e.target.value as 'en' | 'es')}
+                      onChange={(e) => {
+                        setLanguage(e.target.value as 'en' | 'es');
+                        trackEvent('language_changed', 'settings', e.target.value);
+                      }}
                       className="px-3 py-1 bg-slate-100 dark:bg-slate-600 text-slate-900 dark:text-slate-100 rounded border border-slate-300 dark:border-slate-500 text-sm"
                     >
                       <option value="en">{t.english}</option>
