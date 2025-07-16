@@ -61,19 +61,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Basic Security Script -->
-    <script>
-      // Simple security measures without interfering with React
-      (function() {
-        // Only remove source maps, nothing else
-        setTimeout(function() {
-          var maps = document.querySelectorAll('script[src*=".map"], link[href*=".map"]');
-          for (var i = 0; i < maps.length; i++) {
-            maps[i].remove();
-          }
-        }, 2000);
-      })();
-    </script>
+
     
     <!-- Structured Data -->
     <script type="application/ld+json">
