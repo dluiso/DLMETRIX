@@ -36,6 +36,18 @@ export default function SharePage() {
     enabled: !!shareToken,
   });
 
+  // Debug logging
+  useEffect(() => {
+    console.log('SharePage Debug:', {
+      shareToken,
+      isLoading,
+      error,
+      hasSharedReport: !!sharedReport,
+      sharedReportKeys: sharedReport ? Object.keys(sharedReport) : [],
+      analysisDataKeys: sharedReport?.analysisData ? Object.keys(sharedReport.analysisData) : []
+    });
+  }, [shareToken, isLoading, error, sharedReport]);
+
   // Calculate time remaining
   useEffect(() => {
     if (!sharedReport?.expiresAt) return;
@@ -98,6 +110,30 @@ export default function SharePage() {
   }
 
   const analysisData = sharedReport.analysisData;
+
+  // Additional safety check
+  if (!analysisData) {
+    console.error('No analysis data found in shared report:', sharedReport);
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="p-8 text-center border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800">
+            <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Invalid Report Data</h3>
+            <p className="text-yellow-600 dark:text-yellow-300 mb-4">
+              The shared report data appears to be corrupted or incomplete.
+            </p>
+            <Button
+              onClick={() => window.location.href = '/'}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white"
+            >
+              Go to DLMETRIX
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">

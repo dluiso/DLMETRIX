@@ -178,7 +178,27 @@ export class DatabaseStorage implements IStorage {
       
       const createdAnalysis: WebAnalysis = {
         id: result.insertId as number,
-        ...insertAnalysis,
+        url: insertAnalysis.url,
+        title: insertAnalysis.title ?? null,
+        keywords: insertAnalysis.keywords ?? null,
+        canonicalUrl: insertAnalysis.canonicalUrl ?? null,
+        robotsMeta: insertAnalysis.robotsMeta ?? null,
+        viewportMeta: insertAnalysis.viewportMeta ?? null,
+        openGraphTags: insertAnalysis.openGraphTags ?? null,
+        twitterCardTags: insertAnalysis.twitterCardTags ?? null,
+        schemaMarkup: insertAnalysis.schemaMarkup ?? false,
+        sitemap: insertAnalysis.sitemap ?? false,
+        coreWebVitals: insertAnalysis.coreWebVitals ?? null,
+        performanceScore: insertAnalysis.performanceScore ?? 0,
+        accessibilityScore: insertAnalysis.accessibilityScore ?? 0,
+        bestPracticesScore: insertAnalysis.bestPracticesScore ?? 0,
+        seoScore: insertAnalysis.seoScore ?? 0,
+        mobileScreenshot: insertAnalysis.mobileScreenshot ?? null,
+        desktopScreenshot: insertAnalysis.desktopScreenshot ?? null,
+        recommendations: insertAnalysis.recommendations ?? null,
+        diagnostics: insertAnalysis.diagnostics ?? null,
+        insights: insertAnalysis.insights ?? null,
+        technicalChecks: insertAnalysis.technicalChecks ?? null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
