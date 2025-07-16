@@ -878,6 +878,7 @@ export default function Home() {
               mobileScreenshot={seoData.mobileScreenshot}
               desktopScreenshot={seoData.desktopScreenshot}
               url={seoData.url}
+              language={language}
             />
 
             {/* Legacy SEO Analysis */}

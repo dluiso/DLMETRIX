@@ -234,6 +234,16 @@ export const translations: Record<'en' | 'es', Translations> = {
     needsImprovement: "Needs Improvement",
     poor: "Poor",
     
+    // Core Web Vitals Additional
+    averageScore: "Average Score",
+    basedOnMetrics: "Based on Core Web Vitals performance",
+    issuesFound: "Issues Found & Recommendations",
+    performanceAreas: "performance areas that need attention",
+    excellent: "Excellent",
+    needsWork: "Needs Work",
+    screenshotNotAvailable: "Screenshot Not Available",
+    screenshotFailureReason: "Screenshot could not be generated. This may be due to server policies, security restrictions, or website blocking features.",
+    
     // SEO Analysis
     seoAnalysisResults: "SEO Analysis Results",
     metaDescription: "Meta Description",
@@ -385,6 +395,16 @@ export const translations: Record<'en' | 'es', Translations> = {
     good: "Bueno",
     needsImprovement: "Necesita Mejora",
     poor: "Pobre",
+    
+    // Core Web Vitals Additional
+    averageScore: "Puntuación Promedio",
+    basedOnMetrics: "Basado en el rendimiento de Core Web Vitals",
+    issuesFound: "Problemas Encontrados y Recomendaciones",
+    performanceAreas: "áreas de rendimiento que necesitan atención",
+    excellent: "Excelente",
+    needsWork: "Necesita Trabajo",
+    screenshotNotAvailable: "Captura de Pantalla No Disponible",
+    screenshotFailureReason: "No se pudo generar la captura de pantalla. Esto puede deberse a políticas del servidor, restricciones de seguridad o funciones de bloqueo del sitio web.",
     
     // SEO Analysis
     seoAnalysisResults: "Resultados del Análisis SEO",

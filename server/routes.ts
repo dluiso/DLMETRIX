@@ -448,9 +448,9 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
   const page = await browser.newPage();
   
   try {
-    // Set longer timeout for ARM64
-    page.setDefaultTimeout(45000);
-    page.setDefaultNavigationTimeout(45000);
+    // Set longer timeout for ARM64 - increased for better compatibility
+    page.setDefaultTimeout(60000);
+    page.setDefaultNavigationTimeout(60000);
     
     if (device === 'mobile') {
       await page.setViewport({ 
@@ -467,11 +467,11 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
     // Navigate with optimized wait conditions for ARM64
     await page.goto(url, { 
       waitUntil: 'domcontentloaded',
-      timeout: device === 'mobile' ? 30000 : 40000 // Shorter timeout for mobile
+      timeout: device === 'mobile' ? 45000 : 55000 // Increased timeouts significantly
     });
     
-    // Shorter wait for mobile to avoid timeouts
-    const waitTime = device === 'mobile' ? 1000 : 2000;
+    // Wait for content to settle
+    const waitTime = device === 'mobile' ? 2000 : 3000; // Increased wait times
     await new Promise(resolve => setTimeout(resolve, waitTime));
     
     // Capture with timeout protection (optimized for mobile ARM64)
@@ -491,8 +491,8 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
     
     const screenshotPromise = page.screenshot(screenshotOptions);
     
-    // Different timeout for mobile vs desktop
-    const timeoutMs = device === 'mobile' ? 25000 : 35000;
+    // Different timeout for mobile vs desktop - significantly increased
+    const timeoutMs = device === 'mobile' ? 40000 : 50000; // Increased from 25s/35s to 40s/50s
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Screenshot timeout')), timeoutMs)
     );

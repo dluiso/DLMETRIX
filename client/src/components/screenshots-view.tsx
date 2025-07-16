@@ -1,15 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Monitor, Smartphone, Image } from "lucide-react";
+import { Monitor, Smartphone, Image, AlertCircle } from "lucide-react";
+import { getTranslations } from "@/lib/translations";
 
 interface ScreenshotsViewProps {
   mobileScreenshot: string | null;
   desktopScreenshot: string | null;
   url: string;
+  language?: 'en' | 'es';
 }
 
-export default function ScreenshotsView({ mobileScreenshot, desktopScreenshot, url }: ScreenshotsViewProps) {
+export default function ScreenshotsView({ mobileScreenshot, desktopScreenshot, url, language = 'en' }: ScreenshotsViewProps) {
   const hasScreenshots = mobileScreenshot || desktopScreenshot;
+  const t = getTranslations(language);
 
   return (
     <Card>
@@ -41,11 +44,11 @@ export default function ScreenshotsView({ mobileScreenshot, desktopScreenshot, u
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="mobile" className="flex items-center space-x-2">
               <Smartphone className="w-4 h-4" />
-              <span>Mobile</span>
+              <span>{t.mobile}</span>
             </TabsTrigger>
             <TabsTrigger value="desktop" className="flex items-center space-x-2">
               <Monitor className="w-4 h-4" />
-              <span>Desktop</span>
+              <span>{t.desktop}</span>
             </TabsTrigger>
           </TabsList>
           
@@ -70,10 +73,11 @@ export default function ScreenshotsView({ mobileScreenshot, desktopScreenshot, u
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-64 bg-slate-200 rounded-lg">
-                  <div className="text-center">
-                    <Smartphone className="w-8 h-8 mx-auto text-slate-400 mb-2" />
-                    <p className="text-slate-500">Mobile screenshot not available</p>
+                <div className="flex items-center justify-center h-64 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <div className="text-center p-4">
+                    <AlertCircle className="w-8 h-8 mx-auto text-amber-600 dark:text-amber-400 mb-3" />
+                    <h4 className="font-medium text-amber-900 dark:text-amber-100 mb-2">{t.screenshotNotAvailable}</h4>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">{t.screenshotFailureReason}</p>
                   </div>
                 </div>
               )}
@@ -101,10 +105,11 @@ export default function ScreenshotsView({ mobileScreenshot, desktopScreenshot, u
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-64 bg-slate-200 rounded-lg">
-                  <div className="text-center">
-                    <Monitor className="w-8 h-8 mx-auto text-slate-400 mb-2" />
-                    <p className="text-slate-500">Desktop screenshot not available</p>
+                <div className="flex items-center justify-center h-64 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <div className="text-center p-4">
+                    <AlertCircle className="w-8 h-8 mx-auto text-amber-600 dark:text-amber-400 mb-3" />
+                    <h4 className="font-medium text-amber-900 dark:text-amber-100 mb-2">{t.screenshotNotAvailable}</h4>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">{t.screenshotFailureReason}</p>
                   </div>
                 </div>
               )}

@@ -151,9 +151,9 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
     return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   };
 
-  // Get problems and suggestions for device
-  const getProblemsAndSuggestions = (deviceData: any) => {
-    const problems: Array<{metric: string, title: string, status: string, suggestion: string}> = [];
+  // Get problems and suggestions with specific elements for device
+  const getProblemsAndSuggestions = (deviceData: any, device: 'mobile' | 'desktop') => {
+    const problems: Array<{metric: string, title: string, status: string, suggestion: string, specificElements: string[]}> = [];
     
     vitalsConfig.forEach(vital => {
       const value = deviceData[vital.key];
@@ -170,13 +170,16 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
         if (threshold) {
           let status = 'good';
           let suggestion = '';
+          let specificElements: string[] = [];
           
           if (value > threshold.poor) {
             status = 'poor';
             suggestion = vital.suggestions.poor;
+            specificElements = getSpecificElements(vital.key, 'poor', device);
           } else if (value > threshold.good) {
             status = 'needsImprovement';
             suggestion = vital.suggestions.needsImprovement;
+            specificElements = getSpecificElements(vital.key, 'needsImprovement', device);
           }
           
           if (status !== 'good') {
@@ -184,7 +187,8 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
               metric: vital.key,
               title: vital.title,
               status: status === 'poor' ? 'Poor' : 'Needs Improvement',
-              suggestion
+              suggestion,
+              specificElements
             });
           }
         }
@@ -192,6 +196,94 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
     });
     
     return problems;
+  };
+
+  // Get specific elements causing issues
+  const getSpecificElements = (metric: string, severity: string, device: 'mobile' | 'desktop'): string[] => {
+    const elementsByMetric = {
+      lcp: {
+        poor: [
+          'Large unoptimized images (hero images, banners)',
+          'Render-blocking CSS files in <head>',
+          'Large JavaScript bundles blocking rendering',
+          'Slow server response (>600ms TTFB)',
+          'Third-party scripts (ads, analytics)',
+          'Web fonts without font-display: swap'
+        ],
+        needsImprovement: [
+          'Images without responsive sizing',
+          'Unused CSS rules',
+          'Non-critical JavaScript in <head>',
+          'Missing resource hints (preload, prefetch)'
+        ]
+      },
+      fid: {
+        poor: [
+          'Heavy JavaScript execution blocking main thread',
+          'Large DOM manipulation scripts',
+          'Synchronous third-party scripts',
+          'Event handlers on document/window',
+          'Long-running functions (>50ms)',
+          'Unoptimized React/Vue components'
+        ],
+        needsImprovement: [
+          'Non-essential JavaScript bundles',
+          'Excessive event listeners',
+          'Large framework libraries',
+          'Heavy CSS animations'
+        ]
+      },
+      cls: {
+        poor: [
+          'Images without width/height attributes',
+          'Dynamic content insertion (ads, embeds)',
+          'Web fonts causing FOIT/FOUT',
+          'Elements without reserved space',
+          'JavaScript-injected content',
+          'CSS animations affecting layout'
+        ],
+        needsImprovement: [
+          'Missing aspect-ratio CSS properties',
+          'Late-loading web fonts',
+          'Responsive images without sizes',
+          'Dynamic height containers'
+        ]
+      },
+      fcp: {
+        poor: [
+          'Render-blocking CSS files',
+          'Large JavaScript bundles',
+          'Slow server response times',
+          'Multiple DNS lookups',
+          'Unoptimized critical rendering path',
+          'Missing HTTP/2 or HTTP/3'
+        ],
+        needsImprovement: [
+          'Non-inlined critical CSS',
+          'Large CSS files',
+          'Unoptimized web fonts',
+          'Missing resource prioritization'
+        ]
+      },
+      ttfb: {
+        poor: [
+          'Slow hosting server/provider',
+          'Database queries without optimization',
+          'Missing server-side caching',
+          'No CDN implementation',
+          'Heavy server-side processing',
+          'Poor database indexes'
+        ],
+        needsImprovement: [
+          'Suboptimal server configuration',
+          'Missing compression (gzip/brotli)',
+          'Heavy application logic',
+          'Inefficient hosting plan'
+        ]
+      }
+    };
+
+    return elementsByMetric[metric as keyof typeof elementsByMetric]?.[severity as keyof typeof elementsByMetric[metric]] || [];
   };
 
   return (
@@ -234,8 +326,8 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
                   <div className="flex items-center space-x-3">
                     <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     <div>
-                      <h4 className="font-medium text-blue-900 dark:text-blue-100">Mobile Average Score</h4>
-                      <p className="text-sm text-blue-700 dark:text-blue-300">Based on Core Web Vitals performance</p>
+                      <h4 className="font-medium text-blue-900 dark:text-blue-100">{t.mobile} {t.averageScore}</h4>
+                      <p className="text-sm text-blue-700 dark:text-blue-300">{t.basedOnMetrics}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -253,8 +345,8 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
                       calculateAverageScore(data.mobile)! >= 60 ? 'secondary' : 'destructive'
                     } className="text-xs">
                       {calculateAverageScore(data.mobile) === null ? 'N/A' :
-                       calculateAverageScore(data.mobile)! >= 80 ? 'Excellent' :
-                       calculateAverageScore(data.mobile)! >= 60 ? 'Good' : 'Needs Work'}
+                       calculateAverageScore(data.mobile)! >= 80 ? t.excellent :
+                       calculateAverageScore(data.mobile)! >= 60 ? t.good : t.needsWork}
                     </Badge>
                   </div>
                 </div>
@@ -291,28 +383,45 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
             </div>
 
             {/* Problems and Suggestions Section */}
-            {hasRealData && getProblemsAndSuggestions(data.mobile).length > 0 && (
+            {hasRealData && getProblemsAndSuggestions(data.mobile, 'mobile').length > 0 && (
               <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
                 <div className="flex items-start space-x-3 mb-4">
                   <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-amber-900 dark:text-amber-100">Issues Found & Recommendations</h4>
-                    <p className="text-sm text-amber-700 dark:text-amber-300">Mobile performance areas that need attention</p>
+                    <h4 className="font-medium text-amber-900 dark:text-amber-100">{t.issuesFound}</h4>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">{t.mobile} {t.performanceAreas}</p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  {getProblemsAndSuggestions(data.mobile).map((problem, index) => (
-                    <div key={index} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-amber-200 dark:border-amber-700">
-                      <div className="flex items-center justify-between mb-2">
+                <div className="space-y-4">
+                  {getProblemsAndSuggestions(data.mobile, 'mobile').map((problem, index) => (
+                    <div key={index} className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-amber-200 dark:border-amber-700">
+                      <div className="flex items-center justify-between mb-3">
                         <span className="font-medium text-slate-900 dark:text-slate-100">{problem.title}</span>
                         <Badge variant={problem.status === 'Poor' ? 'destructive' : 'secondary'} className="text-xs">
                           {problem.status}
                         </Badge>
                       </div>
-                      <div className="flex items-start space-x-2">
+                      
+                      {/* General Recommendation */}
+                      <div className="flex items-start space-x-2 mb-3">
                         <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-slate-600 dark:text-slate-400">{problem.suggestion}</p>
                       </div>
+                      
+                      {/* Specific Elements */}
+                      {problem.specificElements.length > 0 && (
+                        <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                          <h5 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Specific elements causing issues:</h5>
+                          <ul className="space-y-1">
+                            {problem.specificElements.map((element, idx) => (
+                              <li key={idx} className="text-xs text-slate-600 dark:text-slate-400 flex items-start space-x-2">
+                                <span className="text-red-500 mt-1">•</span>
+                                <span>{element}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -328,8 +437,8 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
                   <div className="flex items-center space-x-3">
                     <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                     <div>
-                      <h4 className="font-medium text-green-900 dark:text-green-100">Desktop Average Score</h4>
-                      <p className="text-sm text-green-700 dark:text-green-300">Based on Core Web Vitals performance</p>
+                      <h4 className="font-medium text-green-900 dark:text-green-100">{t.desktop} {t.averageScore}</h4>
+                      <p className="text-sm text-green-700 dark:text-green-300">{t.basedOnMetrics}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -347,8 +456,8 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
                       calculateAverageScore(data.desktop)! >= 60 ? 'secondary' : 'destructive'
                     } className="text-xs">
                       {calculateAverageScore(data.desktop) === null ? 'N/A' :
-                       calculateAverageScore(data.desktop)! >= 80 ? 'Excellent' :
-                       calculateAverageScore(data.desktop)! >= 60 ? 'Good' : 'Needs Work'}
+                       calculateAverageScore(data.desktop)! >= 80 ? t.excellent :
+                       calculateAverageScore(data.desktop)! >= 60 ? t.good : t.needsWork}
                     </Badge>
                   </div>
                 </div>
@@ -385,28 +494,45 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
             </div>
 
             {/* Problems and Suggestions Section */}
-            {hasRealData && getProblemsAndSuggestions(data.desktop).length > 0 && (
+            {hasRealData && getProblemsAndSuggestions(data.desktop, 'desktop').length > 0 && (
               <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
                 <div className="flex items-start space-x-3 mb-4">
                   <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-amber-900 dark:text-amber-100">Issues Found & Recommendations</h4>
-                    <p className="text-sm text-amber-700 dark:text-amber-300">Desktop performance areas that need attention</p>
+                    <h4 className="font-medium text-amber-900 dark:text-amber-100">{t.issuesFound}</h4>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">{t.desktop} {t.performanceAreas}</p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  {getProblemsAndSuggestions(data.desktop).map((problem, index) => (
-                    <div key={index} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-amber-200 dark:border-amber-700">
-                      <div className="flex items-center justify-between mb-2">
+                <div className="space-y-4">
+                  {getProblemsAndSuggestions(data.desktop, 'desktop').map((problem, index) => (
+                    <div key={index} className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-amber-200 dark:border-amber-700">
+                      <div className="flex items-center justify-between mb-3">
                         <span className="font-medium text-slate-900 dark:text-slate-100">{problem.title}</span>
                         <Badge variant={problem.status === 'Poor' ? 'destructive' : 'secondary'} className="text-xs">
                           {problem.status}
                         </Badge>
                       </div>
-                      <div className="flex items-start space-x-2">
+                      
+                      {/* General Recommendation */}
+                      <div className="flex items-start space-x-2 mb-3">
                         <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-slate-600 dark:text-slate-400">{problem.suggestion}</p>
                       </div>
+                      
+                      {/* Specific Elements */}
+                      {problem.specificElements.length > 0 && (
+                        <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                          <h5 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Specific elements causing issues:</h5>
+                          <ul className="space-y-1">
+                            {problem.specificElements.map((element, idx) => (
+                              <li key={idx} className="text-xs text-slate-600 dark:text-slate-400 flex items-start space-x-2">
+                                <span className="text-red-500 mt-1">•</span>
+                                <span>{element}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
