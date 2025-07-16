@@ -203,13 +203,12 @@ export default function Home() {
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-0 sm:h-16 gap-4 sm:gap-0">
-            <div className="flex items-center space-x-3 w-full sm:w-auto">
-              <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg flex-shrink-0">
+            <div className="flex items-center space-x-3 w-full sm:w-auto cursor-pointer" onClick={() => window.location.reload()}>
+              <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
                 <BarChart3 className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">{t.title}</h1>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden sm:block">{t.subtitle}</p>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{t.title}</h1>
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
@@ -515,7 +514,7 @@ export default function Home() {
               {/* Footer for centered layout */}
               <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
                 <div className="flex items-center justify-center gap-1 flex-wrap text-sm text-slate-500 dark:text-slate-400">
-                  <span>© 2025 Web Performance Analyzer. All rights reserved. Created by Luis Mena.</span>
+                  <span>© 2025 DLMETRIX. All rights reserved. Created by Luis Mena.</span>
                   <span className="mx-1">•</span>
                   <Dialog open={isLegalOpen} onOpenChange={setIsLegalOpen}>
                     <DialogTrigger asChild>
