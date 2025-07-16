@@ -238,6 +238,32 @@ export default function Home() {
         ['']
       ] : []),
 
+      // Heading Structure Analysis
+      ...(seoData.headings || seoData.headingStructure ? [
+        ['=== HEADING STRUCTURE ANALYSIS ==='],
+        ['H1 Headings', (seoData.headings?.h1?.join(' | ') || 'None')],
+        ['H2 Headings', (seoData.headings?.h2?.join(' | ') || 'None')],
+        ['H3 Headings', (seoData.headings?.h3?.join(' | ') || 'None')],
+        ['H4 Headings', (seoData.headings?.h4?.join(' | ') || 'None')],
+        ['H5 Headings', (seoData.headings?.h5?.join(' | ') || 'None')],
+        ['H6 Headings', (seoData.headings?.h6?.join(' | ') || 'None')],
+        [''],
+        ['Heading Structure (Order)', 'Level', 'Text Content'],
+        ...(seoData.headingStructure?.map((heading, index) => [
+          `#${index + 1}`,
+          heading.level || 'N/A',
+          heading.text || 'N/A'
+        ]) || []),
+        [''],
+        ['Structure Analysis'],
+        ['First Heading Level', seoData.headingStructure?.[0]?.level || 'N/A'],
+        ['Starts with H1', seoData.headingStructure?.[0]?.level === 'H1' ? 'Yes (Good)' : 'No (Critical Issue)'],
+        ['Total Headings', seoData.headingStructure?.length?.toString() || '0'],
+        ['H1 Count', seoData.headings?.h1?.length?.toString() || '0'],
+        ['SEO Hierarchy Score', seoData.headingStructure?.[0]?.level === 'H1' ? '100 (Excellent)' : '25 (Poor - Does not start with H1)'],
+        ['']
+      ] : []),
+
       // Keyword Analysis
       ...(seoData.keywordAnalysis ? [
         ['=== KEYWORD ANALYSIS ==='],

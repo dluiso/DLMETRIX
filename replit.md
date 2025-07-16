@@ -126,7 +126,10 @@ Preferred communication style: Simple, everyday language.
 - **Enhanced Translations**: Complete Spanish localization including new error messages and recommendations for heading structure issues
 - **Dark Mode Optimization**: Full dark mode support with proper contrast and theming for all new UI elements
 - **Real-time Analysis**: Server now extracts `headingStructure` array with proper order and level detection for accurate analysis
-- **User Impact**: Users can now see exactly how their heading structure appears to search engines and get specific visual guidance on optimal restructuring
+- **Complete Export Integration**: Updated both PDF and CSV exports to include comprehensive heading structure analysis
+- **PDF Export Enhancement**: Added dedicated "Heading Structure Analysis" section with SEO hierarchy scoring, visual warnings for critical issues, and detailed recommendations
+- **CSV Export Enhancement**: Included heading structure data with order analysis, hierarchy evaluation, and comprehensive heading information by type
+- **User Impact**: Users can now see exactly how their heading structure appears to search engines and get specific visual guidance on optimal restructuring, with complete export capabilities
 
 ## Recent Changes (January 2025)
 

@@ -467,7 +467,183 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     }
   }
 
-  // 9. KEYWORD ANALYSIS SECTION
+  // 9. HEADING STRUCTURE ANALYSIS SECTION
+  if (data.headings || data.headingStructure) {
+    addSectionHeader('Heading Structure Analysis', [156, 39, 176]);
+    
+    // Critical SEO Assessment
+    const startsWithH1 = data.headingStructure?.[0]?.level === 'H1';
+    const h1Count = data.headings?.h1?.length || 0;
+    const totalHeadings = data.headingStructure?.length || 0;
+    
+    // Heading Hierarchy Score
+    pdf.setFillColor(startsWithH1 ? 240 : 254, startsWithH1 ? 253 : 242, startsWithH1 ? 244 : 242); // Green or red background
+    pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 25, 'F');
+    
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('SEO Hierarchy Score:', margin, yPosition + 5);
+    
+    // Score with color coding
+    const hierarchyScore = startsWithH1 ? 100 : 25;
+    const scoreColor = startsWithH1 ? [34, 197, 94] : [239, 68, 68];
+    pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(`${hierarchyScore}/100`, margin + 60, yPosition + 5);
+    
+    // Status indicator
+    pdf.setFontSize(10);
+    pdf.text(startsWithH1 ? '(Excellent)' : '(Critical Issue)', margin + 100, yPosition + 5);
+    
+    pdf.setTextColor(0, 0, 0);
+    yPosition += 30;
+    
+    // Summary Statistics
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(11);
+    pdf.text('Structure Summary:', margin, yPosition);
+    yPosition += 8;
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`First Heading Level: ${data.headingStructure?.[0]?.level || 'N/A'}`, margin + 5, yPosition);
+    yPosition += 6;
+    pdf.text(`Total Headings Found: ${totalHeadings}`, margin + 5, yPosition);
+    yPosition += 6;
+    pdf.text(`H1 Headings Count: ${h1Count}`, margin + 5, yPosition);
+    yPosition += 6;
+    
+    // Critical Issue Warning
+    if (!startsWithH1) {
+      pdf.setTextColor(239, 68, 68);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('⚠ Critical SEO Issue: Page does not start with H1 heading!', margin + 5, yPosition);
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 8;
+    } else {
+      pdf.setTextColor(34, 197, 94);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('✓ Excellent: Page follows proper H1 hierarchy', margin + 5, yPosition);
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 8;
+    }
+    
+    yPosition += 5;
+    
+    // Heading Groups by Type
+    if (data.headings) {
+      const headingTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(11);
+      pdf.text('Headings by Type:', margin, yPosition);
+      yPosition += 8;
+      
+      headingTypes.forEach(level => {
+        const headings = data.headings?.[level];
+        if (headings && headings.length > 0) {
+          checkPageBreak(15);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(10);
+          pdf.text(`${level.toUpperCase()} (${headings.length}):`, margin + 5, yPosition);
+          yPosition += 6;
+          
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(9);
+          headings.forEach(heading => {
+            checkPageBreak(8);
+            const truncatedHeading = heading.length > 80 ? heading.substring(0, 80) + '...' : heading;
+            yPosition = addWrappedText(`• ${truncatedHeading}`, margin + 10, yPosition, pageWidth - 2 * margin - 10, 9);
+            yPosition += 4;
+          });
+          yPosition += 3;
+        }
+      });
+    }
+    
+    // Heading Structure Order (if available)
+    if (data.headingStructure && data.headingStructure.length > 0) {
+      checkPageBreak(30);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(11);
+      pdf.text('Heading Structure Order (as appears on page):', margin, yPosition);
+      yPosition += 8;
+      
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      
+      data.headingStructure.slice(0, 15).forEach((heading, index) => {
+        checkPageBreak(8);
+        const position = `#${index + 1}`;
+        const level = heading.level || 'N/A';
+        const text = heading.text ? (heading.text.length > 60 ? heading.text.substring(0, 60) + '...' : heading.text) : 'No text';
+        
+        // Color code first heading if not H1
+        if (index === 0 && heading.level !== 'H1') {
+          pdf.setTextColor(239, 68, 68);
+        }
+        
+        pdf.text(`${position}`, margin + 5, yPosition);
+        pdf.text(`${level}`, margin + 15, yPosition);
+        pdf.text(`${text}`, margin + 25, yPosition);
+        yPosition += 5;
+        
+        pdf.setTextColor(0, 0, 0);
+      });
+      
+      if (data.headingStructure.length > 15) {
+        pdf.setFont('helvetica', 'italic');
+        pdf.setTextColor(107, 114, 128);
+        pdf.text(`... and ${data.headingStructure.length - 15} more headings`, margin + 5, yPosition);
+        pdf.setTextColor(0, 0, 0);
+        yPosition += 6;
+      }
+      yPosition += 10;
+    }
+    
+    // SEO Recommendations for Heading Structure
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(11);
+    pdf.text('Heading Structure Recommendations:', margin, yPosition);
+    yPosition += 8;
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(9);
+    
+    if (!startsWithH1) {
+      pdf.setTextColor(239, 68, 68);
+      yPosition = addWrappedText('• CRITICAL: Change your first heading to H1 for proper SEO hierarchy', margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+      yPosition += 5;
+    }
+    
+    if (h1Count === 0) {
+      pdf.setTextColor(239, 68, 68);
+      yPosition = addWrappedText('• CRITICAL: Add at least one H1 heading to your page', margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+      yPosition += 5;
+    } else if (h1Count > 1) {
+      pdf.setTextColor(245, 158, 11);
+      yPosition = addWrappedText('• WARNING: Consider using only one H1 heading per page for better SEO', margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+      yPosition += 5;
+    }
+    
+    if (totalHeadings < 3) {
+      pdf.setTextColor(245, 158, 11);
+      yPosition = addWrappedText('• Add more headings (H2, H3) to improve content structure and readability', margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+      yPosition += 5;
+    }
+    
+    pdf.setTextColor(34, 197, 94);
+    yPosition = addWrappedText('• Use headings to create a logical content hierarchy (H1 > H2 > H3...)', margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+    yPosition += 5;
+    yPosition = addWrappedText('• Include relevant keywords naturally in your headings', margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+    yPosition += 5;
+    
+    pdf.setTextColor(0, 0, 0);
+    yPosition += 15;
+  }
+
+  // 10. KEYWORD ANALYSIS SECTION
   if (data.keywordAnalysis) {
     addSectionHeader('SEO Keywords Analysis', [34, 197, 94]);
     
@@ -552,7 +728,7 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     }
   }
 
-  // 10. PERFORMANCE DIAGNOSTICS SECTION
+  // 11. PERFORMANCE DIAGNOSTICS SECTION
   if (data.diagnostics) {
     addSectionHeader('Performance Diagnostics', [239, 68, 68]);
     
@@ -591,7 +767,7 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     }
   }
 
-  // 11. PERFORMANCE INSIGHTS SECTION
+  // 12. PERFORMANCE INSIGHTS SECTION
   if (data.insights && (data.insights.opportunities.length > 0 || data.insights.diagnostics.length > 0)) {
     addSectionHeader('Performance Insights & Opportunities', [146, 64, 14]);
     
