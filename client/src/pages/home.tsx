@@ -9,7 +9,6 @@ import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
 import SeoSummaryCards from "@/components/seo-summary-cards";
 import MetaTagAnalysis from "@/components/meta-tag-analysis";
-import MetaDescriptionAnalysis from "@/components/meta-description-analysis";
 import HeadingStructureAnalysis from "@/components/heading-structure-analysis";
 import OpenGraphAnalysis from "@/components/open-graph-analysis";
 import TwitterCardsAnalysis from "@/components/twitter-cards-analysis";
@@ -915,9 +914,6 @@ export default function Home() {
 
               {/* Meta Tags Analysis */}
               <MetaTagAnalysis data={seoData} />
-
-              {/* Meta Description Analysis */}
-              <MetaDescriptionAnalysis data={seoData} />
 
               {/* Heading Structure Analysis */}
               <HeadingStructureAnalysis data={seoData} language={language} />
