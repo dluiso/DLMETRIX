@@ -245,6 +245,23 @@ export default function SharePage() {
 
   const analysisData = safeAnalysisData;
   
+  // Debug logging for Performance Overview specifically
+  console.log('SharePage: Performance Overview Data Check:', {
+    originalData: {
+      performance: sharedReport.analysisData?.performanceOverview?.performance,
+      accessibility: sharedReport.analysisData?.performanceOverview?.accessibility,
+      bestPractices: sharedReport.analysisData?.performanceOverview?.bestPractices,
+      seo: sharedReport.analysisData?.performanceOverview?.seo
+    },
+    mappedData: {
+      performance: Number(sharedReport.analysisData?.performanceOverview?.performance) || 0,
+      accessibility: Number(sharedReport.analysisData?.performanceOverview?.accessibility) || 0,
+      bestPractices: Number(sharedReport.analysisData?.performanceOverview?.bestPractices) || 0,
+      seo: Number(sharedReport.analysisData?.performanceOverview?.seo) || 0
+    },
+    fullAnalysisData: sharedReport.analysisData
+  });
+  
   console.log('SharePage: About to render main content with safe analysisData:', !!analysisData);
 
   // Additional safety check
