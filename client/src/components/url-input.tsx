@@ -65,14 +65,7 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
   return (
     <Card className="mb-6 sm:mb-8 shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
       <CardContent className="p-4 sm:p-6">
-        <div className="flex items-center justify-center space-x-3 mb-6">
-          <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg">
-            <BarChart3 className="w-5 h-5" />
-          </div>
-          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
-            DLMETRIX
-          </h1>
-        </div>
+
         <div className="flex items-center space-x-2 mb-4">
           <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
           <h2 className="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-slate-100">

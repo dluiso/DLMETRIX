@@ -807,9 +807,14 @@ export default function Home() {
             <div className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Hero Section */}
               <div className="text-center mb-6 animate-fade-in">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-3 px-2">
-                  {t.title}
-                </h2>
+                <div className="flex items-center justify-center space-x-3 mb-3">
+                  <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg">
+                    <BarChart3 className="w-5 h-5" />
+                  </div>
+                  <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
+                    DLMETRIX
+                  </h1>
+                </div>
                 <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4">
                   All-in-one website audit tool: Core Web Vitals, SEO diagnostics, and performance reports.
                 </p>
