@@ -8,7 +8,22 @@
 
 ## **Solución Inmediata:**
 
-### 1. **Downgrade Controlado** (Recomendado)
+### 1. **Aumentar Memoria en PM2**
+```bash
+# Parar procesos actuales
+pm2 stop all
+
+# Reiniciar con más memoria (recomendado 2GB mínimo)
+pm2 start ecosystem.config.js --max-memory-restart 2G
+
+# O si usas comando directo:
+pm2 start npm --name "dlmetrix" -- start --max-memory-restart 2048M
+
+# Verificar configuración:
+pm2 info dlmetrix
+```
+
+### 2. **Downgrade Controlado** (Recomendado)
 ```bash
 # Volver a versiones estables compatibles:
 npm install vite@^5.4.19 --save-dev

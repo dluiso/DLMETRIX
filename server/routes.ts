@@ -41,6 +41,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         versions: {
           node: process.version,
           platform: process.platform,
+          memory: process.memoryUsage(),
           timestamp: new Date().toISOString()
         }
       });
