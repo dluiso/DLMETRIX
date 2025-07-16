@@ -44,7 +44,7 @@ export default function SupportDialog({ language = 'en' }: SupportDialogProps) {
           <div className="flex justify-center">
             <Button 
               className="bg-yellow-600 hover:bg-yellow-700 text-white"
-              onClick={() => window.open('https://www.paypal.com/paypalme/dluiso', '_blank')}
+              onClick={() => window.open('https://ko-fi.com/dlmetrix', '_blank')}
             >
               <Coffee className="w-4 h-4 mr-2" />
               {t.buyMeCoffee}
