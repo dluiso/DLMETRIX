@@ -534,7 +534,7 @@ async function fetchBasicSeoData(url: string) {
     const charset = $('meta[charset]').attr('charset') || $('meta[http-equiv="Content-Type"]').attr('content')?.includes('charset') || null;
     const langAttribute = $('html').attr('lang')?.trim() || null;
 
-    // Extract headings structure
+    // Extract headings structure (grouped by type)
     const headings = {
       h1: $('h1').map((_, el) => $(el).text().trim()).get(),
       h2: $('h2').map((_, el) => $(el).text().trim()).get(),
@@ -543,6 +543,21 @@ async function fetchBasicSeoData(url: string) {
       h5: $('h5').map((_, el) => $(el).text().trim()).get(),
       h6: $('h6').map((_, el) => $(el).text().trim()).get()
     };
+
+    // Extract headings in the order they appear on the page
+    const headingStructure = [];
+    $('h1, h2, h3, h4, h5, h6').each((index, element) => {
+      const $el = $(element);
+      const level = element.tagName.toLowerCase();
+      const text = $el.text().trim();
+      if (text) {
+        headingStructure.push({
+          level,
+          text,
+          order: index + 1
+        });
+      }
+    });
 
     // Analyze images
     const images = $('img');
@@ -649,6 +664,7 @@ async function fetchBasicSeoData(url: string) {
       charset,
       langAttribute,
       headings,
+      headingStructure,
       imageAnalysis,
       linkAnalysis: {
         total: allLinks.length,

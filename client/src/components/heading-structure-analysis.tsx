@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertTriangle, CheckCircle, Info, ArrowRight } from "lucide-react";
 
 interface HeadingStructureAnalysisProps {
   data: {
@@ -13,6 +14,7 @@ interface HeadingStructureAnalysisProps {
       h5: string[];
       h6: string[];
     };
+    headingStructure?: Array<{ level: string; text: string; order: number }>;
   };
   language?: 'en' | 'es';
 }
@@ -21,25 +23,32 @@ const translations = {
   en: {
     title: "Heading Structure Analysis",
     hierarchyTree: "Heading Hierarchy Tree",
+    currentStructure: "Current Structure",
+    suggestedStructure: "Suggested Structure",
     statistics: "Heading Statistics",
     analysis: "Hierarchy Analysis",
     recommendations: "Recommendations",
     noHeadings: "No headings found on this page",
     count: "Count",
     type: "Type",
+    orderFound: "Order found on page",
     issues: {
       noH1: "Missing H1 heading - every page should have exactly one H1",
       multipleH1: "Multiple H1 headings found - use only one H1 per page",
       skipLevel: "Heading hierarchy jumps levels - avoid skipping from H1 to H3",
       excessiveUse: "Excessive use of heading levels",
-      poorStructure: "Poor heading structure affects SEO and accessibility"
+      poorStructure: "Poor heading structure affects SEO and accessibility",
+      noH1Start: "Page doesn't start with H1 - first heading should always be H1",
+      wrongStart: "Page starts with wrong heading level - this affects SEO and accessibility"
     },
     recommendationTexts: {
       addH1: "Add a single, descriptive H1 heading that defines the main topic",
       consolidateH1: "Use only one H1 heading and convert others to H2 or lower levels",
       fixHierarchy: "Follow proper hierarchy: H1 → H2 → H3 → H4 → H5 → H6",
       balanceHeadings: "Balance heading distribution for better content structure",
-      improveStructure: "Restructure headings to create logical content flow"
+      improveStructure: "Restructure headings to create logical content flow",
+      startWithH1: "Always start your page with an H1 heading as the main title",
+      fixStartLevel: "Move your first heading to H1 and adjust subsequent headings accordingly"
     },
     status: {
       good: "Good heading structure",
@@ -50,25 +59,32 @@ const translations = {
   es: {
     title: "Análisis de Estructura de Encabezados",
     hierarchyTree: "Árbol de Jerarquía de Encabezados",
+    currentStructure: "Estructura Actual",
+    suggestedStructure: "Estructura Sugerida",
     statistics: "Estadísticas de Encabezados",
     analysis: "Análisis de Jerarquía",
     recommendations: "Recomendaciones",
     noHeadings: "No se encontraron encabezados en esta página",
     count: "Cantidad",
     type: "Tipo",
+    orderFound: "Orden encontrado en la página",
     issues: {
       noH1: "Falta encabezado H1 - cada página debe tener exactamente un H1",
       multipleH1: "Se encontraron múltiples encabezados H1 - usa solo uno por página",
       skipLevel: "La jerarquía de encabezados salta niveles - evita saltar de H1 a H3",
       excessiveUse: "Uso excesivo de niveles de encabezados",
-      poorStructure: "La estructura pobre de encabezados afecta SEO y accesibilidad"
+      poorStructure: "La estructura pobre de encabezados afecta SEO y accesibilidad",
+      noH1Start: "La página no comienza con H1 - el primer encabezado siempre debe ser H1",
+      wrongStart: "La página comienza con nivel incorrecto - esto afecta SEO y accesibilidad"
     },
     recommendationTexts: {
       addH1: "Agrega un solo encabezado H1 descriptivo que defina el tema principal",
       consolidateH1: "Usa solo un encabezado H1 y convierte otros a H2 o niveles inferiores",
       fixHierarchy: "Sigue la jerarquía adecuada: H1 → H2 → H3 → H4 → H5 → H6",
       balanceHeadings: "Equilibra la distribución de encabezados para mejor estructura",
-      improveStructure: "Reestructura encabezados para crear flujo lógico de contenido"
+      improveStructure: "Reestructura encabezados para crear flujo lógico de contenido",
+      startWithH1: "Siempre comienza tu página con un encabezado H1 como título principal",
+      fixStartLevel: "Mueve tu primer encabezado a H1 y ajusta los encabezados siguientes"
     },
     status: {
       good: "Buena estructura de encabezados",
@@ -94,6 +110,22 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
   
   const totalHeadings = Object.values(stats).reduce((sum, count) => sum + count, 0);
   
+  // Use heading structure from server data if available, otherwise create from grouped headings
+  const orderedStructure = data.headingStructure || (() => {
+    const structure = [];
+    let order = 1;
+    
+    ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach((level) => {
+      const levelHeadings = headings[level as keyof typeof headings] || [];
+      levelHeadings.forEach((text) => {
+        structure.push({ level, text, order: order++ });
+      });
+    });
+    
+    return structure;
+  })();
+  const firstHeadingLevel = orderedStructure.length > 0 ? orderedStructure[0].level : null;
+  
   // Analyze hierarchy issues
   const issues = [];
   const recommendations = [];
@@ -107,6 +139,13 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
     issues.push(t.issues.multipleH1);
     recommendations.push(t.recommendationTexts.consolidateH1);
     status = 'warning';
+  }
+  
+  // Check if page starts with H1
+  if (firstHeadingLevel && firstHeadingLevel !== 'h1') {
+    issues.push(t.issues.noH1Start);
+    recommendations.push(t.recommendationTexts.startWithH1);
+    status = 'error';
   }
   
   // Check for level skipping
@@ -137,6 +176,37 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
     recommendations.push(t.recommendationTexts.improveStructure);
     if (status === 'good') status = 'warning';
   }
+  
+  // Generate suggested structure
+  const generateSuggestedStructure = () => {
+    if (orderedStructure.length === 0) return [];
+    
+    const suggested = [];
+    let currentH1 = null;
+    
+    orderedStructure.forEach((item, index) => {
+      if (index === 0) {
+        // First heading should always be H1
+        suggested.push({ level: 'h1', text: item.text, order: 1 });
+        currentH1 = item.text;
+      } else {
+        // Adjust subsequent headings based on content hierarchy
+        const originalLevel = parseInt(item.level.replace('h', ''));
+        let suggestedLevel = Math.min(originalLevel, 6);
+        
+        // Ensure proper hierarchy
+        if (suggestedLevel === 1 && currentH1) {
+          suggestedLevel = 2; // Subsequent H1s should become H2s
+        }
+        
+        suggested.push({ level: `h${suggestedLevel}`, text: item.text, order: index + 1 });
+      }
+    });
+    
+    return suggested;
+  };
+  
+  const suggestedStructure = generateSuggestedStructure();
   
   const getStatusIcon = () => {
     switch (status) {
@@ -181,34 +251,101 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Heading Tree Structure */}
+        {/* Heading Tree Structure with Tabs */}
         <div>
           <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">{t.hierarchyTree}</h4>
-          <div className="space-y-2 max-h-64 overflow-y-auto">
-            {['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map((level) => {
-              const levelHeadings = headings[level as keyof typeof headings] || [];
-              const levelNumber = level.replace('h', '');
-              const indent = (parseInt(levelNumber) - 1) * 20;
-              
-              return levelHeadings.map((heading, index) => (
-                <div 
-                  key={`${level}-${index}`}
-                  style={{ marginLeft: `${indent}px` }}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-700 border-l-4 border-blue-400 dark:border-blue-500"
-                >
-                  <Badge 
-                    variant="secondary" 
-                    className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-mono"
+          <Tabs defaultValue="current" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="current">{t.currentStructure}</TabsTrigger>
+              <TabsTrigger value="suggested">{t.suggestedStructure}</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="current" className="space-y-2">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                {t.orderFound}
+              </div>
+              {orderedStructure.map((item, index) => {
+                const levelNumber = item.level.replace('h', '');
+                const indent = (parseInt(levelNumber) - 1) * 20;
+                const isFirstAndNotH1 = index === 0 && item.level !== 'h1';
+                
+                return (
+                  <div 
+                    key={`current-${index}`}
+                    style={{ marginLeft: `${indent}px` }}
+                    className={`flex items-center gap-2 p-2 rounded-lg border-l-4 ${
+                      isFirstAndNotH1 
+                        ? 'bg-red-50 dark:bg-red-900/20 border-red-400 dark:border-red-500' 
+                        : 'bg-gray-50 dark:bg-gray-700 border-blue-400 dark:border-blue-500'
+                    }`}
                   >
-                    {level.toUpperCase()}
-                  </Badge>
-                  <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">
-                    {heading || `(${language === 'es' ? 'Vacío' : 'Empty'})`}
-                  </span>
-                </div>
-              ));
-            })}
-          </div>
+                    <Badge 
+                      variant="secondary" 
+                      className={`text-xs font-mono ${
+                        isFirstAndNotH1
+                          ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                          : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
+                      }`}
+                    >
+                      {item.level.toUpperCase()}
+                    </Badge>
+                    {isFirstAndNotH1 && (
+                      <AlertTriangle className="h-3 w-3 text-red-500" />
+                    )}
+                    <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">
+                      {item.text || `(${language === 'es' ? 'Vacío' : 'Empty'})`}
+                    </span>
+                  </div>
+                );
+              })}
+            </TabsContent>
+            
+            <TabsContent value="suggested" className="space-y-2">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                {language === 'es' ? 'Estructura recomendada para SEO óptimo' : 'Recommended structure for optimal SEO'}
+              </div>
+              {suggestedStructure.map((item, index) => {
+                const levelNumber = item.level.replace('h', '');
+                const indent = (parseInt(levelNumber) - 1) * 20;
+                const originalItem = orderedStructure[index];
+                const hasChanged = originalItem && originalItem.level !== item.level;
+                
+                return (
+                  <div 
+                    key={`suggested-${index}`}
+                    style={{ marginLeft: `${indent}px` }}
+                    className={`flex items-center gap-2 p-2 rounded-lg border-l-4 ${
+                      hasChanged 
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-400 dark:border-green-500'
+                        : 'bg-gray-50 dark:bg-gray-700 border-blue-400 dark:border-blue-500'
+                    }`}
+                  >
+                    <Badge 
+                      variant="secondary" 
+                      className={`text-xs font-mono ${
+                        hasChanged
+                          ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                          : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
+                      }`}
+                    >
+                      {item.level.toUpperCase()}
+                    </Badge>
+                    {hasChanged && (
+                      <ArrowRight className="h-3 w-3 text-green-500" />
+                    )}
+                    <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">
+                      {item.text || `(${language === 'es' ? 'Vacío' : 'Empty'})`}
+                    </span>
+                    {hasChanged && originalItem && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {language === 'es' ? 'era' : 'was'} {originalItem.level.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Statistics */}

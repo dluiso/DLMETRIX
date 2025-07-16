@@ -115,6 +115,21 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### Enhanced Heading Structure Analysis Component (January 16, 2025)
+- **Advanced Hierarchy Detection**: Completely rewrote heading analysis to detect pages that don't start with H1 as critical SEO deficiency
+- **Real Order Extraction**: Updated server-side analysis to extract headings in the exact order they appear on the page, not grouped by type
+- **Critical Edge Case Fix**: Now properly detects and flags websites that start with unusual heading levels (H6, H5, etc.) as major SEO issues
+- **Tabbed Interface Implementation**: Added sophisticated "Current Structure" vs "Suggested Structure" tabs with visual comparison
+- **Scroll Removal**: Eliminated scroll from heading tree display for better user experience and complete visibility
+- **Visual Error Highlighting**: First heading that's not H1 is highlighted in red with warning icons in Current Structure tab
+- **Smart Suggestions**: Suggested Structure tab shows optimized hierarchy with green highlighting for changes and arrows indicating improvements
+- **Enhanced Translations**: Complete Spanish localization including new error messages and recommendations for heading structure issues
+- **Dark Mode Optimization**: Full dark mode support with proper contrast and theming for all new UI elements
+- **Real-time Analysis**: Server now extracts `headingStructure` array with proper order and level detection for accurate analysis
+- **User Impact**: Users can now see exactly how their heading structure appears to search engines and get specific visual guidance on optimal restructuring
+
+## Recent Changes (January 2025)
+
 ### ARM64 Server Performance Analysis Implementation Success (January 16, 2025)
 - **Complete ARM64 Compatibility Achieved**: Successfully replaced Lighthouse with manual performance analysis specifically optimized for ARM64 servers
 - **Core Web Vitals Working**: Real Core Web Vitals measurements (LCP, FCP, CLS, TTFB, FID) functioning perfectly on both mobile and desktop
