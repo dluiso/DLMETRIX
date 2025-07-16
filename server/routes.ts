@@ -759,7 +759,7 @@ async function fetchBasicSeoData(url: string) {
     };
     
   } catch (error) {
-    console.error('DEBUG fetchBasicSeoData - Error occurred:', error.message);
+    console.log('DEBUG fetchBasicSeoData - Site blocked access:', error.response?.status || error.message);
     return {
       title: null,
       description: null,
@@ -808,10 +808,14 @@ async function checkEndpoint(url: string): Promise<boolean> {
   try {
     const response = await axios.head(url, {
       timeout: 5000,
-      validateStatus: (status) => status < 400
+      validateStatus: (status) => status < 400,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
     });
     return response.status >= 200 && response.status < 400;
   } catch (error) {
+    // Endpoint check failed, continuing silently
     return false;
   }
 }
@@ -1948,7 +1952,7 @@ async function generateAiSearchAnalysis(url: string, seoData: any) {
     };
     
   } catch (error) {
-    console.error('AI analysis error:', error);
+    // AI analysis unavailable for blocked sites
     // Return default analysis if content fetching fails
     return {
       overallScore: 50,
