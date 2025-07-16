@@ -438,14 +438,14 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors relative">
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo and Title */}
-            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => window.location.reload()}>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            {/* Logo and Title - Improved Mobile */}
+            <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onClick={() => window.location.reload()}>
               <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
-                <BarChart3 className="w-5 h-5" />
+                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate max-w-[120px] sm:max-w-none">
                 {t.title}
               </h1>
             </div>
@@ -513,12 +513,12 @@ export default function Home() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2"
+                className="p-2 btn-mobile"
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-7 h-7" />
+                  <X className="w-6 h-6" />
                 ) : (
-                  <Menu className="w-7 h-7" />
+                  <Menu className="w-6 h-6" />
                 )}
               </Button>
             </div>
@@ -526,16 +526,16 @@ export default function Home() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-slate-200 dark:border-slate-700 py-4 bg-white dark:bg-slate-800">
+            <div className="md:hidden border-t border-slate-200 dark:border-slate-700 py-3 bg-white dark:bg-slate-800">
               <div className="flex flex-col space-y-3">
                 {/* Main Navigation */}
-                <div className="grid grid-cols-2 gap-3 px-4">
+                <div className="grid grid-cols-2 gap-2 px-3">
                   <WhyDlmetrixDialog language={language} />
                   <HelpDialog language={language} />
                 </div>
                 
                 {/* Settings and History */}
-                <div className="grid grid-cols-2 gap-3 px-4">
+                <div className="grid grid-cols-2 gap-2 px-3">
                   <Button 
                     variant="ghost" 
                     size="sm"
@@ -570,7 +570,7 @@ export default function Home() {
 
                 {/* Export Options - Only show if there's data */}
                 {seoData && (
-                  <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
+                  <div className="grid grid-cols-2 gap-2 px-3 pt-2 border-t border-slate-200 dark:border-slate-700">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -604,7 +604,7 @@ export default function Home() {
                 )}
 
                 {/* Contact and Support */}
-                <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-2 gap-2 px-3 pt-2 border-t border-slate-200 dark:border-slate-700">
                   <ContactDialog language={language} />
                   <SupportDialog language={language} />
                 </div>
@@ -702,7 +702,7 @@ export default function Home() {
                   {analysisHistory.map((item, index) => (
                     <div 
                       key={index}
-                      className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 cursor-pointer transition-colors"
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 cursor-pointer transition-colors gap-2 sm:gap-0"
                       onClick={() => {
                         setSeoData(item);
                         setShowHistory(false);
@@ -713,10 +713,10 @@ export default function Home() {
                       }}
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                        <div className="font-medium text-slate-900 dark:text-slate-100 truncate text-sm">
                           {item.url}
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-xs text-slate-500 dark:text-slate-400 mt-1 gap-1 sm:gap-0">
                           <div className="flex items-center space-x-1">
                             <Calendar className="w-3 h-3" />
                             <span>Just analyzed</span>
@@ -727,7 +727,7 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
                         <Button 
                           variant="ghost" 
                           size="sm"
@@ -735,6 +735,7 @@ export default function Home() {
                             e.stopPropagation();
                             handleCompareWith(item);
                           }}
+                          className="flex-shrink-0 p-2"
                         >
                           <BarChart3 className="w-4 h-4" />
                         </Button>
@@ -745,6 +746,7 @@ export default function Home() {
                             e.stopPropagation();
                             exportToPDF(item).catch(console.error);
                           }}
+                          className="flex-shrink-0 p-2"
                         >
                           <Download className="w-4 h-4" />
                         </Button>
@@ -755,6 +757,7 @@ export default function Home() {
                             e.stopPropagation();
                             setAnalysisHistory(prev => prev.filter((_, i) => i !== index));
                           }}
+                          className="flex-shrink-0 p-2"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -809,10 +812,10 @@ export default function Home() {
                     <BarChart3 className="w-8 h-8" />
                   </div>
                 </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4 px-2">
                   {t.title}
                 </h1>
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto">
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4">
                   {t.subtitle}
                 </p>
               </div>
@@ -822,50 +825,47 @@ export default function Home() {
                 <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
-              {/* Features List */}
+              {/* Features List - Improved Mobile Layout */}
               <div className="mt-12 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
-                  <div className="flex items-center gap-1.5">
-                    <Monitor className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-3 sm:gap-4 justify-center items-center text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
                     <span className="font-medium">Desktop</span>
                   </div>
-                  <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-1.5">
-                    <Smartphone className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
                     <span className="font-medium">Mobile</span>
                   </div>
-                  <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-1.5">
-                    <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 text-purple-500" />
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500 flex-shrink-0" />
                     <span className="font-medium">Performance</span>
                   </div>
-                  <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-1.5">
-                    <Globe className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-500" />
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500 flex-shrink-0" />
                     <span className="font-medium">SEO</span>
                   </div>
-                  <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-1.5">
-                    <Search className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" />
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Search className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 flex-shrink-0" />
                     <span className="font-medium">AI Search</span>
                   </div>
-                  <span className="text-slate-400 dark:text-slate-600">|</span>
-                  <div className="flex items-center gap-1.5">
-                    <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-pink-500" />
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 flex-shrink-0" />
                     <span className="font-medium">Keywords</span>
                   </div>
                 </div>
               </div>
               
-              {/* Footer for centered layout */}
+              {/* Footer for centered layout - Improved Mobile */}
               <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <div className="flex items-center justify-center gap-1 flex-wrap text-sm text-slate-500 dark:text-slate-400">
-                  <span>© 2025 DLMETRIX. All rights reserved. Created by Luis Mena.</span>
-                  <span className="mx-1">•</span>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  <span className="text-center">© 2025 DLMETRIX. All rights reserved.</span>
+                  <span className="hidden sm:inline mx-1">•</span>
+                  <span className="text-center">Created by Luis Mena</span>
+                  <span className="hidden sm:inline mx-1">•</span>
                   <Dialog open={isLegalOpen} onOpenChange={setIsLegalOpen}>
                     <DialogTrigger asChild>
                       <button 
-                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors text-xs sm:text-sm"
                         onClick={() => setIsLegalOpen(true)}
                       >
                         Legal Notice
@@ -1013,18 +1013,18 @@ export default function Home() {
                       {t.exitComparison}
                     </Button>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 text-sm">
                     <div>
-                      <div className="font-medium text-slate-900 dark:text-slate-100">{seoData.url}</div>
-                      <div className="flex space-x-4 mt-1">
+                      <div className="font-medium text-slate-900 dark:text-slate-100 truncate">{seoData.url}</div>
+                      <div className="flex flex-wrap gap-2 sm:gap-4 mt-1">
                         <span className="text-blue-600 dark:text-blue-400">Perf: {seoData.performanceScore}</span>
                         <span className="text-green-600 dark:text-green-400">SEO: {seoData.seoScore}</span>
                         <span className="text-purple-600 dark:text-purple-400">A11y: {seoData.accessibilityScore}</span>
                       </div>
                     </div>
                     <div>
-                      <div className="font-medium text-slate-900 dark:text-slate-100">{compareData.url}</div>
-                      <div className="flex space-x-4 mt-1">
+                      <div className="font-medium text-slate-900 dark:text-slate-100 truncate">{compareData.url}</div>
+                      <div className="flex flex-wrap gap-2 sm:gap-4 mt-1">
                         <span className="text-blue-600 dark:text-blue-400">Perf: {compareData.performanceScore}</span>
                         <span className="text-green-600 dark:text-green-400">SEO: {compareData.seoScore}</span>
                         <span className="text-purple-600 dark:text-purple-400">A11y: {compareData.accessibilityScore}</span>

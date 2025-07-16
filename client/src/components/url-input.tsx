@@ -66,8 +66,8 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
     <Card className="mb-6 sm:mb-8 shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center space-x-2 mb-4">
-          <Globe className="w-5 h-5 text-primary flex-shrink-0" />
-          <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+          <h2 className="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-slate-100">
             {language === 'en' ? 'Website URL Analysis' : 'Análisis de URL del Sitio Web'}
           </h2>
         </div>
@@ -79,18 +79,18 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
               placeholder={t.enterUrl}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="pl-4 pr-10 text-sm sm:text-base h-10 sm:h-11"
+              className="pl-4 pr-10 text-sm sm:text-base h-11 sm:h-12"
               disabled={isLoading}
             />
             <Link className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
           </div>
           <Button 
             type="submit" 
-            className="gradient-button h-10 sm:h-11 text-sm sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200"
+            className="gradient-button h-11 sm:h-12 text-sm sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200 font-medium"
             disabled={isLoading}
           >
-            <Search className="w-4 h-4 mr-2" />
-            {isLoading ? t.analyzing : t.analyze}
+            <Search className="w-4 h-4 mr-2 flex-shrink-0" />
+            <span className="truncate">{isLoading ? t.analyzing : t.analyze}</span>
           </Button>
         </form>
       </CardContent>

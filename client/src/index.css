@@ -2,6 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-first responsive improvements */
+@media (max-width: 640px) {
+  /* Ensure text doesn't break layout on small screens */
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+  
+  /* Improve button touch targets on mobile */
+  .btn-mobile {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better spacing for mobile cards */
+  .card-mobile {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Improve header spacing on mobile */
+  .header-mobile {
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Better form inputs on mobile */
+  .form-mobile input,
+  .form-mobile button {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
 /* Modern elegant theme with enhanced dark mode */
 :root {
   /* Light theme - Elegant and modern */
