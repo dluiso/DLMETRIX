@@ -156,31 +156,156 @@ export default function Home() {
     if (!seoData) return;
 
     const csvData = [
-      ['Metric', 'Value'],
-      ['URL', seoData.url],
-      ['Performance Score', seoData.performanceScore.toString()],
-      ['Accessibility Score', seoData.accessibilityScore.toString()],
-      ['Best Practices Score', seoData.bestPracticesScore.toString()],
-      ['SEO Score', seoData.seoScore.toString()],
-      ['Title', seoData.title || 'N/A'],
-      ['Description', seoData.description || 'N/A'],
-      ['Keywords', seoData.keywords || 'N/A'],
-      ['Canonical URL', seoData.canonicalUrl || 'N/A'],
-      ['Mobile LCP', seoData.coreWebVitals.mobile.lcp?.toString() || 'N/A'],
-      ['Mobile FID', seoData.coreWebVitals.mobile.fid?.toString() || 'N/A'],
-      ['Mobile CLS', seoData.coreWebVitals.mobile.cls?.toString() || 'N/A'],
-      ['Desktop LCP', seoData.coreWebVitals.desktop.lcp?.toString() || 'N/A'],
-      ['Desktop FID', seoData.coreWebVitals.desktop.fid?.toString() || 'N/A'],
-      ['Desktop CLS', seoData.coreWebVitals.desktop.cls?.toString() || 'N/A'],
-      ...seoData.recommendations.map((rec, i) => [`Recommendation ${i + 1}`, rec.title])
+      // Header
+      ['DLMETRIX - Complete Web Analysis Report'],
+      ['Generated on', new Date().toLocaleDateString()],
+      ['Website URL', seoData.url],
+      [''],
+
+      // Performance Overview
+      ['=== PERFORMANCE OVERVIEW ==='],
+      ['Metric', 'Score'],
+      ['Performance', seoData.performanceScore.toString()],
+      ['Accessibility', seoData.accessibilityScore.toString()],
+      ['Best Practices', seoData.bestPracticesScore.toString()],
+      ['SEO', seoData.seoScore.toString()],
+      [''],
+
+      // Core Web Vitals
+      ['=== CORE WEB VITALS ==='],
+      ['Device', 'Metric', 'Value', 'Status'],
+      ['Mobile', 'LCP (Largest Contentful Paint)', seoData.coreWebVitals.mobile.lcp?.toString() || 'N/A', seoData.coreWebVitals.mobile.lcp ? (seoData.coreWebVitals.mobile.lcp <= 2.5 ? 'Good' : seoData.coreWebVitals.mobile.lcp <= 4.0 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Mobile', 'FID (First Input Delay)', seoData.coreWebVitals.mobile.fid?.toString() || 'N/A', seoData.coreWebVitals.mobile.fid ? (seoData.coreWebVitals.mobile.fid <= 100 ? 'Good' : seoData.coreWebVitals.mobile.fid <= 300 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Mobile', 'CLS (Cumulative Layout Shift)', seoData.coreWebVitals.mobile.cls?.toString() || 'N/A', seoData.coreWebVitals.mobile.cls ? (seoData.coreWebVitals.mobile.cls <= 0.1 ? 'Good' : seoData.coreWebVitals.mobile.cls <= 0.25 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Mobile', 'FCP (First Contentful Paint)', seoData.coreWebVitals.mobile.fcp?.toString() || 'N/A', seoData.coreWebVitals.mobile.fcp ? (seoData.coreWebVitals.mobile.fcp <= 1.8 ? 'Good' : seoData.coreWebVitals.mobile.fcp <= 3.0 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Mobile', 'TTFB (Time to First Byte)', seoData.coreWebVitals.mobile.ttfb?.toString() || 'N/A', seoData.coreWebVitals.mobile.ttfb ? (seoData.coreWebVitals.mobile.ttfb <= 800 ? 'Good' : seoData.coreWebVitals.mobile.ttfb <= 1800 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Desktop', 'LCP (Largest Contentful Paint)', seoData.coreWebVitals.desktop.lcp?.toString() || 'N/A', seoData.coreWebVitals.desktop.lcp ? (seoData.coreWebVitals.desktop.lcp <= 2.5 ? 'Good' : seoData.coreWebVitals.desktop.lcp <= 4.0 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Desktop', 'FID (First Input Delay)', seoData.coreWebVitals.desktop.fid?.toString() || 'N/A', seoData.coreWebVitals.desktop.fid ? (seoData.coreWebVitals.desktop.fid <= 100 ? 'Good' : seoData.coreWebVitals.desktop.fid <= 300 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Desktop', 'CLS (Cumulative Layout Shift)', seoData.coreWebVitals.desktop.cls?.toString() || 'N/A', seoData.coreWebVitals.desktop.cls ? (seoData.coreWebVitals.desktop.cls <= 0.1 ? 'Good' : seoData.coreWebVitals.desktop.cls <= 0.25 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Desktop', 'FCP (First Contentful Paint)', seoData.coreWebVitals.desktop.fcp?.toString() || 'N/A', seoData.coreWebVitals.desktop.fcp ? (seoData.coreWebVitals.desktop.fcp <= 1.8 ? 'Good' : seoData.coreWebVitals.desktop.fcp <= 3.0 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      ['Desktop', 'TTFB (Time to First Byte)', seoData.coreWebVitals.desktop.ttfb?.toString() || 'N/A', seoData.coreWebVitals.desktop.ttfb ? (seoData.coreWebVitals.desktop.ttfb <= 800 ? 'Good' : seoData.coreWebVitals.desktop.ttfb <= 1800 ? 'Needs Improvement' : 'Poor') : 'N/A'],
+      [''],
+
+      // SEO Meta Information
+      ['=== SEO METADATA ==='],
+      ['Element', 'Content', 'Length', 'Status'],
+      ['Title Tag', seoData.title || 'Not Found', seoData.title?.length.toString() || '0', seoData.title ? (seoData.title.length >= 30 && seoData.title.length <= 60 ? 'Good' : 'Needs Optimization') : 'Missing'],
+      ['Meta Description', seoData.description || 'Not Found', seoData.description?.length.toString() || '0', seoData.description ? (seoData.description.length >= 120 && seoData.description.length <= 160 ? 'Good' : 'Needs Optimization') : 'Missing'],
+      ['Keywords', seoData.keywords || 'Not Specified', seoData.keywords?.length.toString() || '0', seoData.keywords ? 'Present' : 'Not Specified'],
+      ['Canonical URL', seoData.canonicalUrl || 'Not Found', seoData.canonicalUrl?.length.toString() || '0', seoData.canonicalUrl ? 'Present' : 'Missing'],
+      [''],
+
+      // Open Graph Tags
+      ['=== OPEN GRAPH TAGS ==='],
+      ['Property', 'Content', 'Status'],
+      ['og:title', seoData.ogTitle || 'Not Found', seoData.ogTitle ? 'Present' : 'Missing'],
+      ['og:description', seoData.ogDescription || 'Not Found', seoData.ogDescription ? 'Present' : 'Missing'],
+      ['og:image', seoData.ogImage || 'Not Found', seoData.ogImage ? 'Present' : 'Missing'],
+      ['og:url', seoData.ogUrl || 'Not Found', seoData.ogUrl ? 'Present' : 'Missing'],
+      ['og:type', seoData.ogType || 'Not Found', seoData.ogType ? 'Present' : 'Missing'],
+      [''],
+
+      // Twitter Cards
+      ['=== TWITTER CARDS ==='],
+      ['Property', 'Content', 'Status'],
+      ['twitter:card', seoData.twitterCard || 'Not Found', seoData.twitterCard ? 'Present' : 'Missing'],
+      ['twitter:title', seoData.twitterTitle || 'Not Found', seoData.twitterTitle ? 'Present' : 'Missing'],
+      ['twitter:description', seoData.twitterDescription || 'Not Found', seoData.twitterDescription ? 'Present' : 'Missing'],
+      ['twitter:image', seoData.twitterImage || 'Not Found', seoData.twitterImage ? 'Present' : 'Missing'],
+      [''],
+
+      // Technical SEO Checks
+      ['=== TECHNICAL SEO CHECKS ==='],
+      ['Check', 'Status'],
+      ...(seoData.technicalChecks ? Object.entries(seoData.technicalChecks).map(([check, passed]) => [
+        check.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+        passed ? 'Pass' : 'Fail'
+      ]) : []),
+      [''],
+
+      // AI Search Analysis
+      ...(seoData.aiSearchAnalysis ? [
+        ['=== AI SEARCH ANALYSIS ==='],
+        ['Content Quality Score', seoData.aiSearchAnalysis.contentQuality?.toString() || 'N/A'],
+        ['Structured Data Score', seoData.aiSearchAnalysis.structuredDataScore?.toString() || 'N/A'],
+        ['Semantic Clarity Score', seoData.aiSearchAnalysis.semanticClarityScore?.toString() || 'N/A'],
+        ['Primary Topics', seoData.aiSearchAnalysis.primaryTopics?.join(', ') || 'N/A'],
+        ['Key Entities', seoData.aiSearchAnalysis.keyEntities?.join(', ') || 'N/A'],
+        ['Factual Claims', seoData.aiSearchAnalysis.factualClaims?.join(', ') || 'N/A'],
+        ['']
+      ] : []),
+
+      // Keyword Analysis
+      ...(seoData.keywordAnalysis ? [
+        ['=== KEYWORD ANALYSIS ==='],
+        ['Overall Score', seoData.keywordAnalysis.overallScore?.toString() || 'N/A'],
+        ['Primary Keywords'],
+        ['Keyword', 'Frequency', 'Density'],
+        ...(seoData.keywordAnalysis.primaryKeywords?.map(kw => [kw.term, kw.frequency?.toString() || '0', kw.density?.toString() || '0']) || []),
+        [''],
+        ['Secondary Keywords'],
+        ['Keyword', 'Frequency', 'Density'],
+        ...(seoData.keywordAnalysis.secondaryKeywords?.map(kw => [kw.term, kw.frequency?.toString() || '0', kw.density?.toString() || '0']) || []),
+        [''],
+        ['Long-tail Keywords'],
+        ...(seoData.keywordAnalysis.longTailKeywords?.map(kw => [kw]) || []),
+        [''],
+        ['Missed Opportunities'],
+        ...(seoData.keywordAnalysis.missedOpportunities?.map(opp => [opp]) || []),
+        ['']
+      ] : []),
+
+      // Recommendations
+      ['=== RECOMMENDATIONS ==='],
+      ['Priority', 'Category', 'Title', 'Description'],
+      ...(seoData.recommendations?.map(rec => [
+        rec.priority || 'Medium',
+        rec.category || 'General',
+        rec.title || 'N/A',
+        rec.description?.replace(/\n/g, ' ') || 'N/A'
+      ]) || []),
+      [''],
+
+      // Diagnostics
+      ...(seoData.diagnostics?.length ? [
+        ['=== PERFORMANCE DIAGNOSTICS ==='],
+        ['Title', 'Description', 'Score Impact'],
+        ...seoData.diagnostics.map(diag => [
+          diag.title || 'N/A',
+          diag.description?.replace(/\n/g, ' ') || 'N/A',
+          diag.scoreDisplayMode || 'N/A'
+        ]),
+        ['']
+      ] : []),
+
+      // Performance Insights
+      ...(seoData.insights?.length ? [
+        ['=== PERFORMANCE INSIGHTS ==='],
+        ['Title', 'Description', 'Type'],
+        ...seoData.insights.map(insight => [
+          insight.title || 'N/A',
+          insight.description?.replace(/\n/g, ' ') || 'N/A',
+          insight.scoreDisplayMode || 'N/A'
+        ]),
+        ['']
+      ] : []),
+
+      // Footer
+      [''],
+      ['Report generated by DLMETRIX'],
+      ['https://dlmetrix.com'],
+      ['© 2025 Luis Mena Hernandez']
     ];
 
-    const csvContent = csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const csvContent = csvData.map(row => 
+      row.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `web-analysis-${new URL(seoData.url).hostname}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `dlmetrix-complete-analysis-${new URL(seoData.url).hostname}-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
 
