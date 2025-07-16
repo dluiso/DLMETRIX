@@ -95,6 +95,7 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
       executablePath,
       headless: true,
       timeout: 60000,
+      protocolTimeout: 45000, // Increased for ARM64 screenshot timeouts
       args: [
         '--no-sandbox', 
         '--disable-setuid-sandbox', 
@@ -119,7 +120,8 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
         '--ignore-certificate-errors',
         '--allow-running-insecure-content',
         '--disable-component-extensions-with-background-pages',
-        '--disable-background-networking'
+        '--disable-background-networking',
+        '--disable-ipc-flooding-protection' // Additional ARM64 optimization
       ]
     });
 
@@ -441,26 +443,51 @@ function generateBasicRecommendations(loadTime: number, device: string) {
   return recommendations;
 }
 
-// Capture screenshot
+// Capture screenshot optimized for ARM64
 async function captureScreenshot(url: string, device: 'mobile' | 'desktop', browser: any): Promise<string> {
   const page = await browser.newPage();
   
   try {
+    // Set longer timeout for ARM64
+    page.setDefaultTimeout(45000);
+    page.setDefaultNavigationTimeout(45000);
+    
     if (device === 'mobile') {
-      await page.setViewport({ width: 375, height: 667, deviceScaleFactor: 2 });
+      await page.setViewport({ width: 375, height: 667, deviceScaleFactor: 1 }); // Reduced scale for performance
     } else {
       await page.setViewport({ width: 1350, height: 940, deviceScaleFactor: 1 });
     }
     
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
-    
-    const screenshot = await page.screenshot({
-      type: 'png',
-      encoding: 'base64',
-      fullPage: false
+    // Navigate with optimized wait conditions for ARM64
+    await page.goto(url, { 
+      waitUntil: 'domcontentloaded', // Less strict than networkidle2
+      timeout: 40000 
     });
     
+    // Wait a bit for content to settle
+    await page.waitForTimeout(2000);
+    
+    // Capture with timeout protection
+    const screenshotPromise = page.screenshot({
+      type: 'png',
+      encoding: 'base64',
+      fullPage: false,
+      clip: device === 'mobile' 
+        ? { x: 0, y: 0, width: 375, height: 667 }
+        : { x: 0, y: 0, width: 1350, height: 940 }
+    });
+    
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Screenshot timeout')), 35000)
+    );
+    
+    const screenshot = await Promise.race([screenshotPromise, timeoutPromise]) as string;
+    
     return `data:image/png;base64,${screenshot}`;
+  } catch (error) {
+    console.log(`Screenshot failed for ${device}: ${error.message}`);
+    // Return a fallback placeholder instead of failing completely
+    return null;
   } finally {
     await page.close();
   }

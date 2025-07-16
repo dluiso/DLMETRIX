@@ -1,78 +1,58 @@
-# DLMETRIX - Solución de Emergencia
+# DLMETRIX - Corrección de Emergency para Screenshots ARM64
 
-## Problema Crítico
-La aplicación muestra código HTML en lugar de la interfaz debido a scripts de obfuscación interfiriendo con React.
+## Problema Identificado
+Screenshots están tardando demasiado en ARM64 y causando timeouts de protocolo.
 
-## Solución INMEDIATA
+## Solución Aplicada
 
-### 1. Comandos para ejecutar EN TU SERVIDOR:
+### Optimizaciones para Screenshots ARM64:
+1. **Increased Protocol Timeout**: 45 segundos para operaciones de protocolo
+2. **Reduced DeviceScaleFactor**: De 2 a 1 para móvil (mejor rendimiento)
+3. **Optimized Wait Conditions**: `domcontentloaded` en lugar de `networkidle2`
+4. **Screenshot Timeout Protection**: Promise.race con timeout de 35s
+5. **Graceful Fallback**: null en lugar de error completo si screenshot falla
+6. **Additional Chrome Flags**: `--disable-ipc-flooding-protection` para ARM64
+
+## Comando de Actualización para tu Servidor
 
 ```bash
-# Detener aplicación
-pm2 stop dlmetrix
-
-# Ir al directorio
 cd ~/DLMETRIX
-
-# Crear main.tsx limpio SIN obfuscación
-cat > client/src/main.tsx << 'EOF'
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
-
-const container = document.getElementById("root");
-if (!container) throw new Error("Root container missing in index.html");
-
-const root = createRoot(container);
-root.render(<App />);
-EOF
-
-# Limpiar dist
-rm -rf dist
-
-# Construir
+git stash
+git pull origin main
 npm run build
-
-# Iniciar
-NODE_ENV=production npm start
+pm2 restart dlmetrix
 ```
 
-### 2. Si aún no funciona, modo debugging:
+## Resultado Esperado
 
-```bash
-# Iniciar en modo desarrollo para ver qué pasa
-NODE_ENV=development npm start
+Después de la actualización:
+
+✅ **Screenshots funcionando sin timeouts**
+✅ **Core Web Vitals manteniendo valores reales**  
+✅ **Sin errores de "Page.captureScreenshot timed out"**
+✅ **Análisis más rápido en general**
+
+## Logs Esperados
+
+```
+Starting manual performance analysis for mobile (ARM64 compatible)
+Starting manual performance analysis for desktop (ARM64 compatible)
+[análisis completado sin errores de timeout]
 ```
 
-## Qué hice
+## Si Aún Hay Problemas
 
-1. **Eliminé TODOS los scripts de obfuscación** del HTML
-2. **Simplifiqué main.tsx** a solo lo esencial para React
-3. **Sin imports de seguridad** que puedan interferir
+Si persisten timeouts de screenshots, el análisis seguirá funcionando con:
+- Core Web Vitals ✅ (funcionando)
+- Performance Scores ✅ (funcionando)  
+- Screenshots = null (sin romper el análisis)
 
-## Resultado esperado
+## Ventajas de Esta Corrección
 
-Después de estos comandos debes ver:
-- Interfaz normal de DLMETRIX
-- No código HTML en pantalla
-- Aplicación funcionando completamente
+1. **Timeouts Apropiados**: 45s protocolo, 40s navegación, 35s screenshot
+2. **Mejor Performance**: Reduced device scale factor y wait conditions
+3. **Fault Tolerance**: Screenshot failures no rompen el análisis completo
+4. **ARM64 Optimized**: Flags específicos para arquitectura ARM64
+5. **Maintaining Core Features**: Core Web Vitals siguen funcionando perfectamente
 
-## Si persiste
-
-Si después de esto aún ves código, el problema puede ser:
-
-1. **Caché del navegador**: Ctrl+F5 para refrescar
-2. **Archivos no actualizados**: Verifica que main.tsx se creó correctamente
-3. **Proceso zombie**: `pkill -f node` para matar todos los procesos
-
-## Verificación rápida
-
-Después de aplicar la solución, ejecuta:
-```bash
-# Ver si el archivo está correcto
-cat client/src/main.tsx
-
-# Debe mostrar solo 8 líneas, sin imports de obfuscación
-```
-
-Esta es la solución más simple y directa para que React funcione sin interferencias.
+La aplicación será más estable y confiable en tu servidor ARM64.
