@@ -115,6 +115,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### ARM64 Server Performance Analysis Implementation Success (January 16, 2025)
+- **Complete ARM64 Compatibility Achieved**: Successfully replaced Lighthouse with manual performance analysis specifically optimized for ARM64 servers
+- **Core Web Vitals Working**: Real Core Web Vitals measurements (LCP, FCP, CLS, TTFB, FID) functioning perfectly on both mobile and desktop
+- **Screenshot Capture Optimized**: Mobile and desktop screenshots working with ARM64-specific configurations (mobile: 375×600, desktop: 1350×940)
+- **Puppeteer Direct Integration**: Bypassed Lighthouse dependency using Puppeteer directly for better ARM64 compatibility with /usr/bin/chromium-browser
+- **Performance Timeouts Optimized**: Mobile (25s), Desktop (35s), and navigation timeouts specifically tuned for ARM64 server performance
+- **PNG Quality Fix**: Eliminated incompatible quality parameter from PNG screenshots, ensuring clean capture without errors
+- **Graceful Error Handling**: Screenshots that timeout return null without breaking the entire analysis, maintaining Core Web Vitals functionality
+- **Manual Performance Measurement**: Custom performance scoring system compatible with ARM64 architecture using direct Puppeteer metrics
+- **Production Deployment Success**: User confirmed complete functionality on ARM64 server with PM2 process management
+- **User Impact**: Full DLMETRIX functionality restored with real performance data, screenshots, and Core Web Vitals on ARM64 servers
+
 ### Critical Production Deployment Fix (January 16, 2025)
 - **Resolved Critical Rendering Issue**: Fixed production deployment where obfuscation scripts caused React to fail rendering, showing raw HTML/code instead of the interface
 - **Simplified Security Approach**: Removed complex obfuscation systems that interfered with React rendering in production environments
