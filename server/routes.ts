@@ -512,6 +512,8 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
 // Fetch comprehensive SEO data with DOM analysis
 async function fetchBasicSeoData(url: string) {
   try {
+    console.log('DEBUG fetchBasicSeoData - Starting analysis for URL:', url);
+    
     const response = await axios.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -519,6 +521,9 @@ async function fetchBasicSeoData(url: string) {
       timeout: 15000,
       maxRedirects: 5
     });
+
+    console.log('DEBUG fetchBasicSeoData - Response status:', response.status);
+    console.log('DEBUG fetchBasicSeoData - Content length:', response.data.length);
 
     const html = response.data;
     const $ = cheerio.load(html);
@@ -534,6 +539,8 @@ async function fetchBasicSeoData(url: string) {
     const charset = $('meta[charset]').attr('charset') || $('meta[http-equiv="Content-Type"]').attr('content')?.includes('charset') || null;
     const langAttribute = $('html').attr('lang')?.trim() || null;
 
+    console.log('DEBUG fetchBasicSeoData - Basic meta extracted:', { title, description: !!description, viewportMeta: !!viewportMeta });
+
     // Extract headings structure (grouped by type)
     const headings = {
       h1: $('h1').map((_, el) => $(el).text().trim()).get(),
@@ -543,6 +550,13 @@ async function fetchBasicSeoData(url: string) {
       h5: $('h5').map((_, el) => $(el).text().trim()).get(),
       h6: $('h6').map((_, el) => $(el).text().trim()).get()
     };
+
+    console.log('DEBUG fetchBasicSeoData - Headings extracted:', {
+      h1Count: headings.h1.length,
+      h2Count: headings.h2.length,
+      h3Count: headings.h3.length,
+      h1Text: headings.h1[0] || 'None'
+    });
 
     // Extract headings in the order they appear on the page
     const headingStructure = [];
@@ -708,8 +722,44 @@ async function fetchBasicSeoData(url: string) {
       finalUrl: response.request.res.responseUrl || url,
       hasSSL: (response.request.res.responseUrl || url).startsWith('https://')
     };
+    console.log('DEBUG fetchBasicSeoData - Analysis complete, returning result with keys:', Object.keys({
+      title, description, keywords, canonicalUrl, robotsMeta, viewportMeta, charset, langAttribute,
+      headings, headingStructure, imageAnalysis, linkAnalysis, contentAnalysis, technicalAnalysis,
+      openGraphTags, twitterCardTags, schemaMarkup, robotsTxtExists, sitemapExists, finalUrl, hasSSL
+    }));
+    
+    console.log('DEBUG fetchBasicSeoData - Headings in final result:', {
+      h1Count: headings.h1.length,
+      h1First: headings.h1[0] || 'None',
+      structureCount: headingStructure.length
+    });
+
+    return {
+      title,
+      description,
+      keywords,
+      canonicalUrl,
+      robotsMeta,
+      viewportMeta,
+      charset,
+      langAttribute,
+      headings,
+      headingStructure,
+      imageAnalysis,
+      linkAnalysis,
+      contentAnalysis,
+      technicalAnalysis,
+      openGraphTags,
+      twitterCardTags,
+      schemaMarkup,
+      robotsTxtExists,
+      sitemapExists,
+      finalUrl,
+      hasSSL
+    };
+    
   } catch (error) {
-    console.error('Error fetching comprehensive SEO data:', error);
+    console.error('DEBUG fetchBasicSeoData - Error occurred:', error.message);
     return {
       title: null,
       description: null,
