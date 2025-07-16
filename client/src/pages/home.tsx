@@ -812,12 +812,12 @@ export default function Home() {
                     <BarChart3 className="w-8 h-8" />
                   </div>
                 </div>
-                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4 px-2">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4 px-2">
                   {t.title}
-                </h1>
-                <h2 className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4 font-medium">
-                  {t.subtitle}
                 </h2>
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4">
+                  {t.subtitle}
+                </p>
               </div>
               
               {/* Centered URL Input */}
@@ -825,138 +825,101 @@ export default function Home() {
                 <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
-              {/* Features Section - SEO Optimized */}
-              <section className="mt-12 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
+              {/* Features Section - Compact */}
+              <section className="mt-8 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
                   {language === 'en' ? 'Comprehensive Website Analysis Features' : 'Características de Análisis Web Integral'}
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-3 sm:gap-4 justify-center items-center text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
-                    <span className="font-medium">Desktop</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
-                    <span className="font-medium">Mobile</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500 flex-shrink-0" />
-                    <span className="font-medium">Performance</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500 flex-shrink-0" />
-                    <span className="font-medium">SEO</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Search className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 flex-shrink-0" />
-                    <span className="font-medium">AI Search</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 flex-shrink-0" />
-                    <span className="font-medium">Keywords</span>
-                  </div>
-                </div>
-              </section>
-
-              {/* About Section - SEO Content */}
-              <article className="mt-16 max-w-4xl mx-auto px-4 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-                <section className="text-center mb-8">
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-                    {language === 'en' ? 'Free Website SEO Analysis Tool' : 'Herramienta Gratuita de Análisis SEO'}
-                  </h2>
-                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-                    {language === 'en' 
-                      ? 'DLMETRIX provides comprehensive website performance analysis including Core Web Vitals, SEO audit, accessibility testing, and technical optimization recommendations. Our free tool helps web developers and SEO professionals identify performance issues and improve search engine rankings.'
-                      : 'DLMETRIX proporciona análisis integral de rendimiento web incluyendo Core Web Vitals, auditoría SEO, pruebas de accesibilidad y recomendaciones de optimización técnica. Nuestra herramienta gratuita ayuda a desarrolladores web y profesionales SEO a identificar problemas de rendimiento y mejorar el ranking en buscadores.'
-                    }
-                  </p>
-                </section>
-
-                <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                </h2>
+                <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto px-4">
+                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Core Web Vitals' : 'Core Web Vitals'}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
                       {language === 'en' 
                         ? 'Measure LCP, FID, CLS and other performance metrics that affect user experience and search rankings.'
                         : 'Mide LCP, FID, CLS y otras métricas de rendimiento que afectan la experiencia del usuario y el ranking en buscadores.'
                       }
                     </p>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Technical SEO' : 'SEO Técnico'}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
                       {language === 'en' 
                         ? 'Analyze meta tags, heading structure, schema markup, and other technical SEO factors.'
                         : 'Analiza meta etiquetas, estructura de encabezados, marcado de esquema y otros factores de SEO técnico.'
                       }
                     </p>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Accessibility' : 'Accesibilidad'}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
                       {language === 'en' 
                         ? 'Check website accessibility compliance and get recommendations for inclusive design.'
                         : 'Verifica el cumplimiento de accesibilidad del sitio web y obtén recomendaciones para diseño inclusivo.'
                       }
                     </p>
                   </div>
-                </section>
-              </article>
+                </div>
+              </section>
               
-              {/* Footer for centered layout - Improved Mobile */}
-              <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                  <span className="text-center">© 2025 DLMETRIX. All rights reserved.</span>
-                  <span className="hidden sm:inline mx-1">•</span>
-                  <span className="text-center">Created by Luis Mena</span>
-                  <span className="hidden sm:inline mx-1">•</span>
-                  <Dialog open={isLegalOpen} onOpenChange={setIsLegalOpen}>
-                    <DialogTrigger asChild>
-                      <button 
-                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors text-xs sm:text-sm"
-                        onClick={() => setIsLegalOpen(true)}
-                      >
-                        Legal Notice
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              {/* Footer for centered layout - Compact */}
+              <footer className="mt-8 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+                    <span>© 2025 DLMETRIX. All rights reserved.</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span>Made with ❤️ for web developers</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span>Free SEO analysis tool</span>
+                  </div>
+                  <div>
+                    <Dialog open={isLegalOpen} onOpenChange={setIsLegalOpen}>
+                      <DialogTrigger asChild>
+                        <button 
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline transition-colors text-xs"
+                          onClick={() => setIsLegalOpen(true)}
+                        >
                           Legal Notice
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
-                        <p>
-                          All rights reserved to Luis Mena Hernandez.
-                        </p>
-                        <div className="space-y-2">
-                          <p className="font-medium">Legal Address:</p>
-                          <address className="not-italic text-slate-600 dark:text-slate-400">
-                            461 N Lake<br />
-                            Aurora, Illinois 60506<br />
-                            United States
-                          </address>
-                        </div>
-                        <div className="space-y-2">
-                          <p className="font-medium">Application Registration:</p>
-                          <div className="text-slate-600 dark:text-slate-400 font-mono space-y-1">
-                            <p>DLMETRIX™</p>
-                            <p>App Registration No. DLM-2025-US-01783</p>
-                            <p>© 2025 DLMETRIX. All rights reserved.</p>
-                            <p>Copyright Reference: TXu 2-974-635</p>
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                            Legal Notice
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                          <p>
+                            All rights reserved to Luis Mena Hernandez.
+                          </p>
+                          <div className="space-y-2">
+                            <p className="font-medium">Legal Address:</p>
+                            <address className="not-italic text-slate-600 dark:text-slate-400">
+                              461 N Lake<br />
+                              Aurora, Illinois 60506<br />
+                              United States
+                            </address>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="font-medium">Application Registration:</p>
+                            <div className="text-slate-600 dark:text-slate-400 font-mono space-y-1">
+                              <p>DLMETRIX™</p>
+                              <p>App Registration No. DLM-2025-US-01783</p>
+                              <p>© 2025 DLMETRIX. All rights reserved.</p>
+                              <p>Copyright Reference: TXu 2-974-635</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
-              </div>
+              </footer>
             </div>
           </div>
         ) : (
