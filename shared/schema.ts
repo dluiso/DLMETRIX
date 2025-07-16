@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, json } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, json, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -36,12 +36,28 @@ export const webAnalyses = pgTable("web_analyses", {
   technicalChecks: json("technical_checks"),
 });
 
+export const sharedReports = pgTable("shared_reports", {
+  id: serial("id").primaryKey(),
+  shareToken: text("share_token").unique().notNull(),
+  url: text("url").notNull(),
+  analysisData: json("analysis_data").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+});
+
 export const insertWebAnalysisSchema = createInsertSchema(webAnalyses).omit({
   id: true,
 });
 
+export const insertSharedReportSchema = createInsertSchema(sharedReports).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertWebAnalysis = z.infer<typeof insertWebAnalysisSchema>;
 export type WebAnalysis = typeof webAnalyses.$inferSelect;
+export type InsertSharedReport = z.infer<typeof insertSharedReportSchema>;
+export type SharedReport = typeof sharedReports.$inferSelect;
 
 // Core Web Vitals schema
 export const coreWebVitalsSchema = z.object({

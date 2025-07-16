@@ -6,6 +6,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import lighthouse from "lighthouse";
 import puppeteer from "puppeteer";
+import { nanoid } from "nanoid";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Comprehensive web performance analysis
@@ -74,6 +75,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.error('Web analysis error:', error);
       res.status(500).json({ message: "Internal server error during analysis" });
+    }
+  });
+
+  // Share report API
+  app.post("/api/share/create", async (req, res) => {
+    try {
+      const { analysisData } = req.body;
+      
+      if (!analysisData || !analysisData.url) {
+        return res.status(400).json({ message: "Analysis data is required" });
+      }
+
+      // Generate unique token
+      const shareToken = nanoid(20);
+      
+      // Set expiration to 12 hours from now
+      const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
+      
+      // Store shared report
+      const sharedReport = await storage.createSharedReport({
+        shareToken,
+        url: analysisData.url,
+        analysisData,
+        expiresAt
+      });
+      
+      // Clean expired reports periodically
+      await storage.cleanExpiredSharedReports();
+      
+      res.json({
+        shareToken,
+        shareUrl: `${req.protocol}://${req.get('host')}/share/${shareToken}`,
+        expiresAt: expiresAt.toISOString(),
+        url: analysisData.url
+      });
+    } catch (error: any) {
+      console.error('Share creation error:', error);
+      res.status(500).json({ message: "Failed to create shareable link" });
+    }
+  });
+
+  // Get shared report API
+  app.get("/api/share/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Share token is required" });
+      }
+
+      const sharedReport = await storage.getSharedReport(token);
+      
+      if (!sharedReport) {
+        return res.status(404).json({ 
+          message: "Shared report not found or has expired",
+          expired: true
+        });
+      }
+      
+      res.json({
+        url: sharedReport.url,
+        analysisData: sharedReport.analysisData,
+        createdAt: sharedReport.createdAt,
+        expiresAt: sharedReport.expiresAt
+      });
+    } catch (error: any) {
+      console.error('Share retrieval error:', error);
+      res.status(500).json({ message: "Failed to retrieve shared report" });
     }
   });
 

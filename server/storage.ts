@@ -1,4 +1,4 @@
-import { webAnalyses, type WebAnalysis, type InsertWebAnalysis } from "@shared/schema";
+import { webAnalyses, sharedReports, type WebAnalysis, type InsertWebAnalysis, type SharedReport, type InsertSharedReport } from "@shared/schema";
 
 export interface IStorage {
   getUser(id: number): Promise<any | undefined>;
@@ -7,19 +7,26 @@ export interface IStorage {
   createWebAnalysis(analysis: InsertWebAnalysis): Promise<WebAnalysis>;
   getWebAnalysis(id: number): Promise<WebAnalysis | undefined>;
   getWebAnalysesByUrl(url: string): Promise<WebAnalysis[]>;
+  createSharedReport(report: InsertSharedReport): Promise<SharedReport>;
+  getSharedReport(shareToken: string): Promise<SharedReport | undefined>;
+  cleanExpiredSharedReports(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, any>;
   private webAnalyses: Map<number, WebAnalysis>;
+  private sharedReports: Map<string, SharedReport>;
   private currentUserId: number;
   private currentAnalysisId: number;
+  private currentSharedId: number;
 
   constructor() {
     this.users = new Map();
     this.webAnalyses = new Map();
+    this.sharedReports = new Map();
     this.currentUserId = 1;
     this.currentAnalysisId = 1;
+    this.currentSharedId = 1;
   }
 
   async getUser(id: number): Promise<any | undefined> {
@@ -78,6 +85,42 @@ export class MemStorage implements IStorage {
     return Array.from(this.webAnalyses.values()).filter(
       (analysis) => analysis.url === url,
     );
+  }
+
+  async createSharedReport(insertReport: InsertSharedReport): Promise<SharedReport> {
+    const report: SharedReport = {
+      id: this.currentSharedId++,
+      ...insertReport,
+      createdAt: new Date(),
+    };
+    this.sharedReports.set(report.shareToken, report);
+    return report;
+  }
+
+  async getSharedReport(shareToken: string): Promise<SharedReport | undefined> {
+    const report = this.sharedReports.get(shareToken);
+    if (report && report.expiresAt > new Date()) {
+      return report;
+    }
+    if (report && report.expiresAt <= new Date()) {
+      this.sharedReports.delete(shareToken);
+    }
+    return undefined;
+  }
+
+  async cleanExpiredSharedReports(): Promise<void> {
+    const now = new Date();
+    const tokensToDelete: string[] = [];
+    
+    this.sharedReports.forEach((report, token) => {
+      if (report.expiresAt <= now) {
+        tokensToDelete.push(token);
+      }
+    });
+    
+    tokensToDelete.forEach(token => {
+      this.sharedReports.delete(token);
+    });
   }
 }
 
