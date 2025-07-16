@@ -120,6 +120,7 @@ export interface Translations {
   tryAgain: string;
   csvExported: string;
   csvDescription: string;
+  exportCSV: string;
   comparisonEnabled: string;
   comparingWith: string;
   
@@ -273,6 +274,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     tryAgain: "There was an error generating the PDF report. Please try again.",
     csvExported: "CSV exported!",
     csvDescription: "Analysis data has been exported to CSV format.",
+    exportCSV: "Export CSV",
     comparisonEnabled: "Comparison mode enabled",
     comparingWith: "Comparing current analysis with",
     
@@ -424,6 +426,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     tryAgain: "Hubo un error generando el reporte PDF. Por favor intenta de nuevo.",
     csvExported: "¡CSV exportado!",
     csvDescription: "Los datos del análisis han sido exportados a formato CSV.",
+    exportCSV: "Exportar CSV",
     comparisonEnabled: "Modo de comparación habilitado",
     comparingWith: "Comparando análisis actual con",
     

@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages, Monitor, Smartphone, Globe } from "lucide-react";
+import { Bookmark, Search, Download, History, FileText, Trash2, Calendar, BarChart3, FileDown, Settings, Moon, Sun, Languages, Monitor, Smartphone, Globe, Menu, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import UrlInput from "@/components/url-input";
 import SeoScore from "@/components/seo-score";
@@ -43,6 +43,7 @@ export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es'>('en');
   const [isLegalOpen, setIsLegalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { toast } = useToast();
 
   const analyzeMutation = useMutation({
@@ -330,16 +331,19 @@ export default function Home() {
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-0 sm:h-16 gap-4 sm:gap-0">
-            <div className="flex items-center space-x-3 w-full sm:w-auto cursor-pointer" onClick={() => window.location.reload()}>
+          <div className="flex items-center justify-between h-16">
+            {/* Logo and Title */}
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => window.location.reload()}>
               <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
                 <BarChart3 className="w-5 h-5" />
               </div>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{t.title}</h1>
-              </div>
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                {t.title}
+              </h1>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
+
+            {/* Desktop Menu */}
+            <div className="hidden lg:flex items-center space-x-3">
               <WhyDlmetrixDialog language={language} />
               <Button 
                 variant="ghost" 
@@ -353,7 +357,7 @@ export default function Home() {
                     {analysisHistory.length}
                   </span>
                 )}
-                <span className="hidden sm:inline ml-2">{t.history}</span>
+                <span className="ml-2">{t.history}</span>
               </Button>
               <Button 
                 variant="ghost" 
@@ -361,7 +365,7 @@ export default function Home() {
                 onClick={() => setShowSettings(!showSettings)}
               >
                 <Settings className="w-4 h-4" />
-                <span className="hidden sm:inline ml-2">{t.settings}</span>
+                <span className="ml-2">{t.settings}</span>
               </Button>
               <HelpDialog language={language} />
               {seoData && (
@@ -372,7 +376,7 @@ export default function Home() {
                   disabled={!seoData}
                 >
                   <FileDown className="w-4 h-4" />
-                  <span className="hidden sm:inline ml-2">CSV</span>
+                  <span className="ml-2">CSV</span>
                 </Button>
               )}
               <Button 
@@ -381,21 +385,116 @@ export default function Home() {
                 disabled={!seoData || isExporting}
               >
                 {isExporting ? (
-                  <Download className="w-4 h-4 mr-1 sm:mr-2 animate-spin" />
+                  <Download className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                  <Bookmark className="w-4 h-4 mr-1 sm:mr-2" />
+                  <Bookmark className="w-4 h-4 mr-2" />
                 )}
-                <span className="hidden sm:inline">
-                  {isExporting ? t.generating : t.saveReport}
-                </span>
-                <span className="sm:hidden">
-                  {isExporting ? "..." : t.saveReport.split(' ')[0]}
-                </span>
+                {isExporting ? t.generating : t.saveReport}
               </Button>
               <ContactDialog language={language} />
               <SupportDialog language={language} />
             </div>
+
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </Button>
+            </div>
           </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="lg:hidden border-t border-slate-200 dark:border-slate-700 py-4">
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between px-4 py-2">
+                  <WhyDlmetrixDialog language={language} />
+                  <HelpDialog language={language} />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 px-4">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => {
+                      setShowHistory(!showHistory);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="relative justify-start"
+                  >
+                    <History className="w-4 h-4 mr-2" />
+                    {t.history}
+                    {analysisHistory.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {analysisHistory.length}
+                      </span>
+                    )}
+                  </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setShowSettings(!showSettings);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="justify-start"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    {t.settings}
+                  </Button>
+                </div>
+
+                {seoData && (
+                  <div className="grid grid-cols-1 gap-3 px-4">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        handleExportCSV();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      disabled={!seoData}
+                      className="justify-start"
+                    >
+                      <FileDown className="w-4 h-4 mr-2" />
+                      {t.exportCSV || 'Export CSV'}
+                    </Button>
+                    
+                    <Button 
+                      className="bg-primary hover:bg-blue-700 justify-start"
+                      onClick={() => {
+                        handleExportPDF();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      disabled={!seoData || isExporting}
+                    >
+                      {isExporting ? (
+                        <Download className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Bookmark className="w-4 h-4 mr-2" />
+                      )}
+                      {isExporting ? t.generating : t.saveReport}
+                    </Button>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-center space-x-4 px-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+                  <ContactDialog language={language} />
+                  <SupportDialog language={language} />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
