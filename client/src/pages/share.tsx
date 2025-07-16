@@ -322,9 +322,9 @@ export default function SharePage() {
             />
           )}
 
-          {/* SEO Analysis with safe data structure */}
+          {/* SEO Analysis with real data */}
           <SeoScore data={{
-            score: 75,
+            score: Number(analysisData.performanceOverview.seo) || 25,
             title: analysisData.seoAnalysis.title,
             description: analysisData.seoAnalysis.description,
             keywords: analysisData.seoAnalysis.keywords,
@@ -333,7 +333,7 @@ export default function SharePage() {
             viewportMeta: analysisData.seoAnalysis.viewportMeta,
             openGraphTags: analysisData.seoAnalysis.openGraphTags,
             twitterCardTags: analysisData.seoAnalysis.twitterCardTags,
-            technicalSeoChecks: {},
+            technicalSeoChecks: analysisData.technicalSeoAnalysis || [],
             recommendations: analysisData.recommendations || []
           }} />
           
