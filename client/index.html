@@ -3,10 +3,157 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    
+    <!-- Primary Meta Tags -->
+    <title>DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker</title>
+    <meta name="title" content="DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker">
+    <meta name="description" content="Free comprehensive SEO analysis tool. Check Core Web Vitals, performance scores, technical SEO, mobile readiness, and get AI-powered insights. No signup required - analyze any website instantly.">
+    <meta name="keywords" content="SEO analysis tool, free SEO checker, Core Web Vitals, website performance test, technical SEO audit, mobile SEO, page speed test, accessibility checker, lighthouse audit, SEO report generator, website analyzer, performance monitoring, SEO optimization, meta tag checker, Open Graph validator, schema markup test">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="author" content="DLMETRIX - Luis Mena Hernandez">
+    <meta name="copyright" content="© 2025 DLMETRIX. All rights reserved.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dlmetrix.com/">
+    <meta property="og:title" content="DLMETRIX - Free SEO Analysis Tool | Core Web Vitals & Performance Checker">
+    <meta property="og:description" content="Comprehensive free SEO analysis tool with Core Web Vitals, performance audits, technical SEO checks, and AI-powered insights. Analyze any website instantly without signup.">
+    <meta property="og:image" content="https://dlmetrix.com/og-image.png">
+    <meta property="og:site_name" content="DLMETRIX">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://dlmetrix.com/">
+    <meta property="twitter:title" content="DLMETRIX - Free SEO Analysis Tool | Core Web Vitals Checker">
+    <meta property="twitter:description" content="Free comprehensive SEO analysis with Core Web Vitals, performance scores, technical audits, and AI insights. No signup required.">
+    <meta property="twitter:image" content="https://dlmetrix.com/twitter-image.png">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="application-name" content="DLMETRIX">
+    <meta name="apple-mobile-web-app-title" content="DLMETRIX">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://dlmetrix.com/">
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Preconnect to important domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DLMETRIX",
+      "description": "Free comprehensive SEO analysis tool with Core Web Vitals, performance audits, technical SEO checks, and AI-powered insights.",
+      "url": "https://dlmetrix.com",
+      "applicationCategory": "SEO Tool",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Luis Mena Hernandez"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "DLMETRIX",
+        "url": "https://dlmetrix.com"
+      },
+      "featureList": [
+        "Core Web Vitals Analysis",
+        "SEO Performance Audit",
+        "Technical SEO Checks",
+        "Mobile Readiness Test",
+        "Accessibility Audit",
+        "Page Speed Analysis",
+        "Meta Tags Validation",
+        "Open Graph Testing",
+        "AI-Powered Content Analysis",
+        "Performance Recommendations"
+      ]
+    }
+    </script>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <!-- Disable caching for security -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Security Script -->
+    <script>
+      // Additional security measures
+      (function() {
+        'use strict';
+        
+        // Disable drag and drop
+        document.addEventListener('dragstart', function(e) {
+          e.preventDefault();
+        });
+        
+        // Disable image saving
+        document.addEventListener('dragstart', function(e) {
+          if (e.target.tagName === 'IMG') {
+            e.preventDefault();
+          }
+        });
+        
+        // Obfuscate source view attempts
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function() {
+          console.log('%cUnauthorized network access detected', 'color: red; font-size: 16px;');
+          return originalOpen.apply(this, arguments);
+        };
+        
+        // Disable common inspection shortcuts
+        document.addEventListener('keydown', function(e) {
+          if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) {
+            e.preventDefault();
+            return false;
+          }
+        });
+        
+        // Clear window properties that might expose information
+        delete window.console;
+        
+        // Override console methods
+        const noop = function() {};
+        if (typeof window.console === 'undefined') {
+          window.console = {};
+        }
+        window.console.log = noop;
+        window.console.warn = noop;
+        window.console.error = noop;
+        window.console.info = noop;
+        window.console.debug = noop;
+      })();
+    </script>
+    
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>

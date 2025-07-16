@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# SEO-friendly directives
+Sitemap: https://dlmetrix.com/sitemap.xml
+
+# Security directives
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*.json$
+Disallow: /*.ts$
+Disallow: /*.tsx$
+Disallow: /*.js.map$
+
+# SEO optimization
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
