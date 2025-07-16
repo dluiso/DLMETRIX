@@ -579,10 +579,12 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
 }
 
 // Fetch comprehensive SEO data with DOM analysis
+// Enhanced SEO data fetching with Cloudflare bypass using Puppeteer
 async function fetchBasicSeoData(url: string) {
+  console.log('DEBUG fetchBasicSeoData - Starting analysis for URL:', url);
+  
+  // First try with axios for simple cases
   try {
-    console.log('DEBUG fetchBasicSeoData - Starting analysis for URL:', url);
-    
     const response = await axios.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -598,14 +600,167 @@ async function fetchBasicSeoData(url: string) {
         'Sec-Fetch-User': '?1',
         'Cache-Control': 'max-age=0'
       },
-      timeout: 20000,
+      timeout: 15000,
       maxRedirects: 10
     });
 
+    const html = response.data;
+    
+    // Check if response is a Cloudflare challenge page
+    if (html.includes('Just a moment') || 
+        html.includes('checking your browser') || 
+        html.includes('cloudflare') ||
+        html.includes('cf-browser-verification') ||
+        response.status === 403 ||
+        response.status === 503) {
+      
+      console.log('DEBUG fetchBasicSeoData - Cloudflare detected, switching to Puppeteer bypass');
+      return await fetchSeoDataWithPuppeteer(url);
+    }
+    
     console.log('DEBUG fetchBasicSeoData - Response status:', response.status);
     console.log('DEBUG fetchBasicSeoData - Content length:', response.data.length);
+    
+    return await extractSeoDataFromHtml(html, url);
+    
+  } catch (error) {
+    if (error.response?.status === 403 || error.response?.status === 503) {
+      console.log('DEBUG fetchBasicSeoData - Site blocked axios, trying Puppeteer bypass');
+      return await fetchSeoDataWithPuppeteer(url);
+    }
+    
+    console.log('DEBUG fetchBasicSeoData - Site blocked access:', error.response?.status || error.message);
+    return getFallbackSeoData(url);
+  }
+}
 
-    const html = response.data;
+// Puppeteer-based SEO data extraction for Cloudflare-protected sites
+async function fetchSeoDataWithPuppeteer(url: string) {
+  const puppeteer = require('puppeteer');
+  let browser;
+  
+  try {
+    console.log('DEBUG fetchSeoDataWithPuppeteer - Launching browser for Cloudflare bypass');
+    
+    // Launch browser with anti-detection
+    browser = await puppeteer.launch({
+      executablePath: '/usr/bin/chromium-browser',
+      headless: true,
+      timeout: 60000,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-blink-features=AutomationControlled',
+        '--disable-automation',
+        '--exclude-switches=enable-automation',
+        '--disable-browser-side-navigation',
+        '--disable-client-side-phishing-detection',
+        '--disable-features=VizDisplayCompositor,AutofillAssistant,TranslateUI'
+      ]
+    });
+
+    const page = await browser.newPage();
+    
+    // Anti-detection measures
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+      delete window.navigator.__proto__.webdriver;
+      Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
+      Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+    });
+
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    await page.setViewport({ width: 1366, height: 768 });
+    
+    // Set realistic headers
+    await page.setExtraHTTPHeaders({
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'DNT': '1',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1'
+    });
+
+    console.log('DEBUG fetchSeoDataWithPuppeteer - Navigating to URL with Cloudflare handling');
+    
+    // Navigate with extended timeout for Cloudflare
+    const response = await page.goto(url, { 
+      waitUntil: 'networkidle2', 
+      timeout: 60000 
+    });
+
+    // Wait for potential Cloudflare challenges
+    let attempts = 0;
+    const maxAttempts = 3;
+    
+    while (attempts < maxAttempts) {
+      await page.waitForTimeout(3000); // Initial wait
+      
+      const pageContent = await page.evaluate(() => {
+        return {
+          title: document.title,
+          bodyText: document.body ? document.body.textContent : '',
+          isCloudflare: document.title.includes('Just a moment') || 
+                       document.body?.textContent?.includes('checking your browser') ||
+                       document.body?.textContent?.includes('Cloudflare') ||
+                       document.querySelector('.cf-browser-verification') !== null
+        };
+      });
+      
+      if (pageContent.isCloudflare) {
+        console.log(`DEBUG fetchSeoDataWithPuppeteer - Cloudflare challenge detected (attempt ${attempts + 1}), waiting...`);
+        await page.waitForTimeout(15000); // Wait for challenge completion
+        
+        // Wait for real content to load
+        try {
+          await page.waitForFunction(() => {
+            return !document.title.includes('Just a moment') && 
+                   !document.body?.textContent?.includes('checking your browser') &&
+                   document.body &&
+                   document.body.children.length > 2 &&
+                   document.body.textContent.length > 500;
+          }, { timeout: 30000 });
+          
+          console.log('DEBUG fetchSeoDataWithPuppeteer - Cloudflare challenge completed, content loaded');
+          break;
+        } catch (e) {
+          attempts++;
+          if (attempts >= maxAttempts) {
+            console.log('DEBUG fetchSeoDataWithPuppeteer - Max attempts reached, proceeding with current content');
+          }
+        }
+      } else {
+        console.log('DEBUG fetchSeoDataWithPuppeteer - Real content detected, proceeding with analysis');
+        break;
+      }
+      
+      attempts++;
+    }
+
+    // Extract HTML content
+    const html = await page.content();
+    await page.close();
+    
+    console.log('DEBUG fetchSeoDataWithPuppeteer - Content extracted, length:', html.length);
+    return await extractSeoDataFromHtml(html, url);
+    
+  } catch (error) {
+    console.log('DEBUG fetchSeoDataWithPuppeteer - Error:', error.message);
+    return getFallbackSeoData(url);
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
+}
+
+// Extract SEO data from HTML content
+async function extractSeoDataFromHtml(html: string, url: string) {
+  try {
+
     const $ = cheerio.load(html);
     const baseUrl = new URL(url).origin;
 
@@ -839,8 +994,14 @@ async function fetchBasicSeoData(url: string) {
     };
     
   } catch (error) {
-    console.log('DEBUG fetchBasicSeoData - Site blocked access:', error.response?.status || error.message);
-    return {
+    console.log('DEBUG extractSeoDataFromHtml - Error processing HTML:', error.message);
+    return getFallbackSeoData(url);
+  }
+}
+
+// Fallback SEO data for blocked sites
+function getFallbackSeoData(url: string) {
+  return {
       title: null,
       description: null,
       keywords: null,
@@ -880,7 +1041,6 @@ async function fetchBasicSeoData(url: string) {
       finalUrl: url,
       hasSSL: url.startsWith('https://')
     };
-  }
 }
 
 // Helper function to check if an endpoint exists
