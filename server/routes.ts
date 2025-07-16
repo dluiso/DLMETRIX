@@ -1053,67 +1053,222 @@ function estimatePerformanceScores(seoData: any, seoScore: number) {
 function generateSeoRecommendations(seoData: any) {
   const recommendations = [];
 
-  // Title analysis
+  // Title analysis with detailed technical information
   if (!seoData.title) {
     recommendations.push({
       type: 'error' as const,
       priority: 'high' as const,
       title: 'Missing Page Title',
-      description: 'Your page is missing a title tag, which is crucial for SEO.',
+      description: 'Your page is missing a title tag, which is crucial for SEO and user experience.',
       category: 'seo' as const,
-      howToFix: 'Add a descriptive title tag between 30-60 characters that accurately describes your page content.'
+      affectedFiles: ['index.html', 'head section', 'template files'],
+      technicalLocation: 'HTML <head> section, between <title></title> tags',
+      detectionMethod: 'DOM parsing: document.querySelector("title")',
+      codeExample: '<title>Your Page Title - Brand Name</title>',
+      seoImpact: 'Critical - Search engines use title tags as clickable headlines in search results',
+      howToFix: 'Add a descriptive title tag between 30-60 characters that accurately describes your page content.',
+      implementation: [
+        '1. Open your HTML file or template',
+        '2. Locate the <head> section',
+        '3. Add: <title>Your Descriptive Page Title</title>',
+        '4. Include primary keyword near the beginning',
+        '5. Keep it under 60 characters for full display in search results'
+      ],
+      externalResources: [
+        'Google SEO Guidelines: https://developers.google.com/search/docs/fundamentals/seo-starter-guide#title-tags',
+        'MDN Title Element: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title',
+        'Moz Title Tag Guide: https://moz.com/learn/seo/title-tag'
+      ],
+      testingTools: ['Google Search Console', 'SEO Browser Extensions', 'View Page Source']
     });
   } else if (seoData.title.length < 30 || seoData.title.length > 60) {
     recommendations.push({
       type: 'warning' as const,
       priority: 'medium' as const,
-      title: 'Page Title Length',
-      description: `Your title is ${seoData.title.length} characters. Optimal length is 30-60 characters.`,
+      title: 'Page Title Length Optimization',
+      description: `Your title is ${seoData.title.length} characters. Optimal length is 30-60 characters for best search engine display.`,
       category: 'seo' as const,
-      howToFix: 'Adjust your title length to be between 30-60 characters for better search engine display.'
+      currentValue: `"${seoData.title}" (${seoData.title.length} chars)`,
+      affectedFiles: ['HTML template', 'CMS title field', 'meta management system'],
+      technicalLocation: 'HTML <head><title> tag content',
+      detectionMethod: 'String length analysis: document.title.length',
+      codeExample: seoData.title.length > 60 ? 
+        `<!-- Current (too long) -->\n<title>${seoData.title}</title>\n\n<!-- Optimized -->\n<title>${seoData.title.substring(0, 57)}...</title>` :
+        `<!-- Current (too short) -->\n<title>${seoData.title}</title>\n\n<!-- Optimized -->\n<title>${seoData.title} - Additional Context | Brand</title>`,
+      seoImpact: 'Medium - Titles longer than 60 chars get truncated in search results, shorter than 30 may lack context',
+      howToFix: 'Adjust your title length to be between 30-60 characters for optimal search engine display.',
+      implementation: [
+        '1. Count current title characters',
+        '2. If too long: Remove unnecessary words, use shorter synonyms',
+        '3. If too short: Add relevant keywords, location, or brand name',
+        '4. Include primary keyword near the beginning',
+        '5. Make it compelling for users to click'
+      ],
+      externalResources: [
+        'Title Length Checker: https://www.seotesteronline.com/title-tag-checker/',
+        'SERP Preview Tool: https://www.sistrix.com/serp-snippet-generator/',
+        'Google Title Guidelines: https://developers.google.com/search/docs/fundamentals/seo-starter-guide#title-tags'
+      ],
+      testingTools: ['SERP Preview Tools', 'Google Search Console', 'Title Tag Analyzers']
     });
   }
 
-  // Meta description analysis
+  // Meta description analysis with detailed technical information
   if (!seoData.description) {
     recommendations.push({
       type: 'error' as const,
       priority: 'high' as const,
       title: 'Missing Meta Description',
-      description: 'Your page is missing a meta description.',
+      description: 'Your page is missing a meta description tag, which affects search result snippets and click-through rates.',
       category: 'seo' as const,
-      howToFix: 'Add a compelling meta description between 120-160 characters that summarizes your page content.'
+      affectedFiles: ['index.html', 'template files', 'CMS meta fields'],
+      technicalLocation: 'HTML <head> section, <meta name="description" content="...">',
+      detectionMethod: 'DOM query: document.querySelector(\'meta[name="description"]\')?.getAttribute("content")',
+      codeExample: '<meta name="description" content="Comprehensive guide to improving website SEO with actionable tips and best practices for better search rankings.">',
+      seoImpact: 'High - Meta descriptions appear in search results and influence click-through rates',
+      howToFix: 'Add a compelling meta description between 120-160 characters that summarizes your page content.',
+      implementation: [
+        '1. Open your HTML file or CMS meta settings',
+        '2. Locate the <head> section',
+        '3. Add: <meta name="description" content="Your page description">',
+        '4. Write 120-160 characters describing page content',
+        '5. Include primary keywords naturally',
+        '6. Make it compelling to encourage clicks'
+      ],
+      externalResources: [
+        'Google Meta Description Guide: https://developers.google.com/search/docs/appearance/snippet',
+        'Meta Description Best Practices: https://moz.com/learn/seo/meta-description',
+        'SERP Snippet Optimization: https://ahrefs.com/blog/meta-description/'
+      ],
+      testingTools: ['Google Search Console', 'SERP Preview Tools', 'Meta Tag Analyzers']
     });
   } else if (seoData.description.length < 120 || seoData.description.length > 160) {
     recommendations.push({
       type: 'warning' as const,
       priority: 'medium' as const,
-      title: 'Meta Description Length',
-      description: `Your meta description is ${seoData.description.length} characters. Optimal length is 120-160 characters.`,
+      title: 'Meta Description Length Optimization',
+      description: `Your meta description is ${seoData.description.length} characters. Optimal length is 120-160 characters for complete display in search results.`,
       category: 'seo' as const,
-      howToFix: 'Adjust your meta description to be between 120-160 characters for better search result display.'
+      currentValue: `"${seoData.description}" (${seoData.description.length} chars)`,
+      affectedFiles: ['HTML meta tags', 'CMS content management', 'template meta fields'],
+      technicalLocation: 'HTML <head><meta name="description" content="...">',
+      detectionMethod: 'Meta content length: document.querySelector(\'meta[name="description"]\').content.length',
+      codeExample: seoData.description.length > 160 ? 
+        `<!-- Current (too long) -->\n<meta name="description" content="${seoData.description}">\n\n<!-- Optimized -->\n<meta name="description" content="${seoData.description.substring(0, 157)}...">` :
+        `<!-- Current (too short) -->\n<meta name="description" content="${seoData.description}">\n\n<!-- Optimized -->\n<meta name="description" content="${seoData.description} Learn more about key benefits, implementation steps, and best practices for optimal results.">`,
+      seoImpact: 'Medium - Descriptions longer than 160 chars get truncated, shorter ones may lack detail for users',
+      howToFix: 'Adjust your meta description to be between 120-160 characters for optimal search result display.',
+      implementation: [
+        '1. Review current meta description content',
+        '2. If too long: Condense while keeping key information',
+        '3. If too short: Add relevant details, benefits, or call-to-action',
+        '4. Include primary and secondary keywords naturally',
+        '5. End with compelling reason to visit your page'
+      ],
+      externalResources: [
+        'Meta Description Length Tool: https://www.seoptimer.com/meta-description-length-checker',
+        'SERP Preview Generator: https://portent.com/serp-preview-tool/',
+        'Meta Tag Guidelines: https://developers.google.com/search/docs/appearance/snippet'
+      ],
+      testingTools: ['Meta Description Checkers', 'Google Search Console', 'SERP Simulators']
     });
   }
 
-  // Heading structure analysis
+  // Heading structure analysis with detailed technical information
   const headings = seoData.headings || {};
+  const headingStructure = seoData.headingStructure || [];
+  
   if (!headings.h1 || headings.h1.length === 0) {
     recommendations.push({
       type: 'error' as const,
       priority: 'high' as const,
-      title: 'Missing H1 Tag',
-      description: 'Your page is missing an H1 heading, which is important for SEO structure.',
+      title: 'Missing H1 Tag - Critical SEO Issue',
+      description: 'Your page is missing an H1 heading, which is crucial for SEO structure and content hierarchy.',
       category: 'seo' as const,
-      howToFix: 'Add a single, descriptive H1 tag that clearly defines the main topic of your page.'
+      affectedFiles: ['HTML content files', 'template files', 'CMS content editor'],
+      technicalLocation: 'HTML document body, typically near the top of main content',
+      detectionMethod: 'DOM query: document.querySelector("h1") === null',
+      codeExample: '<h1>Your Main Page Topic - Clear and Descriptive Title</h1>',
+      seoImpact: 'Critical - H1 tags signal primary page topic to search engines and screen readers',
+      currentIssue: headingStructure.length > 0 ? 
+        `First heading found: ${headingStructure[0]?.level} - "${headingStructure[0]?.text}"` : 
+        'No headings detected on page',
+      howToFix: 'Add a single, descriptive H1 tag that clearly defines the main topic of your page.',
+      implementation: [
+        '1. Identify your page\'s main topic or primary keyword',
+        '2. Open your HTML file or CMS editor',
+        '3. Add <h1>Your Main Topic</h1> near the top of your content',
+        '4. Ensure H1 contains your primary keyword naturally',
+        '5. Convert any existing large text or headers to proper H1 tag',
+        '6. Structure remaining headings as H2, H3, etc. hierarchically'
+      ],
+      externalResources: [
+        'HTML Heading Structure: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements',
+        'SEO Heading Best Practices: https://moz.com/learn/seo/on-page-factors#heading-tags',
+        'Accessibility Heading Guidelines: https://www.w3.org/WAI/tutorials/page-structure/headings/'
+      ],
+      testingTools: ['HTML Validator', 'Accessibility Checkers', 'SEO Browser Extensions', 'Heading Structure Tools']
     });
   } else if (headings.h1.length > 1) {
     recommendations.push({
       type: 'warning' as const,
       priority: 'medium' as const,
-      title: 'Multiple H1 Tags',
-      description: `Found ${headings.h1.length} H1 tags. Best practice is to use only one H1 per page.`,
+      title: 'Multiple H1 Tags Detected',
+      description: `Found ${headings.h1.length} H1 tags. SEO best practice is to use only one H1 per page for clear topic hierarchy.`,
       category: 'seo' as const,
-      howToFix: 'Use only one H1 tag per page and structure other headings hierarchically with H2, H3, etc.'
+      currentValue: `${headings.h1.length} H1 tags found: ${headings.h1.map((h, i) => `"${h.substring(0, 40)}${h.length > 40 ? '...' : ''}"`).join(', ')}`,
+      affectedFiles: ['HTML content files', 'template includes', 'component files'],
+      technicalLocation: 'Multiple <h1> tags throughout HTML document',
+      detectionMethod: 'DOM query: document.querySelectorAll("h1").length > 1',
+      codeExample: `<!-- Current (Multiple H1s) -->\n<h1>${headings.h1[0]}</h1>\n<h1>${headings.h1[1]}</h1>\n\n<!-- Optimized -->\n<h1>${headings.h1[0]}</h1>\n<h2>${headings.h1[1]}</h2>`,
+      seoImpact: 'Medium - Multiple H1s dilute page topic focus and confuse search engine content understanding',
+      howToFix: 'Use only one H1 tag per page and structure other headings hierarchically with H2, H3, etc.',
+      implementation: [
+        '1. Identify which H1 represents the main page topic',
+        '2. Keep the most important H1, convert others to H2 or H3',
+        '3. Ensure proper heading hierarchy (H1 → H2 → H3...)',
+        '4. Check templates and components for duplicate H1s',
+        '5. Update CSS if styling depends on multiple H1s',
+        '6. Test page structure with accessibility tools'
+      ],
+      externalResources: [
+        'Single H1 Best Practice: https://www.searchenginejournal.com/h1-tag-seo/308091/',
+        'Heading Hierarchy Guide: https://blog.hubspot.com/marketing/header-tags-for-seo',
+        'HTML Semantic Structure: https://web.dev/headings-and-landmarks/'
+      ],
+      testingTools: ['HTML Outline Tools', 'SEO Analyzers', 'Accessibility Checkers', 'WAVE Web Accessibility Evaluator']
+    });
+  }
+
+  // Check if page doesn't start with H1 (new critical check)
+  if (headingStructure.length > 0 && headingStructure[0]?.level !== 'H1') {
+    recommendations.push({
+      type: 'error' as const,
+      priority: 'high' as const,
+      title: 'Page Does Not Start with H1 - Critical SEO Deficiency',
+      description: `Your page starts with ${headingStructure[0]?.level} instead of H1. This creates poor content hierarchy for search engines and accessibility tools.`,
+      category: 'seo' as const,
+      currentValue: `First heading: ${headingStructure[0]?.level} - "${headingStructure[0]?.text}"`,
+      affectedFiles: ['Main content template', 'page layout files', 'content management system'],
+      technicalLocation: `Current first heading at: document.querySelector("${headingStructure[0]?.level.toLowerCase()}")`,
+      detectionMethod: 'Heading order analysis: document.querySelectorAll("h1,h2,h3,h4,h5,h6")[0].tagName !== "H1"',
+      codeExample: `<!-- Current (Poor Structure) -->\n<${headingStructure[0]?.level.toLowerCase()}>${headingStructure[0]?.text}</${headingStructure[0]?.level.toLowerCase()}>\n\n<!-- Optimized -->\n<h1>${headingStructure[0]?.text}</h1>`,
+      seoImpact: 'Critical - Search engines expect H1 as primary topic indicator, starting with other levels confuses content hierarchy',
+      howToFix: 'Change your first heading to H1 and restructure subsequent headings to follow proper hierarchy.',
+      implementation: [
+        '1. Locate the first heading in your content',
+        `2. Change <${headingStructure[0]?.level.toLowerCase()}> to <h1>`,
+        '3. Adjust subsequent headings to maintain hierarchy',
+        '4. Update CSS selectors if they target specific heading levels',
+        '5. Ensure H1 contains your main page keyword',
+        '6. Test heading structure with accessibility tools'
+      ],
+      externalResources: [
+        'Heading Hierarchy Standards: https://www.w3.org/WAI/tutorials/page-structure/headings/',
+        'SEO Heading Structure: https://developers.google.com/search/docs/fundamentals/seo-starter-guide#heading-tags',
+        'Content Accessibility Guidelines: https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html'
+      ],
+      testingTools: ['W3C HTML Validator', 'WAVE Accessibility Checker', 'HeadingsMap Browser Extension', 'SEO Site Checkup']
     });
   }
 
@@ -1130,18 +1285,41 @@ function generateSeoRecommendations(seoData: any) {
     });
   }
 
-  // Image analysis
+  // Image analysis with detailed technical information
   const imageStats = seoData.imageAnalysis || {};
   if (imageStats.total > 0) {
     const altTextPercentage = (imageStats.withAlt / imageStats.total) * 100;
+    const missingAltCount = imageStats.total - imageStats.withAlt;
+    
     if (altTextPercentage < 80) {
       recommendations.push({
         type: 'warning' as const,
         priority: 'medium' as const,
-        title: 'Missing Alt Text on Images',
-        description: `${imageStats.total - imageStats.withAlt} out of ${imageStats.total} images are missing alt text.`,
+        title: 'Missing Alt Text on Images - Accessibility & SEO Issue',
+        description: `${missingAltCount} out of ${imageStats.total} images (${Math.round(100 - altTextPercentage)}%) are missing alt text, affecting accessibility and SEO.`,
         category: 'accessibility' as const,
-        howToFix: 'Add descriptive alt text to all images to improve accessibility and SEO.'
+        currentValue: `${missingAltCount} images without alt text, ${imageStats.withAlt} images with alt text`,
+        affectedFiles: ['HTML templates', 'image components', 'CMS image fields', 'content files'],
+        technicalLocation: '<img> tags throughout HTML document',
+        detectionMethod: 'DOM query: document.querySelectorAll("img:not([alt])").length',
+        codeExample: `<!-- Current (Missing Alt) -->\n<img src="product-image.jpg">\n\n<!-- Optimized -->\n<img src="product-image.jpg" alt="Professional office desk with ergonomic chair and laptop setup">`,
+        seoImpact: 'Medium-High - Alt text helps search engines understand image content and improves accessibility for screen readers',
+        howToFix: 'Add descriptive alt text to all images to improve accessibility and SEO.',
+        implementation: [
+          '1. Audit all images using browser developer tools',
+          '2. For each img tag, add alt="descriptive text"',
+          '3. Describe what the image shows, not "image of" or "picture of"',
+          '4. Include relevant keywords naturally when appropriate',
+          '5. Use empty alt="" for decorative images only',
+          '6. Update CMS/templates to require alt text for new images'
+        ],
+        diagnosticScript: `// Find images missing alt text\nconsole.log('Images missing alt text:', document.querySelectorAll('img:not([alt])'));\nconsole.log('Images with empty alt:', document.querySelectorAll('img[alt=""]'));`,
+        externalResources: [
+          'Alt Text Best Practices: https://moz.com/learn/seo/alt-text',
+          'WebAIM Alt Text Guidelines: https://webaim.org/techniques/alttext/',
+          'Image Accessibility Guide: https://www.w3.org/WAI/tutorials/images/'
+        ],
+        testingTools: ['WAVE Accessibility Checker', 'axe DevTools', 'Lighthouse Accessibility Audit', 'Screen Reader Testing']
       });
     }
 
@@ -1149,23 +1327,70 @@ function generateSeoRecommendations(seoData: any) {
       recommendations.push({
         type: 'info' as const,
         priority: 'low' as const,
-        title: 'Consider Responsive Images',
-        description: 'None of your images use responsive image techniques.',
+        title: 'Implement Responsive Images for Better Performance',
+        description: `None of your ${imageStats.total} images use responsive image techniques, missing performance optimization opportunities.`,
         category: 'performance' as const,
-        howToFix: 'Use srcset attribute or picture elements to serve appropriate image sizes for different devices.'
+        currentValue: `${imageStats.total} images without responsive sizing`,
+        affectedFiles: ['HTML templates', 'image components', 'CSS media queries'],
+        technicalLocation: '<img> tags, <picture> elements, CSS background-image rules',
+        detectionMethod: 'DOM query: document.querySelectorAll("img[srcset], picture").length === 0',
+        codeExample: `<!-- Current (Non-responsive) -->\n<img src="large-image.jpg" alt="Product image">\n\n<!-- Optimized (Responsive) -->\n<img src="large-image.jpg" \n     srcset="small-image.jpg 480w, medium-image.jpg 768w, large-image.jpg 1200w"\n     sizes="(max-width: 480px) 480px, (max-width: 768px) 768px, 1200px"\n     alt="Product image">`,
+        seoImpact: 'Low-Medium - Faster loading images improve user experience and Core Web Vitals scores',
+        howToFix: 'Use srcset attribute or picture elements to serve appropriate image sizes for different devices.',
+        implementation: [
+          '1. Create multiple image sizes (480px, 768px, 1200px widths)',
+          '2. Add srcset attribute with different image sizes',
+          '3. Add sizes attribute to specify display conditions',
+          '4. Consider using picture element for art direction',
+          '5. Implement lazy loading with loading="lazy"',
+          '6. Use modern formats (WebP, AVIF) with fallbacks'
+        ],
+        externalResources: [
+          'Responsive Images Guide: https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images',
+          'Web.dev Responsive Images: https://web.dev/serve-responsive-images/',
+          'Srcset and Sizes Guide: https://ericportis.com/posts/2014/srcset-sizes/'
+        ],
+        testingTools: ['Lighthouse Performance Audit', 'Image Optimization Tools', 'Chrome DevTools Network Tab']
       });
     }
   }
 
-  // Technical SEO checks
+  // Technical SEO checks with detailed information
   if (!seoData.langAttribute) {
     recommendations.push({
       type: 'warning' as const,
       priority: 'medium' as const,
-      title: 'Missing Language Attribute',
-      description: 'Your HTML tag is missing the lang attribute.',
+      title: 'Missing Language Attribute - Accessibility Issue',
+      description: 'Your HTML tag is missing the lang attribute, which affects accessibility and search engine content understanding.',
       category: 'seo' as const,
-      howToFix: 'Add lang="en" (or appropriate language code) to your <html> tag to help search engines understand your content language.'
+      affectedFiles: ['index.html', 'document root', 'HTML template files'],
+      technicalLocation: 'Opening <html> tag at document root',
+      detectionMethod: 'DOM query: document.documentElement.getAttribute("lang") === null',
+      codeExample: `<!-- Current (Missing Lang) -->\n<html>\n\n<!-- Optimized -->\n<html lang="en">`,
+      seoImpact: 'Medium - Helps search engines understand content language and improves accessibility for screen readers',
+      howToFix: 'Add lang="en" (or appropriate language code) to your <html> tag to help search engines understand your content language.',
+      implementation: [
+        '1. Open your main HTML file or template',
+        '2. Locate the opening <html> tag',
+        '3. Add lang attribute: <html lang="en">',
+        '4. Use ISO 639-1 language codes (en, es, fr, de, etc.)',
+        '5. For regional variants use: lang="en-US", lang="es-MX"',
+        '6. Ensure lang matches your actual content language'
+      ],
+      languageCodes: {
+        'English': 'en',
+        'Spanish': 'es', 
+        'French': 'fr',
+        'German': 'de',
+        'Portuguese': 'pt',
+        'Italian': 'it'
+      },
+      externalResources: [
+        'HTML Lang Attribute Guide: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang',
+        'Language Codes Reference: https://www.w3schools.com/tags/ref_language_codes.asp',
+        'Accessibility Language Guidelines: https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html'
+      ],
+      testingTools: ['W3C HTML Validator', 'WAVE Accessibility Checker', 'axe DevTools', 'Lighthouse Accessibility Audit']
     });
   }
 
@@ -1202,38 +1427,121 @@ function generateSeoRecommendations(seoData: any) {
     });
   }
 
-  // Social media optimization
-  if (!seoData.openGraphTags || Object.keys(seoData.openGraphTags).length < 3) {
+  // Social media optimization with detailed technical information
+  const ogTags = seoData.openGraphTags || {};
+  const requiredOgTags = ['og:title', 'og:description', 'og:image', 'og:url', 'og:type'];
+  const missingOgTags = requiredOgTags.filter(tag => !ogTags[tag]);
+  
+  if (!seoData.openGraphTags || Object.keys(ogTags).length < 3 || missingOgTags.length > 0) {
     recommendations.push({
       type: 'warning' as const,
       priority: 'medium' as const,
-      title: 'Incomplete Open Graph Tags',
-      description: 'Add more Open Graph tags for better social media sharing.',
+      title: 'Incomplete Open Graph Tags - Social Media Optimization',
+      description: `Missing ${missingOgTags.length} essential Open Graph tags. Current: ${Object.keys(ogTags).length}, Required: ${requiredOgTags.length} for optimal social sharing.`,
       category: 'seo' as const,
-      howToFix: 'Add og:title, og:description, og:image, og:url, and og:type meta tags for social media optimization.'
+      currentValue: `Present: ${Object.keys(ogTags).join(', ') || 'None'} | Missing: ${missingOgTags.join(', ') || 'None'}`,
+      affectedFiles: ['HTML head section', 'meta tag templates', 'CMS social media fields'],
+      technicalLocation: 'HTML <head> section, <meta property="og:*" content="...">',
+      detectionMethod: 'DOM query: document.querySelectorAll(\'meta[property^="og:"]\').length',
+      codeExample: `<!-- Add to HTML head -->\n<meta property="og:title" content="Your Page Title">\n<meta property="og:description" content="Your page description">\n<meta property="og:image" content="https://yoursite.com/image.jpg">\n<meta property="og:url" content="https://yoursite.com/page">\n<meta property="og:type" content="website">`,
+      seoImpact: 'Medium - Open Graph tags control how your content appears when shared on Facebook, LinkedIn, and other platforms',
+      howToFix: 'Add og:title, og:description, og:image, og:url, and og:type meta tags for social media optimization.',
+      implementation: [
+        '1. Add meta tags to HTML head section',
+        '2. og:title - Use your page title (up to 60 chars)',
+        '3. og:description - Compelling description (up to 160 chars)',
+        '4. og:image - High-quality image (1200x630px recommended)',
+        '5. og:url - Canonical URL of your page',
+        '6. og:type - Content type (website, article, etc.)',
+        '7. Test with Facebook Sharing Debugger'
+      ],
+      externalResources: [
+        'Open Graph Protocol: https://ogp.me/',
+        'Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/',
+        'Open Graph Meta Tags Guide: https://blog.hootsuite.com/open-graph-meta-tags/'
+      ],
+      testingTools: ['Facebook Sharing Debugger', 'LinkedIn Post Inspector', 'Open Graph Preview Tools']
     });
   }
 
-  if (!seoData.twitterCardTags || Object.keys(seoData.twitterCardTags).length < 2) {
+  const twitterTags = seoData.twitterCardTags || {};
+  const requiredTwitterTags = ['twitter:card', 'twitter:title', 'twitter:description'];
+  const missingTwitterTags = requiredTwitterTags.filter(tag => !twitterTags[tag]);
+
+  if (!seoData.twitterCardTags || Object.keys(twitterTags).length < 2 || missingTwitterTags.length > 0) {
     recommendations.push({
       type: 'info' as const,
       priority: 'low' as const,
-      title: 'Missing Twitter Card Tags',
-      description: 'Add Twitter Card tags for better Twitter sharing experience.',
+      title: 'Missing Twitter Card Tags - Social Sharing Enhancement',
+      description: `Missing ${missingTwitterTags.length} Twitter Card tags. Proper Twitter Cards improve engagement when shared on Twitter/X.`,
       category: 'seo' as const,
-      howToFix: 'Add twitter:card, twitter:title, twitter:description, and twitter:image meta tags.'
+      currentValue: `Present: ${Object.keys(twitterTags).join(', ') || 'None'} | Missing: ${missingTwitterTags.join(', ') || 'None'}`,
+      affectedFiles: ['HTML head section', 'social media meta templates'],
+      technicalLocation: 'HTML <head> section, <meta name="twitter:*" content="...">',
+      detectionMethod: 'DOM query: document.querySelectorAll(\'meta[name^="twitter:"]\').length',
+      codeExample: `<!-- Add to HTML head -->\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:title" content="Your Page Title">\n<meta name="twitter:description" content="Your page description">\n<meta name="twitter:image" content="https://yoursite.com/image.jpg">`,
+      seoImpact: 'Low-Medium - Twitter Cards enhance appearance and engagement when content is shared on Twitter/X',
+      howToFix: 'Add twitter:card, twitter:title, twitter:description, and twitter:image meta tags.',
+      implementation: [
+        '1. Add Twitter meta tags to HTML head',
+        '2. twitter:card - Choose card type (summary, summary_large_image)',
+        '3. twitter:title - Compelling title (up to 70 chars)',
+        '4. twitter:description - Clear description (up to 200 chars)',
+        '5. twitter:image - High-quality image (minimum 300x157px)',
+        '6. Test with Twitter Card Validator'
+      ],
+      cardTypes: {
+        'summary': 'Small image, title, description',
+        'summary_large_image': 'Large image with title and description',
+        'app': 'Mobile app promotion',
+        'player': 'Video/audio content'
+      },
+      externalResources: [
+        'Twitter Cards Guide: https://developer.twitter.com/en/docs/twitter-for-websites/cards/guides/getting-started',
+        'Card Validator: https://cards-dev.twitter.com/validator',
+        'Twitter Cards Markup: https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup'
+      ],
+      testingTools: ['Twitter Card Validator', 'Social Media Preview Tools', 'Meta Tag Debuggers']
     });
   }
 
-  // Technical files
+  // Technical files with detailed implementation guidance
   if (!seoData.robotsTxtExists) {
     recommendations.push({
       type: 'warning' as const,
       priority: 'medium' as const,
-      title: 'Missing robots.txt File',
-      description: 'Your website is missing a robots.txt file.',
+      title: 'Missing robots.txt File - Crawler Control Issue',
+      description: 'Your website is missing a robots.txt file, which provides important instructions to search engine crawlers.',
       category: 'technical' as const,
-      howToFix: 'Create a robots.txt file at your domain root to guide search engine crawlers.'
+      affectedFiles: ['Domain root directory', 'web server configuration', 'FTP/hosting control panel'],
+      technicalLocation: 'https://yourdomain.com/robots.txt (root directory)',
+      detectionMethod: 'HTTP request: fetch("/robots.txt").then(r => r.status === 404)',
+      codeExample: `# Basic robots.txt example\nUser-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /private/\nDisallow: /wp-admin/\n\n# Sitemap location\nSitemap: https://yourdomain.com/sitemap.xml`,
+      seoImpact: 'Medium - robots.txt helps search engines understand which pages to crawl and which to avoid',
+      howToFix: 'Create a robots.txt file at your domain root to guide search engine crawlers.',
+      implementation: [
+        '1. Create a text file named "robots.txt"',
+        '2. Upload it to your website root directory (same level as index.html)',
+        '3. Add User-agent: * (rules for all crawlers)',
+        '4. Add Allow: / (allow crawling main content)',
+        '5. Add Disallow: lines for private areas (/admin/, /private/)',
+        '6. Include Sitemap: URL if you have one',
+        '7. Test accessibility at https://yourdomain.com/robots.txt'
+      ],
+      commonDirectives: {
+        'User-agent: *': 'Rules apply to all search engines',
+        'Allow: /': 'Allow crawling of all pages',
+        'Disallow: /admin/': 'Block admin/backend areas',
+        'Disallow: /private/': 'Block private content',
+        'Crawl-delay: 1': 'Wait 1 second between requests',
+        'Sitemap: URL': 'Location of your XML sitemap'
+      },
+      externalResources: [
+        'Google Robots.txt Guide: https://developers.google.com/search/docs/crawling-indexing/robots/intro',
+        'Robots.txt Tester Tool: https://support.google.com/webmasters/answer/6062598',
+        'Robots.txt Generator: https://www.seoptimer.com/robots-txt-generator'
+      ],
+      testingTools: ['Google Search Console Robots.txt Tester', 'Robots.txt Validators', 'Live URL Testing']
     });
   }
 
@@ -1241,23 +1549,113 @@ function generateSeoRecommendations(seoData: any) {
     recommendations.push({
       type: 'warning' as const,
       priority: 'medium' as const,
-      title: 'Missing XML Sitemap',
-      description: 'Your website is missing an XML sitemap.',
+      title: 'Missing XML Sitemap - Indexing Efficiency Issue',
+      description: 'Your website is missing an XML sitemap, which helps search engines discover and efficiently index your pages.',
       category: 'technical' as const,
-      howToFix: 'Create an XML sitemap and submit it to search engines to help them discover your content.'
+      affectedFiles: ['Domain root directory', 'CMS sitemap generator', 'build automation scripts'],
+      technicalLocation: 'https://yourdomain.com/sitemap.xml (root directory)',
+      detectionMethod: 'HTTP request: fetch("/sitemap.xml").then(r => r.status === 404)',
+      codeExample: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://yourdomain.com/</loc>\n    <lastmod>2025-01-16</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n  <url>\n    <loc>https://yourdomain.com/about</loc>\n    <lastmod>2025-01-10</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n</urlset>`,
+      seoImpact: 'Medium - Sitemaps help search engines discover pages faster and understand site structure',
+      howToFix: 'Create an XML sitemap and submit it to search engines to help them discover your content.',
+      implementation: [
+        '1. List all important pages on your website',
+        '2. Create XML file with proper sitemap structure',
+        '3. Include <loc>, <lastmod>, <changefreq>, <priority> for each URL',
+        '4. Upload sitemap.xml to your root directory',
+        '5. Add sitemap URL to robots.txt file',
+        '6. Submit sitemap to Google Search Console and Bing Webmaster Tools',
+        '7. Update sitemap when adding new pages or content'
+      ],
+      sitemapElements: {
+        '<loc>': 'Full URL of the page',
+        '<lastmod>': 'Last modification date (YYYY-MM-DD format)',
+        '<changefreq>': 'Update frequency (daily, weekly, monthly, yearly)',
+        '<priority>': 'Relative importance (0.0 to 1.0, homepage usually 1.0)'
+      },
+      automationOptions: [
+        'WordPress: Yoast SEO, RankMath, Google XML Sitemaps plugins',
+        'Static sites: Build script generators, sitemap libraries',
+        'Shopify/Squarespace: Built-in sitemap generators',
+        'Manual tools: XML-sitemaps.com, Screaming Frog'
+      ],
+      externalResources: [
+        'Google Sitemap Guide: https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview',
+        'XML Sitemap Protocol: https://www.sitemaps.org/protocol.html',
+        'Free Sitemap Generator: https://www.xml-sitemaps.com/'
+      ],
+      testingTools: ['Google Search Console Sitemap Reports', 'Bing Webmaster Tools', 'XML Validators', 'Sitemap Analyzers']
     });
   }
 
-  // Technical performance
+  // Technical performance with detailed implementation guidance
   const techStats = seoData.technicalAnalysis || {};
   if (techStats.inlineStyles > 5) {
     recommendations.push({
       type: 'info' as const,
       priority: 'low' as const,
-      title: 'Excessive Inline Styles',
-      description: `Found ${techStats.inlineStyles} instances of inline styles.`,
+      title: 'Excessive Inline Styles - Performance Optimization',
+      description: `Found ${techStats.inlineStyles} instances of inline styles. This impacts caching efficiency and page load performance.`,
       category: 'performance' as const,
-      howToFix: 'Move inline styles to external CSS files for better caching and maintainability.'
+      currentValue: `${techStats.inlineStyles} elements with style="" attributes`,
+      affectedFiles: ['HTML templates', 'component files', 'dynamic content generators'],
+      technicalLocation: 'HTML elements with style="" attributes throughout document',
+      detectionMethod: 'DOM query: document.querySelectorAll("[style]").length',
+      codeExample: `<!-- Current (Inline Styles) -->\n<div style="color: red; font-size: 16px; margin: 10px;">Content</div>\n\n<!-- Optimized (External CSS) -->\n<div class="highlight-text">Content</div>\n\n/* In external CSS file */\n.highlight-text {\n  color: red;\n  font-size: 16px;\n  margin: 10px;\n}`,
+      seoImpact: 'Low - Inline styles prevent CSS caching and increase HTML size, affecting page load speed',
+      howToFix: 'Move inline styles to external CSS files for better caching and maintainability.',
+      implementation: [
+        '1. Identify all elements with style="" attributes',
+        '2. Create CSS classes for common style patterns',
+        '3. Move styles to external CSS file',
+        '4. Replace style="" with class="" attributes',
+        '5. Group related styles into logical CSS sections',
+        '6. Minify CSS files for production'
+      ],
+      auditScript: `// Find all inline styles\nconst inlineStyleElements = document.querySelectorAll('[style]');\nconsole.log('Elements with inline styles:', inlineStyleElements.length);\ninlineStyleElements.forEach(el => console.log(el.tagName, el.style.cssText));`,
+      externalResources: [
+        'CSS Best Practices: https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Organizing',
+        'Performance CSS Guide: https://web.dev/defer-non-critical-css/',
+        'CSS Architecture: https://www.smashingmagazine.com/2007/05/css-specificity-things-you-should-know/'
+      ],
+      testingTools: ['Lighthouse Performance Audit', 'CSS Analyzer Tools', 'Browser DevTools Coverage Tab']
+    });
+  }
+
+  // Form accessibility issues
+  if (techStats.formsWithoutLabels > 0) {
+    recommendations.push({
+      type: 'warning' as const,
+      priority: 'medium' as const,
+      title: 'Form Accessibility Issues - Missing Labels',
+      description: `${techStats.formsWithoutLabels} form inputs are missing proper labels, affecting accessibility and SEO.`,
+      category: 'accessibility' as const,
+      currentValue: `${techStats.formsWithoutLabels} inputs without associated labels`,
+      affectedFiles: ['Form templates', 'contact forms', 'search forms', 'user input components'],
+      technicalLocation: '<input>, <textarea>, <select> elements without <label> association',
+      detectionMethod: 'DOM query: document.querySelectorAll("input:not([id]), input[id]:not([id*=label])").length',
+      codeExample: `<!-- Current (Missing Labels) -->\n<input type="email" placeholder="Enter email">\n\n<!-- Optimized (Proper Labels) -->\n<label for="email-input">Email Address:</label>\n<input type="email" id="email-input" placeholder="Enter email">\n\n<!-- Alternative (aria-label) -->\n<input type="email" aria-label="Email Address" placeholder="Enter email">`,
+      seoImpact: 'Medium - Proper form labels improve accessibility and help search engines understand form purpose',
+      howToFix: 'Add proper labels to all form inputs for better accessibility and SEO.',
+      implementation: [
+        '1. Audit all form inputs, textareas, and select elements',
+        '2. Add <label> elements with for="" attribute matching input id',
+        '3. Alternative: Use aria-label for inputs without visible labels',
+        '4. Ensure label text clearly describes the input purpose',
+        '5. Group related form fields with <fieldset> and <legend>',
+        '6. Test with screen readers and accessibility tools'
+      ],
+      accessibilityStandards: {
+        'WCAG 2.1 Level A': 'Labels or Instructions - 3.3.2',
+        'Section 508': 'Forms must have associated labels',
+        'ADA Compliance': 'Form controls must be programmatically associated'
+      },
+      externalResources: [
+        'Form Labels Guide: https://www.w3.org/WAI/tutorials/forms/labels/',
+        'WCAG Form Guidelines: https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html',
+        'Accessible Forms: https://webaim.org/techniques/forms/'
+      ],
+      testingTools: ['WAVE Accessibility Checker', 'axe DevTools', 'Lighthouse Accessibility Audit', 'Screen Reader Testing']
     });
   }
 
