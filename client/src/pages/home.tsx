@@ -30,7 +30,7 @@ import { WebAnalysisResult } from "@/shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
 import { getTranslations } from "@/lib/translations";
-import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner } from "@/components/loading-spinners";
+import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner, AIContentSpinner } from "@/components/loading-spinners";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -1194,19 +1194,32 @@ export default function Home() {
                 />
               </div>
               
-              {/* Analysis stages with themed spinners */}
-              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400 space-y-2">
-                <div className="flex items-center justify-center space-x-2">
-                  <PerformanceSpinner size="sm" />
-                  <span>{t.desktopAnalysis}</span>
+              {/* Analysis stages with themed spinners in pairs */}
+              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400 space-y-3">
+                {/* First row: Desktop & Mobile Analysis */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <PerformanceSpinner size="sm" className="scale-75" />
+                    <span className="text-center">{t.desktopAnalysis}</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <PerformanceSpinner size="sm" className="scale-75" />
+                    <span className="text-center">{t.mobileAnalysis}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <PerformanceSpinner size="sm" />
-                  <span>{t.mobileAnalysis}</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <SEOAnalysisSpinner size="sm" />
-                  <span>{t.seoAnalysis}</span>
+                
+                {/* Second row: SEO & AI Content Analysis */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <SEOAnalysisSpinner size="sm" className="scale-75" />
+                    <span className="text-center">{t.seoAnalysis}</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <AIContentSpinner size="sm" className="scale-75" />
+                    <span className="text-center">
+                      {language === 'en' ? 'AI Content Analysis' : 'Análisis de Contenido AI'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
