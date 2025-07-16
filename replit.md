@@ -121,9 +121,13 @@ Preferred communication style: Simple, everyday language.
 - **Production-Safe main.tsx**: Cleaned client/src/main.tsx to contain only essential React initialization without security imports
 - **HTML Script Removal**: Eliminated all inline obfuscation scripts from client/index.html that could interfere with DOM rendering
 - **Dependency Conflict Resolution**: Documented solution for npm ERESOLVE conflicts using --legacy-peer-deps flag
-- **Emergency Deployment Procedures**: Created comprehensive troubleshooting guides (EMERGENCY_FIX.md, QUICK_FIX.md, UPDATE_SERVER.md)
-- **User Impact**: Application now deploys successfully on production servers without rendering interference, maintaining full functionality while keeping basic security measures
-- **Lesson Learned**: Obfuscation systems must be designed to never interfere with core React rendering, especially in production environments
+- **ARM64 Server Architecture Support**: Identified user's server uses ARM64 architecture, created specific Chrome/Chromium installation guides for ARM64 compatibility
+- **Core Web Vitals Setup**: Documented complete process for enabling Lighthouse analysis with Puppeteer on ARM64 servers using Chromium browser
+- **Fallback Analysis System**: Application works perfectly with SEO analysis when browser automation unavailable, showing appropriate "Not Available" messages for Core Web Vitals and Screenshots
+- **Emergency Deployment Procedures**: Created comprehensive troubleshooting guides (EMERGENCY_FIX.md, QUICK_FIX.md, UPDATE_SERVER.md, LIGHTHOUSE_FIX.md, ARM64_CHROME_INSTALL.md)
+- **User Impact**: Application deploys successfully on production servers without rendering interference, maintains full functionality with SEO analysis, and can be enhanced with Core Web Vitals when browser is installed
+- **Architecture Detection**: Proper handling of different server architectures (ARM64 vs x86_64) for browser installation
+- **Lesson Learned**: Obfuscation systems must never interfere with core React rendering, and browser dependencies must match server architecture
 
 ### Advanced Technology Stack & Hosting Obfuscation (January 16, 2025) - DEPRECATED
 - **Technology Detection Prevention**: Comprehensive system to prevent browser addons like Wappalyzer from detecting React, Vite, TypeScript, and other frameworks
