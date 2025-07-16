@@ -22,6 +22,8 @@ import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
 import KeywordAnalysis from "@/components/keyword-analysis";
 import Footer from "@/components/footer";
 import HelpDialog from "@/components/help-dialog";
+import WhyDlmetrixDialog from "@/components/why-dlmetrix-dialog";
+import SupportDialog from "@/components/support-dialog";
 import { WebAnalysisResult } from "@/shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
@@ -212,6 +214,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
+              <WhyDlmetrixDialog />
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -263,6 +266,7 @@ export default function Home() {
                   {isExporting ? "..." : t.saveReport.split(' ')[0]}
                 </span>
               </Button>
+              <SupportDialog />
             </div>
           </div>
         </div>
