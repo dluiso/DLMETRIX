@@ -413,7 +413,7 @@ export default function SharePage() {
             )}
 
             {/* Technical Checks */}
-            <TechnicalSeo checks={analysisData.technicalSeoAnalysis} language="en" />
+            <TechnicalSeo checks={analysisData.technicalSeoAnalysis} />
           </div>
         </div>
       </main>

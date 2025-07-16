@@ -5,11 +5,18 @@ import { Settings, Check, X, ChevronDown, ChevronRight, AlertTriangle } from "lu
 import { useState } from "react";
 
 interface TechnicalSeoProps {
-  checks: Record<string, boolean>;
+  checks: Array<{ check: string; status: string; description: string }> | Record<string, boolean>;
 }
 
 export default function TechnicalSeo({ checks }: TechnicalSeoProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  // Handle both array format (from shared reports) and object format (from original reports)
+  const checksArray = Array.isArray(checks) ? checks : Object.entries(checks || {}).map(([key, value]) => ({
+    check: key,
+    status: value ? 'pass' : 'fail',
+    description: `${key} check`
+  }));
 
   const toggleExpanded = (key: string) => {
     const newExpanded = new Set(expandedItems);
@@ -370,10 +377,10 @@ Sitemap: https://yoursite.com/sitemap.xml`,
     }
   ];
 
-  const allChecks = categories.flatMap(cat => cat.items);
-  const passedChecks = allChecks.filter(item => checks[item.key]).length;
-  const totalChecks = allChecks.length;
-  const passRate = Math.round((passedChecks / totalChecks) * 100);
+  // Calculate statistics based on the actual checks data
+  const passedChecks = checksArray.filter(check => check.status === 'pass').length;
+  const totalChecks = checksArray.length;
+  const passRate = totalChecks > 0 ? Math.round((passedChecks / totalChecks) * 100) : 0;
 
   return (
     <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
@@ -392,112 +399,97 @@ Sitemap: https://yoursite.com/sitemap.xml`,
         </p>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 sm:space-y-6">
-          {categories.map((category) => {
-            const categoryPassed = category.items.filter(item => checks[item.key]).length;
-            const categoryTotal = category.items.length;
-            const categoryRate = Math.round((categoryPassed / categoryTotal) * 100);
-            
-            return (
-              <div key={category.title} className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">{category.title}</h4>
-                  <span className={`text-xs sm:text-sm font-medium ${
-                    categoryRate >= 80 ? 'text-green-600 dark:text-green-400' : 
-                    categoryRate >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 
-                    'text-red-600 dark:text-red-400'
-                  }`}>
-                    {categoryPassed}/{categoryTotal}
-                  </span>
-                </div>
-                <div className="grid gap-2">
-                  {category.items.map((item) => {
-                    const isExpanded = expandedItems.has(item.key);
-                    const hasFailed = !checks[item.key];
-                    const fixGuide = getFixGuide(item.key);
-                    
-                    return (
-                      <div key={item.key} className="border dark:border-slate-600 rounded-md overflow-hidden">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-2 hover:bg-slate-50 dark:hover:bg-slate-700 gap-2">
-                          <div className="flex items-center space-x-3 flex-1">
-                            {checks[item.key] ? (
-                              <Check className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
-                            ) : (
-                              <X className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100">{item.label}</p>
-                              <p className="text-xs text-slate-600 dark:text-slate-400">{item.description}</p>
+        <div className="space-y-4">
+          {checksArray.length > 0 ? (
+            checksArray.map((check) => {
+              const isExpanded = expandedItems.has(check.check);
+              const hasFailed = check.status === 'fail';
+              const fixGuide = getFixGuide(check.check);
+              
+              return (
+                <div key={check.check} className="border dark:border-slate-600 rounded-md overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-2 hover:bg-slate-50 dark:hover:bg-slate-700 gap-2">
+                    <div className="flex items-center space-x-3 flex-1">
+                      {check.status === 'pass' ? (
+                        <Check className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      ) : (
+                        <X className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100">{check.check}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">{check.description}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 justify-end sm:justify-start">
+                      <Badge 
+                        variant={check.status === 'pass' ? "default" : "destructive"}
+                        className="text-xs"
+                      >
+                        {check.status === 'pass' ? "Pass" : "Fail"}
+                      </Badge>
+                      {hasFailed && (
+                        <button
+                          onClick={() => toggleExpanded(check.check)}
+                          className="flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100 dark:hover:bg-slate-600 flex-shrink-0"
+                        >
+                          {isExpanded ? (
+                            <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {hasFailed && isExpanded && (
+                    <div className="border-t bg-red-50 dark:bg-red-900/20 p-4">
+                      <div className="flex items-start space-x-3">
+                        <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <h5 className="font-medium text-red-900 dark:text-red-100 mb-2">How to Fix This Issue</h5>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Steps to resolve:</p>
+                              <ol className="text-sm text-red-700 dark:text-red-300 space-y-1">
+                                {fixGuide.steps.map((step, index) => (
+                                  <li key={index} className="flex items-start space-x-2">
+                                    <span className="font-medium text-red-600 dark:text-red-400 flex-shrink-0">{index + 1}.</span>
+                                    <span>{step}</span>
+                                  </li>
+                                ))}
+                              </ol>
                             </div>
-                          </div>
-                          <div className="flex items-center space-x-2 justify-end sm:justify-start">
-                            <Badge 
-                              variant={checks[item.key] ? "default" : "destructive"}
-                              className="text-xs"
-                            >
-                              {checks[item.key] ? "Pass" : "Fail"}
-                            </Badge>
-                            {hasFailed && (
-                              <button
-                                onClick={() => toggleExpanded(item.key)}
-                                className="flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100 dark:hover:bg-slate-600 flex-shrink-0"
-                              >
-                                {isExpanded ? (
-                                  <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                                ) : (
-                                  <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                                )}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                        
-                        {hasFailed && isExpanded && (
-                          <div className="border-t bg-red-50 dark:bg-red-900/20 p-4">
-                            <div className="flex items-start space-x-3">
-                              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
-                              <div className="flex-1">
-                                <h5 className="font-medium text-red-900 dark:text-red-100 mb-2">How to Fix This Issue</h5>
-                                <div className="space-y-3">
-                                  <div>
-                                    <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Steps to resolve:</p>
-                                    <ol className="text-sm text-red-700 dark:text-red-300 space-y-1">
-                                      {fixGuide.steps.map((step, index) => (
-                                        <li key={index} className="flex items-start space-x-2">
-                                          <span className="font-medium text-red-600 dark:text-red-400 flex-shrink-0">{index + 1}.</span>
-                                          <span>{step}</span>
-                                        </li>
-                                      ))}
-                                    </ol>
-                                  </div>
-                                  
-                                  {fixGuide.code && (
-                                    <div>
-                                      <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Code example:</p>
-                                      <div className="bg-slate-900 dark:bg-slate-800 text-green-400 dark:text-green-300 p-3 rounded text-xs font-mono overflow-x-auto">
-                                        <pre>{fixGuide.code}</pre>
-                                      </div>
-                                    </div>
-                                  )}
-                                  
-                                  <div>
-                                    <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Where to add this:</p>
-                                    <p className="text-sm text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-800/30 px-2 py-1 rounded">
-                                      {fixGuide.location}
-                                    </p>
-                                  </div>
+                            
+                            {fixGuide.code && (
+                              <div>
+                                <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Code example:</p>
+                                <div className="bg-slate-900 dark:bg-slate-800 text-green-400 dark:text-green-300 p-3 rounded text-xs font-mono overflow-x-auto">
+                                  <pre>{fixGuide.code}</pre>
                                 </div>
                               </div>
+                            )}
+                            
+                            <div>
+                              <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Where to add this:</p>
+                              <p className="text-sm text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-800/30 px-2 py-1 rounded">
+                                {fixGuide.location}
+                              </p>
                             </div>
                           </div>
-                        )}
+                        </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="text-center py-8 text-slate-600 dark:text-slate-400">
+              <Settings className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p>No technical checks available for this report</p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
