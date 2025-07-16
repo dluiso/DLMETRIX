@@ -90,10 +90,11 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
     
     console.log(`Using browser executable: ${executablePath}`);
     
-    // Launch browser for Lighthouse and screenshots
+    // Launch browser for Lighthouse and screenshots with ARM64 optimizations
     browser = await puppeteer.launch({
       executablePath,
       headless: true,
+      timeout: 60000,
       args: [
         '--no-sandbox', 
         '--disable-setuid-sandbox', 
@@ -103,7 +104,22 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
         '--disable-features=VizDisplayCompositor',
         '--disable-background-timer-throttling',
         '--disable-backgrounding-occluded-windows',
-        '--disable-renderer-backgrounding'
+        '--disable-renderer-backgrounding',
+        '--disable-extensions',
+        '--disable-plugins',
+        '--disable-default-apps',
+        '--disable-sync',
+        '--disable-translate',
+        '--hide-scrollbars',
+        '--metrics-recording-only',
+        '--mute-audio',
+        '--no-first-run',
+        '--safebrowsing-disable-auto-update',
+        '--ignore-ssl-errors',
+        '--ignore-certificate-errors',
+        '--allow-running-insecure-content',
+        '--disable-component-extensions-with-background-pages',
+        '--disable-background-networking'
       ]
     });
 
@@ -228,18 +244,34 @@ async function performEnhancedSeoAnalysis(url: string): Promise<WebAnalysisResul
 async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', browser: any) {
   const port = new URL(browser.wsEndpoint()).port;
   
+  console.log(`Starting Lighthouse analysis for ${device} on port ${port}`);
+  
   const config = {
     extends: 'lighthouse:default',
     settings: {
       formFactor: device,
+      maxWaitForFcp: 30000,
+      maxWaitForLoad: 45000,
+      skipAudits: [
+        'screenshot-thumbnails',
+        'final-screenshot',
+        'largest-contentful-paint-element',
+        'layout-shift-elements'
+      ],
       throttling: device === 'mobile' ? {
         rttMs: 150,
         throughputKbps: 1638.4,
-        cpuSlowdownMultiplier: 4
+        cpuSlowdownMultiplier: 2, // Reduced for ARM64
+        requestLatencyMs: 150,
+        downloadThroughputKbps: 1638.4,
+        uploadThroughputKbps: 750
       } : {
         rttMs: 40,
         throughputKbps: 10240,
-        cpuSlowdownMultiplier: 1
+        cpuSlowdownMultiplier: 1,
+        requestLatencyMs: 0,
+        downloadThroughputKbps: 0,
+        uploadThroughputKbps: 0
       },
       screenEmulation: device === 'mobile' ? {
         mobile: true,
@@ -255,11 +287,19 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
     }
   };
 
-  const result = await lighthouse(url, {
+  // Add timeout protection
+  const lighthousePromise = lighthouse(url, {
     port: parseInt(port),
     output: 'json',
-    logLevel: 'error'
+    logLevel: 'error',
+    chromeFlags: ['--headless']
   }, config);
+  
+  const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error(`Lighthouse ${device} timeout after 60 seconds`)), 60000)
+  );
+
+  const result = await Promise.race([lighthousePromise, timeoutPromise]) as any;
 
   const lhr = result?.lhr;
   if (!lhr) {

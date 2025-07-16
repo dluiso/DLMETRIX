@@ -1,126 +1,115 @@
-# DLMETRIX - Solución para Core Web Vitals y Screenshots
+# DLMETRIX - Solución Final para Lighthouse en ARM64
 
 ## Problema Identificado
 
-Las secciones de Core Web Vitals y Screenshots no funcionan porque:
-1. Lighthouse requiere Chrome/Chromium en el servidor
-2. Lighthouse es un módulo ESM que requiere configuración especial
-3. Puppeteer necesita dependencias del sistema
+El error "The 'start lh:driver:navigate' performance mark has not been set" es específico de Lighthouse en arquitecturas ARM64. Chromium se detecta correctamente pero Lighthouse falla en la inicialización.
 
-## Solución para tu Servidor
+## Solución Implementada
 
-### 1. Instalar Chrome/Chromium en tu servidor Ubuntu/Debian:
+He actualizado el código con las siguientes optimizaciones para ARM64:
 
-```bash
-# Actualizar sistema
-sudo apt update
+### 1. Configuración de Browser Mejorada
+- Más argumentos de Chrome específicos para ARM64
+- Timeout aumentado a 60 segundos
+- Deshabilitación de funciones problemáticas
 
-# Instalar Chrome
-wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-sudo apt update
-sudo apt install -y google-chrome-stable
+### 2. Configuración de Lighthouse Optimizada
+- Reducción de CPU slowdown de 4x a 2x para móvil en ARM64
+- Timeouts aumentados: maxWaitForFcp: 30s, maxWaitForLoad: 45s
+- Auditorías problemáticas omitidas (screenshots, layout shifts)
+- Timeout de 60 segundos con Promise.race
 
-# O instalar Chromium (alternativa más ligera)
-sudo apt install -y chromium-browser
-
-# Instalar dependencias necesarias para Puppeteer
-sudo apt install -y \
-  libnss3 \
-  libatk-bridge2.0-0 \
-  libdrm2 \
-  libxcomposite1 \
-  libxdamage1 \
-  libxrandr2 \
-  libgbm1 \
-  libxss1 \
-  libasound2
-```
-
-### 2. Verificar instalación:
-
-```bash
-# Verificar que Chrome está instalado
-google-chrome --version
-# O para Chromium:
-chromium-browser --version
-```
-
-### 3. Configurar variables de entorno:
-
-```bash
-# Añadir a tu archivo .bashrc o .env
-export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-export PUPPETEER_EXECUTABLE_PATH=$(which google-chrome-stable)
-# O para Chromium:
-# export PUPPETEER_EXECUTABLE_PATH=$(which chromium-browser)
-```
-
-### 4. Reiniciar la aplicación:
+### 3. Comandos para Actualizar tu Servidor
 
 ```bash
 cd ~/DLMETRIX
-pm2 stop dlmetrix
+
+# 1. Actualizar código desde Git
+git stash  # Guardar cambios locales
+git pull origin main
+
+# 2. Verificar Chromium está instalado
+sudo apt install -y chromium-browser
+
+# 3. Instalar dependencias adicionales para Lighthouse
+sudo apt install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2
+
+# 4. Configurar variables de entorno
+export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+export CHROME_PATH=/usr/bin/chromium-browser
+echo 'export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser' >> ~/.bashrc
+echo 'export CHROME_PATH=/usr/bin/chromium-browser' >> ~/.bashrc
+
+# 5. Verificar Chromium funciona
+chromium-browser --version --no-sandbox
+
+# 6. Limpiar y reconstruir
+rm -rf dist node_modules/.cache
+npm cache clean --force
 npm run build
-NODE_ENV=production npm start
+
+# 7. Reiniciar con configuración ARM64
+pm2 stop dlmetrix
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser CHROME_PATH=/usr/bin/chromium-browser NODE_ENV=production npm start
 ```
 
-## Verificación del Funcionamiento
+## Verificación de Éxito
 
-Después de instalar Chrome, las siguientes funciones deberían funcionar:
+Después de la actualización, deberías ver:
 
-✅ **Core Web Vitals**:
-- LCP (Largest Contentful Paint)
-- FID (First Input Delay) 
-- CLS (Cumulative Layout Shift)
-- FCP (First Contentful Paint)
-- TTFB (Time to First Byte)
+✅ **En los logs**:
+```
+Starting Lighthouse analysis for mobile on port 9222
+Starting Lighthouse analysis for desktop on port 9222
+```
 
-✅ **Screenshots**:
-- Vista móvil (375×667)
-- Vista desktop (1350×940)
-- Captura automática durante análisis
+✅ **NO debería aparecer**:
+```
+The "start lh:driver:navigate" performance mark has not been set
+```
 
-✅ **Performance Scores**:
-- Performance, Accessibility, Best Practices, SEO
-- Métricas reales de Lighthouse
+✅ **En el reporte web**:
+- Core Web Vitals con valores numéricos reales
+- Screenshots funcionando
+- Scores de Performance, Accessibility, Best Practices
 
-## Si no puedes instalar Chrome
+## Si Sigue Fallando
 
-Si no puedes instalar Chrome en tu servidor, la aplicación seguirá funcionando con:
-- Análisis SEO básico
-- Meta tags analysis
-- Technical SEO checks
-- Pero SIN Core Web Vitals ni Screenshots
-
-## Comandos de Debugging
-
-Para verificar si está funcionando:
+Si el problema persiste, ejecuta este test individual:
 
 ```bash
-# Ver logs de la aplicación
-pm2 logs dlmetrix
-
-# Probar manualmente Puppeteer
+cd ~/DLMETRIX
 node -e "
+const lighthouse = require('lighthouse');
 const puppeteer = require('puppeteer');
+
 (async () => {
   try {
-    const browser = await puppeteer.launch({headless: true});
-    console.log('✅ Puppeteer funciona');
+    const browser = await puppeteer.launch({
+      executablePath: '/usr/bin/chromium-browser',
+      headless: true,
+      args: ['--no-sandbox', '--disable-dev-shm-usage']
+    });
+    
+    const result = await lighthouse('https://example.com', {
+      port: new URL(browser.wsEndpoint()).port,
+      output: 'json',
+      logLevel: 'error'
+    });
+    
+    console.log('✅ Lighthouse funciona! Score:', result.lhr.categories.performance.score * 100);
     await browser.close();
   } catch(e) {
-    console.log('❌ Error:', e.message);
+    console.log('❌ Error Lighthouse:', e.message);
   }
 })();
 "
 ```
 
-## Recursos del Sistema
+## Cambios Técnicos Específicos
 
-Chrome/Chromium requiere:
-- **RAM**: Mínimo 1GB libre
-- **CPU**: Moderado durante análisis
-- **Espacio**: ~200MB para instalación
-
-Si tu servidor tiene recursos limitados, considera usar solo el análisis SEO básico que ya funciona perfectamente.
+1. **Reduced CPU Throttling**: De 4x a 2x para móvil en ARM64
+2. **Increased Timeouts**: 30s FCP, 45s Load, 60s total
+3. **Skipped Problematic Audits**: Screenshots y layout shifts que fallan en ARM64
+4. **Better Error Handling**: Promise.race con timeout explícito
+5. **Enhanced Logging**: Mensajes detallados para debugging
