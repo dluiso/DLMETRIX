@@ -30,6 +30,7 @@ import { WebAnalysisResult } from "@/shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
 import { getTranslations } from "@/lib/translations";
+import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner } from "@/components/loading-spinners";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -1170,33 +1171,41 @@ export default function Home() {
         )}
       </main>
 
-      {/* Enhanced Loading Overlay */}
+      {/* Enhanced Loading Overlay with Custom Spinners */}
       {analyzeMutation.isPending && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary mb-4"></div>
+              {/* Main DLMETRIX branded spinner */}
+              <div className="mb-6">
+                <DLMETRIXSpinner size="lg" />
+              </div>
+              
               <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">{t.analyzingWebsite}</h3>
               <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4">
                 {analysisProgress || (language === 'en' ? 'Running comprehensive web performance analysis...' : 'Ejecutando análisis integral de rendimiento web...')}
               </p>
-              <div className="bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+              
+              {/* Progress bar */}
+              <div className="bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden mb-4">
                 <div 
-                  className="bg-primary h-full transition-all duration-500 ease-out rounded-full animate-pulse"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-500 ease-out rounded-full animate-pulse"
                   style={{ width: '75%' }}
                 />
               </div>
-              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400 space-y-1">
+              
+              {/* Analysis stages with themed spinners */}
+              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400 space-y-2">
                 <div className="flex items-center justify-center space-x-2">
-                  <Monitor className="w-3 h-3" />
+                  <PerformanceSpinner size="sm" />
                   <span>{t.desktopAnalysis}</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
-                  <Smartphone className="w-3 h-3" />
+                  <PerformanceSpinner size="sm" />
                   <span>{t.mobileAnalysis}</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
-                  <Globe className="w-3 h-3" />
+                  <SEOAnalysisSpinner size="sm" />
                   <span>{t.seoAnalysis}</span>
                 </div>
               </div>

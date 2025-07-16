@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Globe, Link, Search, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getTranslations } from "@/lib/translations";
+import { DLMETRIXSpinner } from "@/components/loading-spinners";
 
 interface UrlInputProps {
   onAnalyze: (url: string) => void;
@@ -90,7 +91,11 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
             className="gradient-button h-11 sm:h-12 text-sm sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200 font-medium"
             disabled={isLoading}
           >
-            <Search className="w-4 h-4 mr-2 flex-shrink-0" />
+            {isLoading ? (
+              <DLMETRIXSpinner size="sm" className="mr-2" />
+            ) : (
+              <Search className="w-4 h-4 mr-2 flex-shrink-0" />
+            )}
             <span className="truncate">{isLoading ? t.analyzing : t.analyze}</span>
           </Button>
         </form>

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Share2, ExternalLink, Clock, AlertTriangle } from "lucide-react";
+import { LoadingMessage } from "@/components/loading-spinners";
 import SeoScore from "@/components/seo-score";
 import SeoSummaryCards from "@/components/seo-summary-cards";
 import MetaTagAnalysis from "@/components/meta-tag-analysis";
@@ -70,9 +71,11 @@ export default function SharePage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="p-8 text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">Loading Shared Report</h3>
-            <p className="text-slate-600 dark:text-slate-400">Please wait while we fetch the analysis...</p>
+            <LoadingMessage 
+              message="Loading Shared Report - Please wait while we fetch the analysis..."
+              variant="share"
+              size="lg"
+            />
           </Card>
         </div>
       </div>
