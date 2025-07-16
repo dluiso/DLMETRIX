@@ -33,6 +33,7 @@ import { getTranslations } from "@/lib/translations";
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [protectionError, setProtectionError] = useState<any | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [analysisHistory, setAnalysisHistory] = useState<WebAnalysisResult[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -50,11 +51,19 @@ export default function Home() {
   const analyzeMutation = useMutation({
     mutationFn: async (url: string): Promise<WebAnalysisResult> => {
       const response = await apiRequest("POST", "/api/web/analyze", { url });
+      
+      // Check for protection errors (status 423)
+      if (response.status === 423) {
+        const protectionData = await response.json();
+        throw new Error(JSON.stringify({ isProtectionError: true, ...protectionData }));
+      }
+      
       return response.json();
     },
     onSuccess: (data) => {
       setSeoData(data);
       setError(null);
+      setProtectionError(null);
       
       // Add to history (avoid duplicates)
       setAnalysisHistory(prev => {
@@ -69,7 +78,21 @@ export default function Home() {
       });
     },
     onError: (error) => {
+      // Check if it's a protection error
+      try {
+        const errorData = JSON.parse(error.message);
+        if (errorData.isProtectionError) {
+          setProtectionError(errorData);
+          setError(null);
+          setSeoData(null);
+          return;
+        }
+      } catch (e) {
+        // Not a protection error, handle normally
+      }
+      
       setError(error instanceof Error ? error.message : "Failed to analyze website");
+      setProtectionError(null);
       setSeoData(null);
     },
   });
@@ -87,6 +110,7 @@ export default function Home() {
 
   const handleAnalyze = async (url: string) => {
     setError(null);
+    setProtectionError(null);
     setAnalysisProgress('Initializing analysis...');
     
     // Simulate progress updates
@@ -837,6 +861,73 @@ export default function Home() {
               <p className="text-xs sm:text-sm leading-relaxed">
                 {error}
               </p>
+            </div>
+          </Card>
+        )}
+
+        {protectionError && (
+          <Card className="p-4 sm:p-6 mb-6 sm:mb-8 border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800">
+            <div className="text-amber-800 dark:text-amber-100">
+              <div className="flex items-center mb-3">
+                <Settings className="w-5 h-5 mr-2" />
+                <h3 className="font-semibold text-sm sm:text-base">
+                  {language === 'en' ? 'Site Protection Detected' : 'Protección del Sitio Detectada'}
+                </h3>
+              </div>
+              
+              <p className="text-xs sm:text-sm leading-relaxed mb-4">
+                {protectionError.message}
+              </p>
+
+              {protectionError.protections && protectionError.protections.length > 0 && (
+                <div className="space-y-3 mb-4">
+                  <h4 className="font-medium text-sm">
+                    {language === 'en' ? 'Protection Services Detected:' : 'Servicios de Protección Detectados:'}
+                  </h4>
+                  {protectionError.protections.map((protection, index) => (
+                    <div key={index} className="bg-white dark:bg-amber-900/30 p-3 rounded-lg border border-amber-200 dark:border-amber-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-amber-900 dark:text-amber-200">{protection.name}</span>
+                        <span className="text-xs bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 px-2 py-1 rounded">
+                          {protection.type}
+                        </span>
+                      </div>
+                      <p className="text-xs text-amber-700 dark:text-amber-300 mb-2">{protection.description}</p>
+                      <p className="text-xs font-medium text-amber-900 dark:text-amber-100">
+                        <span className="font-semibold">
+                          {language === 'en' ? 'Recommended action:' : 'Acción recomendada:'} 
+                        </span> {protection.action}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {protectionError.recommendations && (
+                <div className="bg-white dark:bg-amber-900/30 p-3 rounded-lg border border-amber-200 dark:border-amber-700">
+                  <h4 className="font-medium text-sm mb-2 text-amber-900 dark:text-amber-200">
+                    {language === 'en' ? 'How to Fix:' : 'Cómo Solucionarlo:'}
+                  </h4>
+                  <ul className="space-y-1 text-xs text-amber-700 dark:text-amber-300">
+                    {protectionError.recommendations.map((rec, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="w-1 h-1 bg-amber-600 dark:bg-amber-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                        {rec}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {protectionError.pageInfo && (
+                <div className="mt-3 pt-3 border-t border-amber-200 dark:border-amber-700">
+                  <p className="text-xs text-amber-600 dark:text-amber-400">
+                    <span className="font-medium">
+                      {language === 'en' ? 'Page detected:' : 'Página detectada:'} 
+                    </span> {protectionError.pageInfo.title}
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
         )}

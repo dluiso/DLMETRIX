@@ -33,7 +33,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createWebAnalysis(analysisResult);
 
       res.json(analysisResult);
-    } catch (error) {
+    } catch (error: any) {
+      // Handle site protection errors specifically
+      if (error.message.includes('SITE_PROTECTION_ACTIVE')) {
+        try {
+          const errorMessage = error.message.replace('Error: ', '');
+          const protectionData = JSON.parse(errorMessage);
+          
+          return res.status(423).json({
+            error: 'SITE_PROTECTION_ACTIVE',
+            message: 'El sitio web tiene protecciones activas que impiden el análisis automatizado',
+            protections: protectionData.protections,
+            pageInfo: {
+              title: protectionData.pageTitle,
+              snippet: protectionData.bodySnippet
+            },
+            recommendations: [
+              'Desactiva temporalmente las protecciones anti-bot durante el análisis',
+              'Agrega la IP de DLMETRIX a la lista blanca de tu firewall',
+              'Configura excepciones para herramientas de análisis SEO',
+              'Contacta al administrador del sitio para permitir el análisis'
+            ]
+          });
+        } catch (parseError) {
+          // Fallback if JSON parsing fails
+          return res.status(423).json({
+            error: 'SITE_PROTECTION_ACTIVE',
+            message: 'El sitio web tiene protecciones activas que impiden el análisis automatizado',
+            protections: [
+              {
+                name: 'Sistema de Protección Detectado',
+                type: 'Anti-Bot Protection',
+                description: 'Se detectó un sistema de protección activo',
+                action: 'Contacta al administrador para permitir el análisis'
+              }
+            ]
+          });
+        }
+      }
+      
       console.error('Web analysis error:', error);
       res.status(500).json({ message: "Internal server error during analysis" });
     }
@@ -49,6 +87,10 @@ async function performComprehensiveAnalysis(url: string): Promise<WebAnalysisRes
     // Try Lighthouse analysis first
     return await performLighthouseAnalysis(url);
   } catch (lighthouseError: any) {
+    // Check if it's a site protection error
+    if (lighthouseError.message.includes('SITE_PROTECTION_ACTIVE')) {
+      throw lighthouseError; // Re-throw to be handled by the API route
+    }
     // Lighthouse unavailable on ARM64, using enhanced SEO analysis
     // Fallback to enhanced SEO analysis
     return await performEnhancedSeoAnalysis(url);
@@ -647,23 +689,112 @@ async function fetchSeoDataWithPuppeteer(url: string) {
       timeout: 45000 
     });
     
-    // Wait for Cloudflare challenges
+    // Detect protection services that require human verification
     try {
-      const isCloudflareChallenge = await page.evaluate(() => {
-        return document.title.includes('Just a moment') || 
-               document.body.textContent.includes('checking your browser');
+      const protectionData = await page.evaluate(() => {
+        const bodyText = document.body.textContent.toLowerCase();
+        const title = document.title.toLowerCase();
+        
+        const protections = [];
+        
+        // Cloudflare detection
+        if (title.includes('just a moment') || 
+            bodyText.includes('checking your browser') ||
+            bodyText.includes('cloudflare') ||
+            bodyText.includes('ray id:') ||
+            document.querySelector('[data-ray]')) {
+          protections.push({
+            name: 'Cloudflare',
+            type: 'Bot Protection',
+            description: 'Cloudflare bot protection is active',
+            action: 'Disable "Bot Fight Mode" or add DLMETRIX to allowed bots'
+          });
+        }
+        
+        // reCAPTCHA detection
+        if (document.querySelector('.g-recaptcha') ||
+            document.querySelector('#recaptcha') ||
+            bodyText.includes('recaptcha') ||
+            document.querySelector('iframe[src*="recaptcha"]')) {
+          protections.push({
+            name: 'Google reCAPTCHA',
+            type: 'Human Verification',
+            description: 'reCAPTCHA verification is required',
+            action: 'Temporarily disable reCAPTCHA during analysis'
+          });
+        }
+        
+        // hCaptcha detection
+        if (document.querySelector('.h-captcha') ||
+            bodyText.includes('hcaptcha') ||
+            document.querySelector('iframe[src*="hcaptcha"]')) {
+          protections.push({
+            name: 'hCaptcha',
+            type: 'Human Verification', 
+            description: 'hCaptcha verification is required',
+            action: 'Temporarily disable hCaptcha during analysis'
+          });
+        }
+        
+        // Sucuri detection
+        if (bodyText.includes('sucuri') ||
+            bodyText.includes('website firewall') ||
+            bodyText.includes('access denied') && bodyText.includes('suspicious activity')) {
+          protections.push({
+            name: 'Sucuri WAF',
+            type: 'Web Application Firewall',
+            description: 'Sucuri firewall is blocking automated access',
+            action: 'Whitelist DLMETRIX IP or temporarily disable WAF'
+          });
+        }
+        
+        // WordFence detection
+        if (bodyText.includes('wordfence') ||
+            bodyText.includes('security plugin') ||
+            (bodyText.includes('blocked') && bodyText.includes('security'))) {
+          protections.push({
+            name: 'WordFence',
+            type: 'WordPress Security Plugin',
+            description: 'WordFence security plugin is blocking access',
+            action: 'Add DLMETRIX to WordFence whitelist or disable rate limiting'
+          });
+        }
+        
+        // Generic bot detection
+        if (bodyText.includes('bot detected') ||
+            bodyText.includes('automated traffic') ||
+            bodyText.includes('verify you are human') ||
+            bodyText.includes('prove you are not a robot')) {
+          protections.push({
+            name: 'Generic Bot Protection',
+            type: 'Anti-Bot System',
+            description: 'Automated traffic detection system is active',
+            action: 'Disable bot protection or add user-agent whitelist'
+          });
+        }
+        
+        return {
+          hasProtection: protections.length > 0,
+          protections,
+          pageTitle: document.title,
+          bodySnippet: document.body.textContent.substring(0, 500)
+        };
       });
       
-      if (isCloudflareChallenge) {
-        console.log('DEBUG fetchSeoDataWithPuppeteer - Cloudflare challenge detected, waiting...');
-        await page.waitForTimeout(15000);
-        await page.waitForFunction(() => {
-          return !document.title.includes('Just a moment') && 
-                 !document.body.textContent.includes('checking your browser');
-        }, { timeout: 25000 });
+      if (protectionData.hasProtection) {
+        await browser.close();
+        throw new Error(JSON.stringify({
+          type: 'PROTECTION_DETECTED',
+          data: protectionData
+        }));
       }
+      
+      // If no protection detected, continue with normal extraction
     } catch (e) {
-      // Continue if no challenge
+      if (e.message.includes('PROTECTION_DETECTED')) {
+        throw e; // Re-throw protection errors
+      }
+      // Continue if no challenge detected
     }
     
     // Extract data using browser context
@@ -1088,6 +1219,19 @@ async function fetchBasicSeoData(url: string) {
     try {
       return await fetchSeoDataWithPuppeteer(url);
     } catch (puppeteerError) {
+      // Check if it's a protection detection error
+      if (puppeteerError.message.includes('PROTECTION_DETECTED')) {
+        try {
+          const errorMessage = puppeteerError.message.replace('Error: ', '');
+          const protectionData = JSON.parse(errorMessage);
+          throw new Error(JSON.stringify({
+            type: 'SITE_PROTECTION_ACTIVE',
+            ...protectionData.data
+          }));
+        } catch (parseError) {
+          console.log('DEBUG fetchBasicSeoData - Protection data parsing failed, using defaults');
+        }
+      }
       console.log('DEBUG fetchBasicSeoData - Puppeteer fallback also failed, using defaults');
     }
     
