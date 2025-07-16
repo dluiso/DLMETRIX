@@ -7,15 +7,17 @@
 
 ## **Solución Segura sin Breaking Changes:**
 
-### 1. **Override Específico de esbuild**
+### 1. **Solución Simple (Sin Overrides)**
 ```bash
-# Crear/editar package.json con override:
-npm pkg set overrides.esbuild="^0.24.3"
-npm pkg set overrides.@esbuild-kit/core-utils.esbuild="^0.24.3"
-npm pkg set overrides.drizzle-kit.esbuild="^0.24.3"
+# Remover override conflictivo:
+npm pkg delete overrides
 
-# Aplicar cambios sin breaking updates:
-npm install
+# Actualizar solo esbuild a versión segura:
+npm install esbuild@latest --save-dev
+
+# Reinstalar sin conflictos:
+rm -rf node_modules package-lock.json
+npm install --legacy-peer-deps
 ```
 
 ### 2. **Alternativa: Actualización Manual Controlada**
