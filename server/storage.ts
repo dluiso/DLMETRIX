@@ -15,6 +15,9 @@ export interface IStorage {
   cleanExpiredSharedReports(): Promise<void>;
 }
 
+// Global storage for shared reports (persistent across requests)
+const globalSharedReports = new Map<string, SharedReport>();
+
 export class MemStorage implements IStorage {
   private users: Map<number, any>;
   private webAnalyses: Map<number, WebAnalysis>;
@@ -26,7 +29,8 @@ export class MemStorage implements IStorage {
   constructor() {
     this.users = new Map();
     this.webAnalyses = new Map();
-    this.sharedReports = new Map();
+    // Use global storage for shared reports to persist across instances
+    this.sharedReports = globalSharedReports;
     this.currentUserId = 1;
     this.currentAnalysisId = 1;
     this.currentSharedId = 1;
@@ -96,18 +100,25 @@ export class MemStorage implements IStorage {
       ...insertReport,
       createdAt: new Date(),
     };
-    this.sharedReports.set(report.shareToken, report);
+    // Store in global map for persistence across requests
+    globalSharedReports.set(report.shareToken, report);
+    console.log(`✅ Shared report created in persistent memory with token: ${report.shareToken}`);
+    console.log(`📊 Total shared reports in memory: ${globalSharedReports.size}`);
     return report;
   }
 
   async getSharedReport(shareToken: string): Promise<SharedReport | undefined> {
-    const report = this.sharedReports.get(shareToken);
+    console.log(`🔍 Searching for shared report with token: ${shareToken}`);
+    const report = globalSharedReports.get(shareToken);
     if (report && report.expiresAt > new Date()) {
+      console.log(`📄 Found shared report: ${report.url} (expires: ${report.expiresAt})`);
       return report;
     }
     if (report && report.expiresAt <= new Date()) {
-      this.sharedReports.delete(shareToken);
+      console.log(`⏰ Report expired, deleting...`);
+      globalSharedReports.delete(shareToken);
     }
+    console.log(`❌ No shared report found with token: ${shareToken}`);
     return undefined;
   }
 
@@ -115,15 +126,16 @@ export class MemStorage implements IStorage {
     const now = new Date();
     const tokensToDelete: string[] = [];
     
-    this.sharedReports.forEach((report, token) => {
+    globalSharedReports.forEach((report, token) => {
       if (report.expiresAt <= now) {
         tokensToDelete.push(token);
       }
     });
     
     tokensToDelete.forEach(token => {
-      this.sharedReports.delete(token);
+      globalSharedReports.delete(token);
     });
+    console.log(`🧹 Cleaned expired shared reports`);
   }
 }
 
