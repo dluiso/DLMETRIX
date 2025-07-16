@@ -433,44 +433,6 @@ function generateBasicRecommendations(loadTime: number, device: string) {
   return recommendations;
 }
 
-  const lhr = result?.lhr;
-  if (!lhr) {
-    throw new Error('Failed to run Lighthouse analysis');
-  }
-  
-  // Extract Core Web Vitals
-  const coreWebVitals = {
-    lcp: lhr.audits['largest-contentful-paint']?.numericValue || null,
-    fid: lhr.audits['max-potential-fid']?.numericValue || null,
-    cls: lhr.audits['cumulative-layout-shift']?.numericValue || null,
-    fcp: lhr.audits['first-contentful-paint']?.numericValue || null,
-    ttfb: lhr.audits['server-response-time']?.numericValue || null
-  };
-
-  // Extract scores
-  const scores = {
-    performance: Math.round((lhr.categories.performance?.score || 0) * 100),
-    accessibility: Math.round((lhr.categories.accessibility?.score || 0) * 100),
-    bestPractices: Math.round((lhr.categories['best-practices']?.score || 0) * 100),
-    seo: Math.round((lhr.categories.seo?.score || 0) * 100)
-  };
-
-  // Extract diagnostics and opportunities
-  const diagnostics = extractDiagnostics(lhr);
-  const insights = extractInsights(lhr);
-  const recommendations = generateRecommendations(lhr, device);
-  const technicalChecks = extractTechnicalChecks(lhr);
-
-  return {
-    ...scores,
-    coreWebVitals,
-    diagnostics,
-    insights,
-    recommendations,
-    technicalChecks
-  };
-}
-
 // Capture screenshot
 async function captureScreenshot(url: string, device: 'mobile' | 'desktop', browser: any): Promise<string> {
   const page = await browser.newPage();
