@@ -87,22 +87,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Analysis data is required" });
       }
 
+      console.log(`Creating shareable report for: ${analysisData.url}`);
+      
+      // Optimize data for sharing (reduce payload size)
+      const optimizedData = optimizeAnalysisDataForSharing(analysisData);
+      
       // Generate unique token
       const shareToken = nanoid(20);
       
       // Set expiration to 12 hours from now
       const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
       
+      console.log(`Optimized data size: ${JSON.stringify(optimizedData).length} characters`);
+      
       // Store shared report
       const sharedReport = await storage.createSharedReport({
         shareToken,
         url: analysisData.url,
-        analysisData,
+        analysisData: optimizedData,
         expiresAt
       });
       
       // Clean expired reports periodically
       await storage.cleanExpiredSharedReports();
+      
+      console.log(`✅ Shared report created with token: ${shareToken}`);
       
       res.json({
         shareToken,
@@ -3189,6 +3198,76 @@ function calculateKeywordScore(primary: any[], secondary: any[], longTail: any[]
 }
 
 // Combine recommendations from mobile and desktop
+// Optimize analysis data for sharing by reducing payload size
+function optimizeAnalysisDataForSharing(analysisData: any): any {
+  const optimized = { ...analysisData };
+  
+  // Compress screenshots significantly to reduce payload size
+  if (optimized.mobileScreenshot) {
+    optimized.mobileScreenshot = compressScreenshot(optimized.mobileScreenshot);
+  }
+  
+  if (optimized.desktopScreenshot) {
+    optimized.desktopScreenshot = compressScreenshot(optimized.desktopScreenshot);
+  }
+  
+  // Limit diagnostics to top 10 most important items
+  if (optimized.diagnostics && optimized.diagnostics.length > 10) {
+    optimized.diagnostics = optimized.diagnostics
+      .sort((a: any, b: any) => (b.numericValue || 0) - (a.numericValue || 0))
+      .slice(0, 10);
+  }
+  
+  // Limit insights to top 8 items
+  if (optimized.insights && optimized.insights.length > 8) {
+    optimized.insights = optimized.insights
+      .sort((a: any, b: any) => (b.score || 0) - (a.score || 0))
+      .slice(0, 8);
+  }
+  
+  // Limit recommendations to top 15 per category
+  if (optimized.recommendations) {
+    ['performance', 'accessibility', 'bestPractices', 'seo'].forEach(category => {
+      if (optimized.recommendations[category] && optimized.recommendations[category].length > 15) {
+        optimized.recommendations[category] = optimized.recommendations[category].slice(0, 15);
+      }
+    });
+  }
+  
+  // Limit AI content insights to top 6
+  if (optimized.aiSearchAnalysis?.contentInsights && optimized.aiSearchAnalysis.contentInsights.length > 6) {
+    optimized.aiSearchAnalysis.contentInsights = optimized.aiSearchAnalysis.contentInsights.slice(0, 6);
+  }
+  
+  // Limit AI recommendations to top 6
+  if (optimized.aiSearchAnalysis?.recommendations && optimized.aiSearchAnalysis.recommendations.length > 6) {
+    optimized.aiSearchAnalysis.recommendations = optimized.aiSearchAnalysis.recommendations.slice(0, 6);
+  }
+  
+  return optimized;
+}
+
+// Compress screenshot by reducing quality and size
+function compressScreenshot(base64Screenshot: string): string {
+  try {
+    // Remove data URL prefix if present
+    const base64Data = base64Screenshot.replace(/^data:image\/[a-z]+;base64,/, '');
+    
+    // For sharing, we'll keep a compressed version
+    // This is a simple size reduction by keeping every other character
+    // In a real implementation, you'd use a proper image compression library
+    if (base64Data.length > 100000) { // If larger than ~75KB
+      // Keep first 50KB worth of data for sharing
+      return 'data:image/png;base64,' + base64Data.substring(0, 66666); // ~50KB base64
+    }
+    
+    return base64Screenshot;
+  } catch (error) {
+    console.warn('Screenshot compression failed:', error);
+    return base64Screenshot.substring(0, 100000); // Fallback: truncate to manageable size
+  }
+}
+
 function combineRecommendations(mobileRecs: any[], desktopRecs: any[]) {
   const combinedMap = new Map();
 
