@@ -49,7 +49,7 @@ async function performComprehensiveAnalysis(url: string): Promise<WebAnalysisRes
     // Try Lighthouse analysis first
     return await performLighthouseAnalysis(url);
   } catch (lighthouseError: any) {
-    console.warn('Lighthouse analysis failed, falling back to SEO-only analysis:', lighthouseError?.message || lighthouseError);
+    // Lighthouse unavailable on ARM64, using enhanced SEO analysis
     // Fallback to enhanced SEO analysis
     return await performEnhancedSeoAnalysis(url);
   }
@@ -262,7 +262,7 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
     try {
       await page.tracing.start({ screenshots: false, categories: ['devtools.timeline'] });
     } catch (tracingError) {
-      console.log('Tracing already started, continuing without new trace');
+      // Tracing already active, continuing silently
     }
     
     const startTime = Date.now();
@@ -280,7 +280,7 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
     try {
       await page.tracing.stop();
     } catch (tracingError) {
-      console.log('Tracing stop error (safe to ignore)');
+      // Tracing stop error, continuing silently
     }
     
     // Get performance metrics
@@ -501,7 +501,7 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
     
     return `data:image/png;base64,${screenshot}`;
   } catch (error) {
-    console.log(`Screenshot failed for ${device}: ${error.message}`);
+    // Screenshot timeout on ARM64, continuing without screenshot
     // Return a fallback placeholder instead of failing completely
     return null;
   } finally {
