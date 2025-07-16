@@ -16,6 +16,16 @@ export class SecurityProtection {
   }
 
   private initProtection(): void {
+    // Skip protection in development environment
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname.includes('replit') ||
+        window.location.hostname.includes('127.0.0.1') ||
+        (window as any).__DEVELOPMENT__) {
+      console.log('%c🔓 DLMETRIX Security: Development mode detected - protection disabled', 
+        'color: orange; font-size: 14px; font-weight: bold;');
+      return;
+    }
+
     // Disable right-click context menu
     document.addEventListener('contextmenu', (e) => {
       e.preventDefault();
@@ -161,8 +171,18 @@ export class SecurityProtection {
   }
 
   private clearConsole(): void {
+    // Don't interfere with development environment
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname.includes('replit') ||
+        window.location.hostname.includes('127.0.0.1') ||
+        (window as any).__DEVELOPMENT__) {
+      return;
+    }
+
     const clearInterval = setInterval(() => {
-      console.clear();
+      if (typeof console.clear === 'function') {
+        console.clear();
+      }
       console.log('%c🔒 DLMETRIX - Unauthorized access attempt detected', 
         'color: red; font-size: 20px; font-weight: bold;');
     }, 1000);
@@ -239,7 +259,14 @@ export class SecurityProtection {
   }
 }
 
-// Initialize protection when module loads
-if (typeof window !== 'undefined' && !(window as any).__securityDisabled) {
+// Initialize protection when module loads (only in production)
+if (typeof window !== 'undefined' && 
+    !(window as any).__securityDisabled &&
+    window.location.hostname !== 'localhost' && 
+    !window.location.hostname.includes('replit') &&
+    !window.location.hostname.includes('127.0.0.1')) {
   SecurityProtection.getInstance();
+} else if (typeof window !== 'undefined') {
+  console.log('%c🔓 DLMETRIX Security: Protection bypassed for development environment', 
+    'color: green; font-size: 14px; font-weight: bold;');
 }
