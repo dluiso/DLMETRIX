@@ -2,17 +2,14 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import "./utils/security";
-import { initTechnologyObfuscation, cleanBuildArtifacts } from './utils/technology-obfuscation';
-import { initAntiWappalyzer, cleanWappalyzerFootprints } from './utils/anti-wappalyzer';
+import { initSimpleObfuscation, safeCleanup } from './utils/simple-obfuscation';
 
-// Initialize all obfuscation systems
-initTechnologyObfuscation();
-initAntiWappalyzer();
+// Initialize simplified obfuscation (safer approach)
+initSimpleObfuscation();
 
-// Clean build artifacts and wappalyzer footprints
+// Safe cleanup without complex operations
 setTimeout(() => {
-  cleanBuildArtifacts();
-  cleanWappalyzerFootprints();
-}, 1000);
+  safeCleanup();
+}, 2000);
 
 createRoot(document.getElementById("root")!).render(<App />);

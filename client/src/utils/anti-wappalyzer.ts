@@ -28,13 +28,17 @@ export function initAntiWappalyzer() {
     // Obfuscate CSS class names that reveal frameworks
     const allElements = document.querySelectorAll('*');
     allElements.forEach(el => {
-      if (el.className && typeof el.className === 'string') {
-        // Replace framework-specific class patterns
-        el.className = el.className
-          .replace(/\breact-\w+/g, 'dlm-component')
-          .replace(/\bvite-\w+/g, 'dlm-build')
-          .replace(/\btailwind/g, 'dlm-style')
-          .replace(/\b(tw-|css-)\w+/g, 'dlm-util');
+      try {
+        if (el.className && typeof el.className === 'string') {
+          // Replace framework-specific class patterns
+          el.className = el.className
+            .replace(/\breact-\w+/g, 'dlm-component')
+            .replace(/\bvite-\w+/g, 'dlm-build')
+            .replace(/\btailwind/g, 'dlm-style')
+            .replace(/\b(tw-|css-)\w+/g, 'dlm-util');
+        }
+      } catch (e) {
+        // Silently handle className access errors
       }
     });
   };
@@ -60,8 +64,8 @@ export function initAntiWappalyzer() {
     const filtered = Array.from(result).filter(el => {
       const hasFrameworkAttributes = el.hasAttribute('data-reactroot') || 
                                    el.hasAttribute('data-vite-dev-id') ||
-                                   el.className?.includes('react-') ||
-                                   el.className?.includes('vite-');
+                                   (typeof el.className === 'string' && el.className.includes('react-')) ||
+                                   (typeof el.className === 'string' && el.className.includes('vite-'));
       return !hasFrameworkAttributes;
     });
     
@@ -108,13 +112,19 @@ export function initAntiWappalyzer() {
       }
     });
 
-    // Add fake technology indicators
-    Object.defineProperty(window, 'DLMETRIX', {
-      value: { version: '2.5.0', framework: 'Custom' },
-      writable: false,
-      enumerable: true,
-      configurable: false
-    });
+    // Add fake technology indicators (only if not already defined)
+    if (!window.DLMETRIX) {
+      try {
+        Object.defineProperty(window, 'DLMETRIX', {
+          value: { version: '2.5.0', framework: 'Custom' },
+          writable: false,
+          enumerable: true,
+          configurable: false
+        });
+      } catch (e) {
+        // Property might already exist
+      }
+    }
   };
 
   // Override navigator properties

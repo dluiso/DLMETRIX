@@ -69,10 +69,14 @@ export function initTechnologyObfuscation() {
       const classesToHide = ['react-', 'vue-', 'ng-', 'vite-', 'tailwind'];
       classesToHide.forEach(prefix => {
         if (el.className && typeof el.className === 'string') {
-          const classes = el.className.split(' ');
-          const filteredClasses = classes.filter(cls => !cls.startsWith(prefix));
-          if (filteredClasses.length !== classes.length) {
-            el.className = filteredClasses.join(' ');
+          try {
+            const classes = el.className.split(' ');
+            const filteredClasses = classes.filter(cls => !cls.startsWith(prefix));
+            if (filteredClasses.length !== classes.length) {
+              el.className = filteredClasses.join(' ');
+            }
+          } catch (e) {
+            // Silently handle className errors
           }
         }
       });
@@ -189,23 +193,39 @@ export function setCustomHeaders() {
 
 // Remove build artifacts and development indicators
 export function cleanBuildArtifacts() {
-  // Remove Vite client indicators
-  const viteElements = document.querySelectorAll('[data-vite-dev-id]');
-  viteElements.forEach(el => el.removeAttribute('data-vite-dev-id'));
+  try {
+    // Remove Vite client indicators
+    const viteElements = document.querySelectorAll('[data-vite-dev-id]');
+    viteElements.forEach(el => {
+      try {
+        el.removeAttribute('data-vite-dev-id');
+      } catch (e) {}
+    });
 
-  // Remove React indicators
-  const reactElements = document.querySelectorAll('[data-reactroot]');
-  reactElements.forEach(el => el.removeAttribute('data-reactroot'));
+    // Remove React indicators
+    const reactElements = document.querySelectorAll('[data-reactroot]');
+    reactElements.forEach(el => {
+      try {
+        el.removeAttribute('data-reactroot');
+      } catch (e) {}
+    });
 
-  // Clean up class names that reveal technology
-  const allElements = document.querySelectorAll('*');
-  allElements.forEach(el => {
-    if (el.className && typeof el.className === 'string') {
-      // Remove technology-specific classes while preserving functionality
-      el.className = el.className
-        .replace(/\b(react-|vue-|ng-|vite-)\w*/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-  });
+    // Clean up class names that reveal technology - simplified and safer
+    const allElements = document.querySelectorAll('*');
+    allElements.forEach(el => {
+      try {
+        if (el && el.className && typeof el.className === 'string') {
+          // Remove technology-specific classes while preserving functionality
+          el.className = el.className
+            .replace(/\b(react-|vue-|ng-|vite-)\w*/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+        }
+      } catch (e) {
+        // Skip elements that cause errors
+      }
+    });
+  } catch (e) {
+    // Silently handle any cleanup errors
+  }
 }
