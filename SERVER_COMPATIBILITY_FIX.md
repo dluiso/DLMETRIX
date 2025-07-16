@@ -1,86 +1,102 @@
-# Solución para Conflictos de Dependencias en Producción
+# Fix de Compatibilidad: Servidor de Producción
 
 ## **Problema Identificado:**
-- Vite se actualizó a v7.0.4 (breaking change)
-- @tailwindcss/vite incompatible con Vite v7
-- @types/node conflictos de versión
-- esbuild vulnerabilidad persiste
+- DOM extraction funciona correctamente en Replit
+- Technical SEO Analysis retorna `"hasH1Tag":false` en tu servidor
+- Necesitamos verificar si axios/cheerio funciona en tu servidor Node.js v22.17.1
 
-## **Solución Inmediata:**
+## **Test Inmediato en Tu Servidor:**
 
-### 1. **Aumentar Memoria en PM2**
+### 1. **Copiar archivo de test:**
 ```bash
-# Parar procesos actuales
-pm2 stop all
-
-# Reiniciar con más memoria (recomendado 2GB mínimo)
-pm2 start ecosystem.config.js --max-memory-restart 2G
-
-# O si usas comando directo:
-pm2 start npm --name "dlmetrix" -- start --max-memory-restart 2048M
-
-# Verificar configuración:
-pm2 info dlmetrix
+# En tu servidor DLMETRIX, ejecutar:
+node test-dom-production.cjs
 ```
 
-### 2. **Downgrade Controlado** (Recomendado)
+### 2. **Si el test falla, verificar dependencias:**
 ```bash
-# Volver a versiones estables compatibles:
-npm install vite@^5.4.19 --save-dev
-npm install @types/node@^20.16.11 --save-dev
-npm install drizzle-kit@^0.30.0 --save-dev
-
-# Verificar compatibilidad:
-npm install
-```
-
-### 2. **Fix Específico para Technical SEO**
-```bash
-# Verificar que estas dependencias críticas estén bien:
+# Verificar que axios y cheerio estén instalados:
 npm list axios cheerio
-npm install axios@^1.10.0 cheerio@^1.1.0
+
+# Si faltan, instalar:
+npm install axios cheerio
 ```
 
-### 3. **Verificación Post-Fix**
-```bash
-# Test del endpoint debug:
-curl "http://localhost:5000/api/debug/technical/https%3A%2F%2Fsmartfiche.com"
+### 3. **Si el test funciona, el problema es en server/routes.ts:**
 
-# Si funciona localmente, test completo:
-curl -X POST http://localhost:5000/api/web/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://smartfiche.com"}'
-```
+**Agregar más debug logging a la función fetchBasicSeoData:**
 
-## **Si Persisten Problemas:**
+Localizar línea ~420 en server/routes.ts y agregar debug:
 
-### Alternativa: Lock a Versiones Estables
-```json
-// En package.json, fijar versiones específicas:
-{
-  "devDependencies": {
-    "vite": "5.4.19",
-    "@types/node": "20.16.11",
-    "drizzle-kit": "0.30.0",
-    "@tailwindcss/vite": "4.1.3"
+```javascript
+async function fetchBasicSeoData(url: string) {
+  try {
+    console.log('DEBUG fetchBasicSeoData - Starting for URL:', url);
+    
+    const response = await axios.get(url, { 
+      timeout: 10000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; DLMETRIX/1.0)'
+      }
+    });
+    
+    console.log('DEBUG fetchBasicSeoData - Response status:', response.status);
+    console.log('DEBUG fetchBasicSeoData - Content length:', response.data.length);
+    
+    const $ = cheerio.load(response.data);
+    
+    // Extract headings with debug
+    const headings = { h1: [], h2: [], h3: [], h4: [], h5: [], h6: [] };
+    $('h1, h2, h3, h4, h5, h6').each((_, elem) => {
+      const tag = elem.name.toLowerCase();
+      const text = $(elem).text().trim();
+      if (text && headings[tag]) {
+        headings[tag].push(text);
+      }
+    });
+    
+    console.log('DEBUG fetchBasicSeoData - Extracted headings:', headings);
+    console.log('DEBUG fetchBasicSeoData - H1 count:', headings.h1.length);
+    
+    // ... resto de la función
+    
+    const result = {
+      // ... otros campos
+      headings,
+      // ... resto de campos
+    };
+    
+    console.log('DEBUG fetchBasicSeoData - Final result keys:', Object.keys(result));
+    return result;
+    
+  } catch (error) {
+    console.error('DEBUG fetchBasicSeoData - Error:', error.message);
+    throw error;
   }
 }
 ```
 
-### Comando de Instalación Limpia:
+### 4. **Test después de agregar debug:**
 ```bash
-rm -rf node_modules package-lock.json
-npm install --legacy-peer-deps
+pm2 restart dlmetrix
+
+curl -X POST http://localhost:5000/api/web/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://smartfiche.com"}' > /dev/null 2>&1
+
+pm2 logs dlmetrix --lines 30 | grep DEBUG
 ```
 
-## **Verificación de Technical SEO:**
+## **Resultados Esperados:**
 
-**Después de los fixes, probar:**
-1. Debug endpoint debe retornar `success: true`
-2. Analysis completo debe incluir `technicalChecks` con datos reales
-3. Twitter Cards/Open Graph deben evaluar correctamente
+### ✅ **Si test-dom-production.cjs funciona:**
+- axios/cheerio están funcionando correctamente
+- El problema está en la implementación de server/routes.ts
+- Necesitamos el debug logging para identificar el punto de falla
 
-**Si aún falla, reportar:**
-- Output exacto del debug endpoint
-- Errores específicos en logs
-- Node version: `node --version`
+### ❌ **Si test-dom-production.cjs falla:**
+- Problema de dependencias en tu servidor
+- Posible problema de red/firewall
+- Problema de compatibilidad Node.js v22.17.1
+
+**Ejecuta primero el test y comparte el resultado para identificar exactamente dónde está el problema.**
