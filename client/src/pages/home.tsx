@@ -806,17 +806,12 @@ export default function Home() {
             {/* Centered Content */}
             <div className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Hero Section */}
-              <div className="text-center mb-8 animate-fade-in">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="p-3 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white shadow-elegant">
-                    <BarChart3 className="w-8 h-8" />
-                  </div>
-                </div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-4 px-2">
+              <div className="text-center mb-6 animate-fade-in">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-3 px-2">
                   {t.title}
                 </h2>
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4">
-                  {t.subtitle}
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4">
+                  All-in-one website audit tool: Core Web Vitals, SEO diagnostics, and performance reports.
                 </p>
               </div>
               
@@ -825,42 +820,72 @@ export default function Home() {
                 <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
+              {/* Feature Icons Section - Restored */}
+              <section className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-3 justify-center items-center text-slate-600 dark:text-slate-400 text-xs">
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Monitor className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <span className="font-medium">Desktop</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Smartphone className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    <span className="font-medium">Mobile</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <BarChart3 className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                    <span className="font-medium">Performance</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Globe className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                    <span className="font-medium">SEO</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <Search className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                    <span className="font-medium">AI Search</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-center">
+                    <FileText className="w-4 h-4 text-pink-500 flex-shrink-0" />
+                    <span className="font-medium">Keywords</span>
+                  </div>
+                </div>
+              </section>
+              
               {/* Features Section - Compact */}
-              <section className="mt-8 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              <section className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3">
                   {language === 'en' ? 'Comprehensive Website Analysis Features' : 'Características de Análisis Web Integral'}
                 </h2>
-                <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto px-4">
-                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                <div className="grid grid-cols-3 gap-3 max-w-2xl mx-auto px-4">
+                  <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Core Web Vitals' : 'Core Web Vitals'}
                     </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                       {language === 'en' 
-                        ? 'Measure LCP, FID, CLS and other performance metrics that affect user experience and search rankings.'
-                        : 'Mide LCP, FID, CLS y otras métricas de rendimiento que afectan la experiencia del usuario y el ranking en buscadores.'
+                        ? 'Measure LCP, FID, CLS and other performance metrics.'
+                        : 'Mide LCP, FID, CLS y otras métricas de rendimiento.'
                       }
                     </p>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                  <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Technical SEO' : 'SEO Técnico'}
                     </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                       {language === 'en' 
-                        ? 'Analyze meta tags, heading structure, schema markup, and other technical SEO factors.'
-                        : 'Analiza meta etiquetas, estructura de encabezados, marcado de esquema y otros factores de SEO técnico.'
+                        ? 'Analyze meta tags, heading structure, schema markup.'
+                        : 'Analiza meta etiquetas, estructura de encabezados, marcado.'
                       }
                     </p>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                  <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Accessibility' : 'Accesibilidad'}
                     </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                       {language === 'en' 
-                        ? 'Check website accessibility compliance and get recommendations for inclusive design.'
-                        : 'Verifica el cumplimiento de accesibilidad del sitio web y obtén recomendaciones para diseño inclusivo.'
+                        ? 'Check website accessibility compliance and get recommendations.'
+                        : 'Verifica el cumplimiento de accesibilidad del sitio web.'
                       }
                     </p>
                   </div>
@@ -868,7 +893,7 @@ export default function Home() {
               </section>
               
               {/* Footer for centered layout - Compact */}
-              <footer className="mt-8 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
+              <footer className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
                 <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                     <span>© 2025 DLMETRIX. All rights reserved.</span>
