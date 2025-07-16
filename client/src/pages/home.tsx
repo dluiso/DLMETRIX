@@ -215,7 +215,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
-              <WhyDlmetrixDialog />
+              <WhyDlmetrixDialog language={language} />
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -267,8 +267,8 @@ export default function Home() {
                   {isExporting ? "..." : t.saveReport.split(' ')[0]}
                 </span>
               </Button>
-              <ContactDialog />
-              <SupportDialog />
+              <ContactDialog language={language} />
+              <SupportDialog language={language} />
             </div>
           </div>
         </div>

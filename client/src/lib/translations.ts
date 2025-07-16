@@ -122,6 +122,34 @@ export interface Translations {
   csvDescription: string;
   comparisonEnabled: string;
   comparingWith: string;
+  
+  // New Navigation Elements
+  whyDlmetrix: string;
+  contact: string;
+  enjoyingDlmetrix: string;
+  
+  // Why DLMETRIX Dialog
+  whyDlmetrixTitle: string;
+  whyDlmetrixContent1: string;
+  whyDlmetrixContent2: string;
+  whyDlmetrixContent3: string;
+  supportProjectTitle: string;
+  supportProjectDescription: string;
+  buyMeCoffee: string;
+  
+  // Contact Dialog
+  contactTitle: string;
+  contactDescription: string;
+  emailSupport: string;
+  responseTime: string;
+  emailCopied: string;
+  emailCopiedDescription: string;
+  copyFailed: string;
+  copyFailedDescription: string;
+  
+  // Support Dialog
+  supportTitle: string;
+  supportDescription: string;
 }
 
 export const translations: Record<'en' | 'es', Translations> = {
@@ -246,7 +274,35 @@ export const translations: Record<'en' | 'es', Translations> = {
     csvExported: "CSV exported!",
     csvDescription: "Analysis data has been exported to CSV format.",
     comparisonEnabled: "Comparison mode enabled",
-    comparingWith: "Comparing current analysis with"
+    comparingWith: "Comparing current analysis with",
+    
+    // New Navigation Elements
+    whyDlmetrix: "Why DLMETRIX",
+    contact: "Contact",
+    enjoyingDlmetrix: "Enjoying DLMETRIX?",
+    
+    // Why DLMETRIX Dialog
+    whyDlmetrixTitle: "Why DLMETRIX",
+    whyDlmetrixContent1: "DLMETRIX was born from the need to provide a powerful and accessible SEO metrics tool—without the high costs often associated with similar platforms. While many competitors limit essential features behind paywalls, DLMETRIX offers real-time, high-quality web analytics that anyone can use for free.",
+    whyDlmetrixContent2: "Our mission is to democratize SEO and performance analysis by delivering cutting-edge diagnostic tools built with the latest web technologies. With DLMETRIX, users can gain instant insights into their site's Core Web Vitals, technical SEO, mobile readiness, social media previews, and keyword trends—all with the support of AI-driven content analysis and actionable recommendations.",
+    whyDlmetrixContent3: "Whether you're a developer, marketer, freelancer, or business owner, DLMETRIX empowers you to optimize your online presence with ease, clarity, and transparency. No barriers. No hidden fees. Just smart, reliable metrics—ready when you are.",
+    supportProjectTitle: "Enjoying DLMETRIX?",
+    supportProjectDescription: "If you'd like to support this project, consider buying me a coffee ☕—your contribution helps keep the platform free and growing!",
+    buyMeCoffee: "Buy me a coffee",
+    
+    // Contact Dialog
+    contactTitle: "Contact Information",
+    contactDescription: "Need help or have questions about DLMETRIX? Get in touch with our support team:",
+    emailSupport: "Email Support",
+    responseTime: "We typically respond within 24 hours during business days.",
+    emailCopied: "Email copied!",
+    emailCopiedDescription: "Email address has been copied to clipboard.",
+    copyFailed: "Copy failed",
+    copyFailedDescription: "Please copy the email manually: support@dlmetrix.com",
+    
+    // Support Dialog
+    supportTitle: "Support DLMETRIX",
+    supportDescription: "If you'd like to support this project, consider buying me a coffee ☕—your contribution helps keep the platform free and growing!"
   },
   es: {
     // Header and Navigation
@@ -369,7 +425,35 @@ export const translations: Record<'en' | 'es', Translations> = {
     csvExported: "¡CSV exportado!",
     csvDescription: "Los datos del análisis han sido exportados a formato CSV.",
     comparisonEnabled: "Modo de comparación habilitado",
-    comparingWith: "Comparando análisis actual con"
+    comparingWith: "Comparando análisis actual con",
+    
+    // New Navigation Elements
+    whyDlmetrix: "Por qué DLMETRIX",
+    contact: "Contacto",
+    enjoyingDlmetrix: "¿Te gusta DLMETRIX?",
+    
+    // Why DLMETRIX Dialog
+    whyDlmetrixTitle: "Por qué DLMETRIX",
+    whyDlmetrixContent1: "DLMETRIX nació de la necesidad de proporcionar una herramienta de métricas SEO potente y accesible, sin los altos costos que suelen asociarse con plataformas similares. Mientras muchos competidores limitan funciones esenciales detrás de muros de pago, DLMETRIX ofrece análisis web de alta calidad en tiempo real que cualquiera puede usar gratis.",
+    whyDlmetrixContent2: "Nuestra misión es democratizar el análisis SEO y de rendimiento entregando herramientas de diagnóstico de vanguardia construidas con las últimas tecnologías web. Con DLMETRIX, los usuarios pueden obtener insights instantáneos sobre Core Web Vitals, SEO técnico, preparación móvil, previsualizaciones de redes sociales y tendencias de palabras clave, todo con el apoyo de análisis de contenido impulsado por IA y recomendaciones accionables.",
+    whyDlmetrixContent3: "Ya seas desarrollador, marketero, freelancer o dueño de negocio, DLMETRIX te empodera para optimizar tu presencia online con facilidad, claridad y transparencia. Sin barreras. Sin tarifas ocultas. Solo métricas inteligentes y confiables, listas cuando las necesites.",
+    supportProjectTitle: "¿Te gusta DLMETRIX?",
+    supportProjectDescription: "Si te gustaría apoyar este proyecto, considera comprarme un café ☕—tu contribución ayuda a mantener la plataforma gratuita y en crecimiento!",
+    buyMeCoffee: "Cómprame un café",
+    
+    // Contact Dialog
+    contactTitle: "Información de Contacto",
+    contactDescription: "¿Necesitas ayuda o tienes preguntas sobre DLMETRIX? Ponte en contacto con nuestro equipo de soporte:",
+    emailSupport: "Soporte por Email",
+    responseTime: "Típicamente respondemos dentro de 24 horas durante días laborales.",
+    emailCopied: "¡Email copiado!",
+    emailCopiedDescription: "La dirección de email ha sido copiada al portapapeles.",
+    copyFailed: "Error al copiar",
+    copyFailedDescription: "Por favor copia el email manualmente: support@dlmetrix.com",
+    
+    // Support Dialog
+    supportTitle: "Apoyar DLMETRIX",
+    supportDescription: "Si te gustaría apoyar este proyecto, considera comprarme un café ☕—tu contribución ayuda a mantener la plataforma gratuita y en crecimiento!"
   }
 };
 
