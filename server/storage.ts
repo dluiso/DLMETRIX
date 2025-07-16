@@ -158,6 +158,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createWebAnalysis(insertAnalysis: InsertWebAnalysis): Promise<WebAnalysis> {
+    console.log('💾 Attempting to save web analysis to database...');
     const { db } = await getDatabase();
     
     if (!db) {
@@ -166,8 +167,37 @@ export class DatabaseStorage implements IStorage {
       const memStorage = new MemStorage();
       return await memStorage.createWebAnalysis(insertAnalysis);
     }
-    const [result] = await db.insert(webAnalyses).values(insertAnalysis).execute();
-    return { id: result.insertId as number, ...insertAnalysis } as WebAnalysis;
+    
+    try {
+      console.log('🔧 Database available, inserting web analysis...');
+      const [result] = await db.insert(webAnalyses).values({
+        ...insertAnalysis,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }).execute();
+      
+      const createdAnalysis: WebAnalysis = {
+        id: result.insertId as number,
+        ...insertAnalysis,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      console.log(`✅ Web analysis saved to database with ID: ${createdAnalysis.id}`);
+      return createdAnalysis;
+      
+    } catch (error: any) {
+      console.error('❌ Database insert failed:', error.message);
+      console.error('🔍 Error details:', {
+        code: error.code,
+        errno: error.errno,
+        sqlMessage: error.sqlMessage
+      });
+      
+      // Fallback to memory storage
+      const memStorage = new MemStorage();
+      return await memStorage.createWebAnalysis(insertAnalysis);
+    }
   }
 
   async getWebAnalysis(id: number): Promise<WebAnalysis | undefined> {

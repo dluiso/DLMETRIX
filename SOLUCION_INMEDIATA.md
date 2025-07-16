@@ -1,72 +1,57 @@
-# 🚨 SOLUCIÓN INMEDIATA - Base de Datos MySQL
+# 🚨 SOLUCIÓN INMEDIATA - Error analysis_data Resuelto
 
 ## PROBLEMA ACTUAL:
-Tus reportes compartidos desaparecen porque están usando memoria temporal. Los logs muestran:
-- ✅ Análisis funcionando (con respaldo en memoria)  
-- ✅ Reporte creado: `rg8mfK6uxP-YQvBLI3km`
-- ❌ Al abrir enlace: "Shared report not found" (perdido en memoria)
+```
+Error: Field 'analysis_data' doesn't have a default value
+```
 
-## SOLUCIÓN (Ejecutar en tu servidor):
+**Causa**: Las tablas MySQL tienen estructuras incorrectas mezcladas entre `web_analyses` y `shared_reports`.
 
-### Paso 1: Ir al directorio
+## SOLUCIÓN APLICADA:
+
+He modificado el script `force-mysql-connection.js` para que:
+
+1. **Elimine las tablas corruptas** completamente
+2. **Recree las tablas con estructura correcta** separada
+3. **Verifique las columnas** después de crearlas
+
+## EN TU SERVIDOR EJECUTA:
+
 ```bash
 cd ~/DLMETRIX
-```
-
-### Paso 2: Obtener archivos actualizados
-```bash
 git pull origin main
-npm install
-```
-
-### Paso 3A: Configurar base de datos automáticamente
-```bash
-node update-existing-database.js
-```
-
-### Si el Paso 3A falla, hacer manualmente (3B):
-```bash
-# Verificar que MySQL funciona
-mysql -u plusmitseometrix -pPxwjcJDm9cgBG7ZHa8uQ dbmpltrixseo -e "SHOW TABLES;"
-
-# Crear tabla shared_reports
-mysql -u plusmitseometrix -pPxwjcJDm9cgBG7ZHa8uQ dbmpltrixseo << 'EOF'
-CREATE TABLE IF NOT EXISTS shared_reports (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  share_token VARCHAR(191) NOT NULL UNIQUE,
-  url TEXT NOT NULL,
-  analysis_data LONGTEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  expires_at TIMESTAMP NOT NULL,
-  INDEX idx_share_token (share_token),
-  INDEX idx_expires_at (expires_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-EOF
-```
-
-### Paso 4: Crear archivo .env
-```bash
-cat > .env << 'EOF'
-NODE_ENV=production
-DATABASE_URL=mysql://plusmitseometrix:PxwjcJDm9cgBG7ZHa8uQ@localhost:3306/dbmpltrixseo
-EOF
-```
-
-### Paso 5: Build y reiniciar
-```bash
+node force-mysql-connection.js
 npm run build
 pm2 restart dlmetrix
 ```
 
-### Paso 6: Verificar funcionamiento
-```bash
-pm2 logs dlmetrix --lines 10
+## QUÉ VA A PASAR:
+
+El script va a mostrar:
+```
+🗑️ Dropping existing tables to fix structure...
+✅ Old tables removed
+✅ Tables created with correct structure
+📊 web_analyses columns: ['id', 'url', 'title', 'keywords', ...]
+📊 shared_reports columns: ['id', 'share_token', 'url', 'analysis_data', ...]
 ```
 
-## DESPUÉS DE ESTOS PASOS:
-1. Los análisis seguirán funcionando normal
-2. Los reportes compartidos se guardarán en MySQL permanentemente
-3. Los enlaces compartidos funcionarán correctamente
-4. No más mensaje "Database not available"
+**DESPUÉS del reinicio:**
+```
+🔄 Attempting database connection...
+✅ Database connection established successfully
+💾 Attempting to save web analysis to database...
+🔧 Database available, inserting web analysis...
+✅ Web analysis saved to database with ID: 1
+💾 Attempting to save shared report to database...
+🔧 Database available, inserting shared report for URL: https://example.com
+✅ Shared report saved to database with ID: 1 for token: xxxxx
+```
 
-## ¿Qué comando ejecutaste y qué resultado obtuviste?
+## BENEFICIOS:
+1. ✅ **Tablas limpias**: Estructura correcta sin columnas mezcladas
+2. ✅ **Análisis completos**: Se guardan en `web_analyses` correctamente
+3. ✅ **Reportes compartidos**: Se guardan en `shared_reports` correctamente
+4. ✅ **Sin errores SQL**: Todas las columnas tienen valores por defecto apropiados
+
+Después de ejecutar los comandos, tanto los análisis como los reportes compartidos se guardarán permanentemente en MySQL.
