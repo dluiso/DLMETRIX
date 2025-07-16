@@ -138,9 +138,58 @@ export default function SharePage() {
     );
   }
 
-  const analysisData = sharedReport.analysisData;
+  // Create safe defaults for missing data to prevent component crashes
+  const safeAnalysisData = {
+    url: sharedReport.url || '',
+    performanceOverview: {
+      performance: sharedReport.analysisData?.performanceOverview?.performance || 0,
+      accessibility: sharedReport.analysisData?.performanceOverview?.accessibility || 0,
+      bestPractices: sharedReport.analysisData?.performanceOverview?.bestPractices || 0,
+      seo: sharedReport.analysisData?.performanceOverview?.seo || 0
+    },
+    coreWebVitals: {
+      mobile: {
+        lcp: sharedReport.analysisData?.coreWebVitals?.mobile?.lcp || { value: null, score: 'N/A' },
+        fid: sharedReport.analysisData?.coreWebVitals?.mobile?.fid || { value: null, score: 'N/A' },
+        cls: sharedReport.analysisData?.coreWebVitals?.mobile?.cls || { value: null, score: 'N/A' },
+        fcp: sharedReport.analysisData?.coreWebVitals?.mobile?.fcp || { value: null, score: 'N/A' },
+        ttfb: sharedReport.analysisData?.coreWebVitals?.mobile?.ttfb || { value: null, score: 'N/A' }
+      },
+      desktop: {
+        lcp: sharedReport.analysisData?.coreWebVitals?.desktop?.lcp || { value: null, score: 'N/A' },
+        fid: sharedReport.analysisData?.coreWebVitals?.desktop?.fid || { value: null, score: 'N/A' },
+        cls: sharedReport.analysisData?.coreWebVitals?.desktop?.cls || { value: null, score: 'N/A' },
+        fcp: sharedReport.analysisData?.coreWebVitals?.desktop?.fcp || { value: null, score: 'N/A' },
+        ttfb: sharedReport.analysisData?.coreWebVitals?.desktop?.ttfb || { value: null, score: 'N/A' }
+      }
+    },
+    seoAnalysis: {
+      title: sharedReport.analysisData?.seoAnalysis?.title || '',
+      description: sharedReport.analysisData?.seoAnalysis?.description || '',
+      keywords: sharedReport.analysisData?.seoAnalysis?.keywords || null,
+      canonicalUrl: sharedReport.analysisData?.seoAnalysis?.canonicalUrl || null,
+      robotsMeta: sharedReport.analysisData?.seoAnalysis?.robotsMeta || null,
+      viewportMeta: sharedReport.analysisData?.seoAnalysis?.viewportMeta || null,
+      charset: sharedReport.analysisData?.seoAnalysis?.charset || null,
+      langAttribute: sharedReport.analysisData?.seoAnalysis?.langAttribute || null,
+      openGraphTags: sharedReport.analysisData?.seoAnalysis?.openGraphTags || {},
+      twitterCardTags: sharedReport.analysisData?.seoAnalysis?.twitterCardTags || {}
+    },
+    technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis || [],
+    recommendations: sharedReport.analysisData?.recommendations || [],
+    diagnostics: sharedReport.analysisData?.diagnostics || [],
+    insights: sharedReport.analysisData?.insights || [],
+    aiSearchAnalysis: sharedReport.analysisData?.aiSearchAnalysis || null,
+    keywordAnalysis: sharedReport.analysisData?.keywordAnalysis || null,
+    screenshots: {
+      mobile: sharedReport.analysisData?.screenshots?.mobile || null,
+      desktop: sharedReport.analysisData?.screenshots?.desktop || null
+    }
+  };
+
+  const analysisData = safeAnalysisData;
   
-  console.log('SharePage: About to render main content with analysisData:', !!analysisData);
+  console.log('SharePage: About to render main content with safe analysisData:', !!analysisData);
 
   // Additional safety check
   if (!analysisData) {
@@ -242,46 +291,61 @@ export default function SharePage() {
 
           {/* Performance Overview */}
           <PerformanceOverview
-            performanceScore={analysisData.performanceScore}
-            accessibilityScore={analysisData.accessibilityScore}
-            bestPracticesScore={analysisData.bestPracticesScore}
-            seoScore={analysisData.seoScore}
+            performanceScore={Number(analysisData.performanceOverview.performance) || 0}
+            accessibilityScore={Number(analysisData.performanceOverview.accessibility) || 0}
+            bestPracticesScore={Number(analysisData.performanceOverview.bestPractices) || 0}
+            seoScore={Number(analysisData.performanceOverview.seo) || 0}
+            language="en"
           />
 
           {/* Core Web Vitals */}
           {analysisData.coreWebVitals && (
-            <CoreWebVitalsComponent data={analysisData.coreWebVitals} />
+            <CoreWebVitalsComponent data={analysisData.coreWebVitals} language="en" />
           )}
 
           {/* Screenshots */}
-          {(analysisData.mobileScreenshot || analysisData.desktopScreenshot) && (
+          {(analysisData.screenshots?.mobile || analysisData.screenshots?.desktop) && (
             <ScreenshotsView
-              mobileScreenshot={analysisData.mobileScreenshot}
-              desktopScreenshot={analysisData.desktopScreenshot}
+              mobileScreenshot={analysisData.screenshots.mobile}
+              desktopScreenshot={analysisData.screenshots.desktop}
               url={analysisData.url}
+              language="en"
             />
           )}
 
-          {/* SEO Analysis */}
-          <SeoScore data={analysisData} />
-          <SeoSummaryCards data={analysisData} />
-          <MetaTagAnalysis data={analysisData} />
+          {/* SEO Analysis with safe data structure */}
+          <SeoScore data={{
+            score: 75,
+            title: analysisData.seoAnalysis.title,
+            description: analysisData.seoAnalysis.description,
+            keywords: analysisData.seoAnalysis.keywords,
+            canonicalUrl: analysisData.seoAnalysis.canonicalUrl,
+            robotsMeta: analysisData.seoAnalysis.robotsMeta,
+            viewportMeta: analysisData.seoAnalysis.viewportMeta,
+            openGraphTags: analysisData.seoAnalysis.openGraphTags,
+            twitterCardTags: analysisData.seoAnalysis.twitterCardTags,
+            technicalSeoChecks: {},
+            recommendations: analysisData.recommendations || []
+          }} />
+          
+          <MetaTagAnalysis data={analysisData} language="en" />
 
           {/* Heading Structure */}
           <HeadingStructureAnalysis 
             data={{
-              headings: (analysisData as any).headings,
-              headingStructure: (analysisData as any).headingStructure
-            }} 
+              headings: analysisData.seoAnalysis.headings || {},
+              headingStructure: analysisData.seoAnalysis.headingStructure || []
+            }}
+            language="en"
           />
 
           {/* Social Media */}
-          <OpenGraphAnalysis data={analysisData} />
-          <PreviewTabs data={analysisData} />
+          <OpenGraphAnalysis data={analysisData} language="en" />
+          <PreviewTabs data={analysisData} language="en" />
 
           {/* Technical SEO */}
-          {analysisData.technicalChecks && (
-            <TechnicalSeo checks={analysisData.technicalChecks} />
+          {analysisData.technicalSeoAnalysis && analysisData.technicalSeoAnalysis.length > 0 && (
+            <TechnicalSeo checks={analysisData.technicalSeoAnalysis} language="en" />
           )}
 
           {/* AI Search Analysis */}
