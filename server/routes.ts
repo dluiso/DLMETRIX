@@ -453,32 +453,49 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
     page.setDefaultNavigationTimeout(45000);
     
     if (device === 'mobile') {
-      await page.setViewport({ width: 375, height: 667, deviceScaleFactor: 1 }); // Reduced scale for performance
+      await page.setViewport({ 
+        width: 375, 
+        height: 600, // Reduced height for faster rendering
+        deviceScaleFactor: 1,
+        isMobile: true,
+        hasTouch: true
+      });
     } else {
       await page.setViewport({ width: 1350, height: 940, deviceScaleFactor: 1 });
     }
     
     // Navigate with optimized wait conditions for ARM64
     await page.goto(url, { 
-      waitUntil: 'domcontentloaded', // Less strict than networkidle2
-      timeout: 40000 
+      waitUntil: 'domcontentloaded',
+      timeout: device === 'mobile' ? 30000 : 40000 // Shorter timeout for mobile
     });
     
-    // Wait a bit for content to settle
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Shorter wait for mobile to avoid timeouts
+    const waitTime = device === 'mobile' ? 1000 : 2000;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
     
-    // Capture with timeout protection
-    const screenshotPromise = page.screenshot({
-      type: 'png',
-      encoding: 'base64',
-      fullPage: false,
-      clip: device === 'mobile' 
-        ? { x: 0, y: 0, width: 375, height: 667 }
-        : { x: 0, y: 0, width: 1350, height: 940 }
-    });
+    // Capture with timeout protection (optimized for mobile ARM64)
+    const screenshotOptions = device === 'mobile' 
+      ? {
+          type: 'png' as const,
+          encoding: 'base64' as const,
+          fullPage: false,
+          clip: { x: 0, y: 0, width: 375, height: 600 }, // Reduced height for mobile
+          quality: 80 // Reduced quality for faster capture
+        }
+      : {
+          type: 'png' as const,
+          encoding: 'base64' as const,
+          fullPage: false,
+          clip: { x: 0, y: 0, width: 1350, height: 940 }
+        };
     
+    const screenshotPromise = page.screenshot(screenshotOptions);
+    
+    // Different timeout for mobile vs desktop
+    const timeoutMs = device === 'mobile' ? 25000 : 35000;
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Screenshot timeout')), 35000)
+      setTimeout(() => reject(new Error('Screenshot timeout')), timeoutMs)
     );
     
     const screenshot = await Promise.race([screenshotPromise, timeoutPromise]) as string;
