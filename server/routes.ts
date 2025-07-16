@@ -8,6 +8,52 @@ import lighthouse from "lighthouse";
 import puppeteer from "puppeteer";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Debug endpoint for Technical SEO troubleshooting
+  app.get("/api/debug/technical/:encodedUrl", async (req, res) => {
+    try {
+      const url = decodeURIComponent(req.params.encodedUrl);
+      console.log('DEBUG Technical SEO for:', url);
+      
+      const seoData = await fetchBasicSeoData(url);
+      console.log('DEBUG: SEO Data keys:', Object.keys(seoData));
+      
+      const technicalChecks = generateBasicTechnicalChecks(seoData, url);
+      console.log('DEBUG: Technical checks:', Object.keys(technicalChecks));
+      
+      res.json({
+        success: true,
+        url,
+        seoDataKeys: Object.keys(seoData),
+        technicalChecksKeys: Object.keys(technicalChecks),
+        sampleChecks: {
+          hasViewportMeta: technicalChecks.hasViewportMeta,
+          hasH1Tag: technicalChecks.hasH1Tag,
+          hasSSL: technicalChecks.hasSSL,
+          hasOpenGraph: technicalChecks.hasOpenGraph,
+          hasTwitterCards: technicalChecks.hasTwitterCards
+        },
+        sampleData: {
+          title: seoData.title ? 'Present' : 'Missing',
+          headings: seoData.headings ? Object.keys(seoData.headings) : 'Missing',
+          images: seoData.imageAnalysis ? `${seoData.imageAnalysis.total} found` : 'Missing',
+          technical: seoData.technicalAnalysis ? 'Present' : 'Missing'
+        },
+        versions: {
+          axios: require('axios/package.json').version,
+          cheerio: require('cheerio/package.json').version,
+          node: process.version
+        }
+      });
+    } catch (error) {
+      console.error('DEBUG Technical SEO error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
+  });
+
   // Comprehensive web performance analysis
   app.post("/api/web/analyze", async (req, res) => {
     try {
