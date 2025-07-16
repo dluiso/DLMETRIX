@@ -1,0 +1,100 @@
+0|dlmetrix  | Analyzing URL: https://smartfiche.com
+0|dlmetrix  | Using browser executable: /usr/bin/chromium-browser
+0|dlmetrix  | DEBUG fetchBasicSeoData - Starting analysis for URL: https://smartfiche.com
+0|dlmetrix  | DEBUG fetchBasicSeoData - Response status: 200
+0|dlmetrix  | DEBUG fetchBasicSeoData - Content length: 233195
+0|dlmetrix  | DEBUG fetchBasicSeoData - Basic meta extracted: {
+0|dlmetrix  |   title: 'SmartFiche - Laserfiche & IT Services Solutions',
+0|dlmetrix  |   description: true,
+0|dlmetrix  |   viewportMeta: true
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG fetchBasicSeoData - Headings extracted: { h1Count: 1, h2Count: 7, h3Count: 10, h1Text: 'Smartfiche' }
+0|dlmetrix  | Starting manual performance analysis for mobile (ARM64 compatible)
+0|dlmetrix  | Starting manual performance analysis for desktop (ARM64 compatible)
+0|dlmetrix  | Tracing already started, continuing without new trace
+0|dlmetrix  | Tracing stop error (safe to ignore)
+0|dlmetrix  | DEBUG generateBasicTechnicalChecks - seoData keys: [
+0|dlmetrix  |   'title',           'description',
+0|dlmetrix  |   'keywords',        'canonicalUrl',
+0|dlmetrix  |   'robotsMeta',      'viewportMeta',
+0|dlmetrix  |   'charset',         'langAttribute',
+0|dlmetrix  |   'headings',        'headingStructure',
+0|dlmetrix  |   'imageAnalysis',   'linkAnalysis',
+0|dlmetrix  |   'contentAnalysis', 'technicalAnalysis',
+0|dlmetrix  |   'openGraphTags',   'twitterCardTags',
+0|dlmetrix  |   'schemaMarkup',    'robotsTxtExists',
+0|dlmetrix  |   'sitemapExists',   'finalUrl',
+0|dlmetrix  |   'hasSSL'
+0|dlmetrix  | ]
+0|dlmetrix  | DEBUG headings data: {
+0|dlmetrix  |   h1: [ 'Smartfiche' ],
+0|dlmetrix  |   h2: [
+0|dlmetrix  |     'Business Process Automation & Document Management Solutions',
+0|dlmetrix  |     'Digital Transformation with Smartfiche',
+0|dlmetrix  |     'Industries we cover',
+0|dlmetrix  |     'Why Choose Smartfiche',
+0|dlmetrix  |     'Our Technologies',
+0|dlmetrix  |     'What Our Customers Say',
+0|dlmetrix  |     "It's time to automate your business"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h3: [
+0|dlmetrix  |     'What Can We Do for You?',
+0|dlmetrix  |     'Business Automation',
+0|dlmetrix  |     'Document Management',
+0|dlmetrix  |     'Document Capture',
+0|dlmetrix  |     'Template Management',
+0|dlmetrix  |     'Repository Administration',
+0|dlmetrix  |     'Integration',
+0|dlmetrix  |     'Government',
+0|dlmetrix  |     'Education',
+0|dlmetrix  |     "Let's talk"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h4: [],
+0|dlmetrix  |   h5: [],
+0|dlmetrix  |   h6: []
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG heading analysis: { hasH1: true, hasMultipleHeadingTypes: true, h1Count: 1 }
+0|dlmetrix  | DEBUG generateBasicTechnicalChecks - seoData keys: [
+0|dlmetrix  |   'title',           'description',
+0|dlmetrix  |   'keywords',        'canonicalUrl',
+0|dlmetrix  |   'robotsMeta',      'viewportMeta',
+0|dlmetrix  |   'charset',         'langAttribute',
+0|dlmetrix  |   'headings',        'headingStructure',
+0|dlmetrix  |   'imageAnalysis',   'linkAnalysis',
+0|dlmetrix  |   'contentAnalysis', 'technicalAnalysis',
+0|dlmetrix  |   'openGraphTags',   'twitterCardTags',
+0|dlmetrix  |   'schemaMarkup',    'robotsTxtExists',
+0|dlmetrix  |   'sitemapExists',   'finalUrl',
+0|dlmetrix  |   'hasSSL'
+0|dlmetrix  | ]
+0|dlmetrix  | DEBUG headings data: {
+0|dlmetrix  |   h1: [ 'Smartfiche' ],
+0|dlmetrix  |   h2: [
+0|dlmetrix  |     'Business Process Automation & Document Management Solutions',
+0|dlmetrix  |     'Digital Transformation with Smartfiche',
+0|dlmetrix  |     'Industries we cover',
+0|dlmetrix  |     'Why Choose Smartfiche',
+0|dlmetrix  |     'Our Technologies',
+0|dlmetrix  |     'What Our Customers Say',
+0|dlmetrix  |     "It's time to automate your business"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h3: [
+0|dlmetrix  |     'What Can We Do for You?',
+0|dlmetrix  |     'Business Automation',
+0|dlmetrix  |     'Document Management',
+0|dlmetrix  |     'Document Capture',
+0|dlmetrix  |     'Template Management',
+0|dlmetrix  |     'Repository Administration',
+0|dlmetrix  |     'Integration',
+0|dlmetrix  |     'Government',
+0|dlmetrix  |     'Education',
+0|dlmetrix  |     "Let's talk"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h4: [],
+0|dlmetrix  |   h5: [],
+0|dlmetrix  |   h6: []
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG heading analysis: { hasH1: true, hasMultipleHeadingTypes: true, h1Count: 1 }
+0|dlmetrix  | Screenshot failed for mobile: Screenshot timeout
+0|dlmetrix  | 2:44:51 AM [express] POST /api/web/analyze 200 in 56186ms :: {"url":"https://smartfiche.com","title"…
+
