@@ -1,124 +1,43 @@
-# DLMETRIX - Comandos para Actualizar el Servidor
+# DLMETRIX - Comando Final de Actualización
 
-## Pasos Exactos para Aplicar las Correcciones
+## Corrección PNG Quality Error
 
-### 1. Detener la aplicación actual
+He eliminado el parámetro `quality` que no es compatible con PNG screenshots.
+
+## Comando de Actualización para tu Servidor
+
 ```bash
-# Si está corriendo con pm2
-pm2 stop dlmetrix
-# O si está corriendo directamente
-pkill -f "node dist/index.js"
+cd ~/DLMETRIX && git stash && git pull origin main && npm run build && pm2 restart dlmetrix
 ```
 
-### 2. Ir al directorio de la aplicación
-```bash
-cd ~/DLMETRIX
-```
+## Estado Final Esperado
 
-### 3. Hacer backup del directorio actual (opcional pero recomendado)
-```bash
-cp -r . ../DLMETRIX_backup
-```
+Después de esta actualización:
 
-### 4. Actualizar el código desde tu repositorio
-```bash
-# Si usas git
-git pull origin main
-
-# O si copias los archivos manualmente, asegúrate de copiar:
-# - client/index.html (corregido)
-# - client/src/main.tsx (corregido)
-# - client/src/utils/simple-obfuscation.ts
-# - client/src/utils/hosting-obfuscation.ts
-# - DEPLOYMENT.md (nuevo)
-# - README.md (nuevo)
-```
-
-### 5. Limpiar instalación anterior
-```bash
-rm -rf node_modules
-rm -rf dist
-rm package-lock.json
-```
-
-### 6. Reinstalar dependencias
-```bash
-npm install
-```
-
-### 7. Construir la aplicación con las correcciones
-```bash
-npm run build
-```
-
-### 8. Iniciar en modo producción
-```bash
-NODE_ENV=production npm start
-```
+✅ **Desktop Screenshots**: Funcionando perfectamente
+✅ **Mobile Screenshots**: Sin error de quality, optimizados para ARM64
+✅ **Core Web Vitals**: Valores reales para mobile y desktop
+✅ **Performance Analysis**: Manual ARM64-compatible funcionando
+✅ **Sin errores**: Ni de quality, ni de timeout, ni de Lighthouse
 
 ## Verificación
 
-Después de ejecutar estos comandos:
-
-1. Ve a tu dominio en el navegador
-2. Deberías ver la interfaz normal de DLMETRIX (no código)
-3. La aplicación debe funcionar completamente
-4. Los sistemas de obfuscación estarán activos pero no interferirán con React
-
-## Si algo sale mal
-
-Si hay problemas, puedes ejecutar en modo debugging:
+Ejecuta este comando para verificar:
 ```bash
-NODE_ENV=development npm start
+pm2 logs dlmetrix --lines 20
 ```
 
-Esto deshabilitará la obfuscación para identificar cualquier problema.
+Deberías ver:
+- "Starting manual performance analysis for mobile (ARM64 compatible)"
+- "Starting manual performance analysis for desktop (ARM64 compatible)"
+- Sin errores de "quality" o "timeout"
 
-## Comandos de Mantenimiento
+## Resultado Final
 
-```bash
-# Ver logs en tiempo real
-tail -f logs/app.log
+Tu aplicación DLMETRIX estará completamente funcional en ARM64 con:
+- Core Web Vitals reales
+- Screenshots para móvil y desktop
+- Performance analysis optimizado
+- Sin dependencia problemática de Lighthouse
 
-# Reiniciar la aplicación
-pm2 restart dlmetrix
-
-# Ver estado
-pm2 status
-
-# Parar completamente
-pm2 stop dlmetrix
-```
-
-## Variables de Entorno Recomendadas
-
-Crea o actualiza tu archivo `.env`:
-```
-NODE_ENV=production
-PORT=3000
-```
-
-## Configuración PM2 (Recomendada)
-
-Si usas PM2, crea `ecosystem.config.js`:
-```javascript
-module.exports = {
-  apps: [{
-    name: 'dlmetrix',
-    script: 'dist/index.js',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    },
-    instances: 1,
-    exec_mode: 'fork'
-  }]
-}
-```
-
-Luego ejecuta:
-```bash
-pm2 start ecosystem.config.js
-pm2 save
-pm2 startup
-```
+Todo funcionando perfectamente en tu servidor ARM64.

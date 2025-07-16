@@ -480,8 +480,7 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
           type: 'png' as const,
           encoding: 'base64' as const,
           fullPage: false,
-          clip: { x: 0, y: 0, width: 375, height: 600 }, // Reduced height for mobile
-          quality: 80 // Reduced quality for faster capture
+          clip: { x: 0, y: 0, width: 375, height: 600 } // Reduced height for mobile
         }
       : {
           type: 'png' as const,
