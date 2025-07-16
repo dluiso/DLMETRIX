@@ -154,7 +154,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     spanish: "Spanish",
     
     // Help Content
-    helpTitle: "How to Use Web Performance Analyzer",
+    helpTitle: "How to Use DLMETRIX",
     howItWorks: "How It Works",
     analysisTypes: "Analysis Types",
     desktopAnalysis: "Desktop Analysis",

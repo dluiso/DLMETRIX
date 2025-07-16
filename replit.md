@@ -118,13 +118,15 @@ Preferred communication style: Simple, everyday language.
 ### Complete Application Rebranding to DLMETRIX (January 16, 2025)
 - **Application Name Change**: Changed from "Web Performance Analyzer" to "DLMETRIX" across entire application
 - **Updated Components**: 
-  - Main page title and navigation header
+  - Main page title and navigation header (with clickable logo/title for home navigation)
   - Help dialog titles in both English and Spanish
-  - Footer copyright notices and legal information
+  - Footer copyright notices and legal information (both components and main page)
   - PDF export headers and footers
   - Translation files for both languages
+  - Removed subtitle from navigation bar for cleaner appearance
+- **Navigation Enhancement**: Logo and title now clickable to return to homepage with hover effects
 - **Documentation Updates**: Updated replit.md project title and references
-- **User Impact**: All user-facing text now consistently shows "DLMETRIX" branding
+- **User Impact**: All user-facing text now consistently shows "DLMETRIX" branding with improved navigation
 
 ## Previous Changes
 
