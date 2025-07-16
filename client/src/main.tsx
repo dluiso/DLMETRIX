@@ -3,13 +3,28 @@ import App from "./App";
 import "./index.css";
 import "./utils/security";
 import { initSimpleObfuscation, safeCleanup } from './utils/simple-obfuscation';
+import { initHostingObfuscation, obfuscateUserAgent, cleanStorageReferences } from './utils/hosting-obfuscation';
 
-// Initialize simplified obfuscation (safer approach)
-initSimpleObfuscation();
+// Initialize React App First - Critical for proper rendering
+const container = document.getElementById("root");
+if (!container) throw new Error("Root container missing in index.html");
 
-// Safe cleanup without complex operations
+const root = createRoot(container);
+root.render(<App />);
+
+// Initialize obfuscation systems after React renders (only in production)
 setTimeout(() => {
-  safeCleanup();
-}, 2000);
+  if (import.meta.env.NODE_ENV !== 'development') {
+    initSimpleObfuscation();
+    initHostingObfuscation();
+    obfuscateUserAgent();
+  }
+}, 500);
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Safe cleanup and storage cleaning (only in production)
+setTimeout(() => {
+  if (import.meta.env.NODE_ENV !== 'development') {
+    safeCleanup();
+    cleanStorageReferences();
+  }
+}, 3000);

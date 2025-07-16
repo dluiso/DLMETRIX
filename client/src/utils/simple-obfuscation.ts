@@ -2,8 +2,10 @@
 // Safer approach to prevent technology detection
 
 export function initSimpleObfuscation() {
-  // Only run in production
-  if (import.meta.env.NODE_ENV === 'development') {
+  // Check if running in development mode
+  const isDev = import.meta.env.NODE_ENV === 'development';
+  
+  if (isDev) {
     console.log('🔓 DLMETRIX Simple Obfuscation: Bypassed for development');
     return;
   }
@@ -30,15 +32,50 @@ export function initSimpleObfuscation() {
       }
     });
 
-    // Add fake framework indicator
+    // Add fake framework indicator and hide hosting info
     try {
       window.DLMETRIX = { 
         version: '2.5.0', 
         framework: 'Custom Enterprise',
-        engine: 'Proprietary'
+        engine: 'Proprietary',
+        hosting: 'Private Cloud Infrastructure',
+        environment: 'Production Enterprise'
       };
     } catch (e) {
       // Might already exist
+    }
+
+    // Hide Replit and development environment indicators
+    const devIndicators = [
+      'REPLIT_CLUSTER',
+      'REPLIT_DOMAIN', 
+      'REPLIT_DB_URL',
+      'replit',
+      '__REPLIT__'
+    ];
+
+    devIndicators.forEach(indicator => {
+      try {
+        if (window[indicator]) {
+          delete window[indicator];
+        }
+      } catch (e) {}
+    });
+
+    // Override location properties to hide .replit.app domain
+    try {
+      if (window.location.hostname.includes('replit.app')) {
+        Object.defineProperty(window.location, 'hostname', {
+          value: 'dlmetrix.com',
+          writable: false
+        });
+        Object.defineProperty(window.location, 'host', {
+          value: 'dlmetrix.com',
+          writable: false
+        });
+      }
+    } catch (e) {
+      // Location properties might not be configurable
     }
 
     // Simple DOM cleanup

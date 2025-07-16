@@ -9,7 +9,7 @@ app.use((req, res, next) => {
   // Remove standard technology headers
   res.removeHeader('X-Powered-By');
   
-  // Add obfuscated headers to hide real technology stack
+  // Add obfuscated headers to hide real technology stack and hosting
   res.setHeader('X-Powered-By', 'DLMETRIX Enterprise Server v2.5');
   res.setHeader('Server', 'DLM-Server/2.5.0');
   res.setHeader('X-Framework', 'DLMETRIX Custom Solution');
@@ -17,6 +17,16 @@ app.use((req, res, next) => {
   res.setHeader('X-Technology', 'Proprietary Enterprise Stack');
   res.setHeader('X-Engine', 'DLMETRIX Core Engine');
   res.setHeader('X-Generator', 'DLMETRIX Custom Framework');
+  res.setHeader('X-Hosting', 'Private Cloud Infrastructure');
+  res.setHeader('X-Environment', 'Production Enterprise');
+  res.setHeader('X-CDN', 'DLMETRIX Global Network');
+  
+  // Remove headers that could reveal Replit or development environment
+  res.removeHeader('X-Replit-Domain');
+  res.removeHeader('X-Replit-Cluster');
+  res.removeHeader('Via');
+  res.removeHeader('X-Forwarded-For');
+  res.removeHeader('X-Real-IP');
   
   // Additional security headers that help hide technology fingerprints
   res.setHeader('X-Content-Type-Options', 'nosniff');

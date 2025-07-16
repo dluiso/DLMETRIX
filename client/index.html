@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     
-    <!-- Technology Obfuscation -->
+    <!-- Technology & Hosting Obfuscation -->
     <meta name="generator" content="DLMETRIX Custom Framework v2.5" />
     <meta name="powered-by" content="DLM Advanced Engine" />
     <meta name="framework" content="DLMETRIX Core Technology" />
     <meta name="X-Powered-By" content="DLM-Server/2.5" />
     <meta name="X-Framework" content="Custom Enterprise Solution" />
+    <meta name="hosting" content="Private Cloud Infrastructure" />
+    <meta name="environment" content="Production Enterprise" />
+    <meta name="cdn" content="DLMETRIX Global Network" />
     
     <!-- Primary Meta Tags -->
     <title>DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker</title>
@@ -87,9 +90,22 @@
             } catch(e) {}
           });
           
-          // Hide source maps
+          // Hide source maps and development indicators
           const hideSourceMaps = () => {
             document.querySelectorAll('script[src*=".map"], link[href*=".map"]').forEach(el => el.remove());
+            
+            // Hide any references to replit.app or development
+            document.querySelectorAll('script, link, meta').forEach(el => {
+              if (el.src && el.src.includes('replit')) {
+                el.src = el.src.replace(/replit\.app/g, 'dlmetrix.com');
+              }
+              if (el.href && el.href.includes('replit')) {
+                el.href = el.href.replace(/replit\.app/g, 'dlmetrix.com');
+              }
+              if (el.content && el.content.includes('replit')) {
+                el.content = el.content.replace(/replit/gi, 'DLMETRIX');
+              }
+            });
           };
           
           // Override console to hide framework logs
