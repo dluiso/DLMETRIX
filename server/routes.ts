@@ -256,8 +256,12 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
       await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
     }
 
-    // Enable performance monitoring
-    await page.tracing.start({ screenshots: false, categories: ['devtools.timeline'] });
+    // Enable performance monitoring (with error handling for ARM64)
+    try {
+      await page.tracing.start({ screenshots: false, categories: ['devtools.timeline'] });
+    } catch (tracingError) {
+      console.log('Tracing already started, continuing without new trace');
+    }
     
     const startTime = Date.now();
     
@@ -270,8 +274,12 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
     const endTime = Date.now();
     const loadTime = endTime - startTime;
     
-    // Stop tracing
-    await page.tracing.stop();
+    // Stop tracing (with error handling)
+    try {
+      await page.tracing.stop();
+    } catch (tracingError) {
+      console.log('Tracing stop error (safe to ignore)');
+    }
     
     // Get performance metrics
     const performanceMetrics = await page.metrics();
