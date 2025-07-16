@@ -31,6 +31,8 @@ export default function SharePage() {
   const shareToken = params.token;
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
+  console.log('SharePage mounted with params:', params, 'token:', shareToken);
+
   const { data: sharedReport, isLoading, error } = useQuery<SharedReportData>({
     queryKey: ['/api/share', shareToken],
     enabled: !!shareToken,
@@ -41,11 +43,27 @@ export default function SharePage() {
     console.log('SharePage Debug:', {
       shareToken,
       isLoading,
-      error,
+      error: error ? error.message : null,
       hasSharedReport: !!sharedReport,
       sharedReportKeys: sharedReport ? Object.keys(sharedReport) : [],
-      analysisDataKeys: sharedReport?.analysisData ? Object.keys(sharedReport.analysisData) : []
+      analysisDataKeys: sharedReport?.analysisData ? Object.keys(sharedReport.analysisData) : [],
+      analysisDataType: sharedReport?.analysisData ? typeof sharedReport.analysisData : 'undefined',
+      url: sharedReport?.url,
+      createdAt: sharedReport?.createdAt,
+      expiresAt: sharedReport?.expiresAt
     });
+    
+    // Additional check for analysisData structure
+    if (sharedReport?.analysisData) {
+      console.log('Analysis Data Structure:', {
+        hasPerformanceOverview: !!sharedReport.analysisData.performanceOverview,
+        hasCoreWebVitals: !!sharedReport.analysisData.coreWebVitals,
+        hasSeoAnalysis: !!sharedReport.analysisData.seoAnalysis,
+        hasTechnicalSeoAnalysis: !!sharedReport.analysisData.technicalSeoAnalysis,
+        hasRecommendations: !!sharedReport.analysisData.recommendations,
+        fullStructure: Object.keys(sharedReport.analysisData)
+      });
+    }
   }, [shareToken, isLoading, error, sharedReport]);
 
   // Calculate time remaining
@@ -74,6 +92,7 @@ export default function SharePage() {
   }, [sharedReport?.expiresAt]);
 
   if (isLoading) {
+    console.log('SharePage: Currently loading shared report...');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -81,6 +100,9 @@ export default function SharePage() {
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">Loading Shared Report</h3>
             <p className="text-slate-600 dark:text-slate-400">Please wait while we fetch the analysis...</p>
+            <div className="text-xs text-slate-500 mt-4">
+              Token: {shareToken}
+            </div>
           </Card>
         </div>
       </div>
@@ -88,6 +110,7 @@ export default function SharePage() {
   }
 
   if (error || !sharedReport) {
+    console.log('SharePage: Error or no shared report found:', { error, sharedReport });
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,6 +120,12 @@ export default function SharePage() {
             <p className="text-red-600 dark:text-red-300 mb-4">
               This shared report doesn't exist or has expired. Shared reports are only available for 12 hours.
             </p>
+            <div className="text-xs text-red-700 dark:text-red-400 mb-4 p-4 bg-red-100 dark:bg-red-900/40 rounded">
+              Debug Info: 
+              <br />Token: {shareToken}
+              <br />Error: {error ? error.message : 'No error'}
+              <br />Has Report: {!!sharedReport}
+            </div>
             <Button
               onClick={() => window.location.href = '/'}
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -110,10 +139,16 @@ export default function SharePage() {
   }
 
   const analysisData = sharedReport.analysisData;
+  
+  console.log('SharePage: About to render main content with analysisData:', !!analysisData);
 
   // Additional safety check
   if (!analysisData) {
-    console.error('No analysis data found in shared report:', sharedReport);
+    console.error('No analysis data found in shared report:', {
+      sharedReport,
+      hasSharedReport: !!sharedReport,
+      sharedReportKeys: sharedReport ? Object.keys(sharedReport) : []
+    });
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -123,6 +158,13 @@ export default function SharePage() {
             <p className="text-yellow-600 dark:text-yellow-300 mb-4">
               The shared report data appears to be corrupted or incomplete.
             </p>
+            <div className="text-xs text-yellow-700 dark:text-yellow-400 mb-4 p-4 bg-yellow-100 dark:bg-yellow-900/40 rounded">
+              Debug Info: {JSON.stringify({
+                hasSharedReport: !!sharedReport,
+                sharedReportKeys: sharedReport ? Object.keys(sharedReport) : [],
+                analysisDataType: sharedReport?.analysisData ? typeof sharedReport.analysisData : 'undefined'
+              }, null, 2)}
+            </div>
             <Button
               onClick={() => window.location.href = '/'}
               className="bg-yellow-600 hover:bg-yellow-700 text-white"
@@ -135,6 +177,8 @@ export default function SharePage() {
     );
   }
 
+  console.log('SharePage: Successfully rendering main content');
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Header */}

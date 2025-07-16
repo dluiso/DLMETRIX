@@ -143,9 +143,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Parse analysisData if it's stored as string in database
+      let analysisData = sharedReport.analysisData;
+      if (typeof analysisData === 'string') {
+        try {
+          analysisData = JSON.parse(analysisData);
+          console.log('📝 Parsed analysisData from JSON string');
+        } catch (parseError) {
+          console.error('❌ Failed to parse analysisData:', parseError);
+          return res.status(500).json({ message: "Corrupted report data" });
+        }
+      }
+      
+      console.log('🔍 Returning shared report data:', {
+        url: sharedReport.url,
+        hasAnalysisData: !!analysisData,
+        analysisDataKeys: analysisData ? Object.keys(analysisData) : [],
+        createdAt: sharedReport.createdAt,
+        expiresAt: sharedReport.expiresAt
+      });
+      
       res.json({
         url: sharedReport.url,
-        analysisData: sharedReport.analysisData,
+        analysisData: analysisData,
         createdAt: sharedReport.createdAt,
         expiresAt: sharedReport.expiresAt
       });
