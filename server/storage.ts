@@ -191,7 +191,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSharedReport(shareToken: string): Promise<SharedReport | undefined> {
-    if (!db) return undefined;
+    if (!db) {
+      console.log(`⚠️ Database not available, checking memory fallback for token: ${shareToken}`);
+      // Try memory storage as fallback
+      const memStorage = new MemStorage();
+      return await memStorage.getSharedReport(shareToken);
+    }
     
     console.log(`🔍 Searching for shared report with token: ${shareToken}`);
     
