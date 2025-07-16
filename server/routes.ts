@@ -465,7 +465,7 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
     });
     
     // Wait a bit for content to settle
-    await page.waitForTimeout(2000);
+    await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Capture with timeout protection
     const screenshotPromise = page.screenshot({
