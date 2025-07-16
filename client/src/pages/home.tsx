@@ -481,19 +481,6 @@ export default function Home() {
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={createShareableLink}
-                    disabled={isSharing}
-                  >
-                    {isSharing ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    ) : (
-                      <Share2 className="w-4 h-4" />
-                    )}
-                    <span className="hidden lg:inline ml-2">{language === 'es' ? 'Compartir' : 'Share'}</span>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
                     onClick={handleExportCSV}
                     disabled={!seoData}
                   >
@@ -581,26 +568,9 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Export and Share Options - Only show if there's data */}
+                {/* Export Options - Only show if there's data */}
                 {seoData && (
-                  <div className="grid grid-cols-3 gap-2 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => {
-                        createShareableLink();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      disabled={isSharing}
-                      className="justify-start"
-                    >
-                      {isSharing ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-                      ) : (
-                        <Share2 className="w-4 h-4 mr-2" />
-                      )}
-                      {language === 'es' ? 'Compartir' : 'Share'}
-                    </Button>
+                  <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -1072,6 +1042,8 @@ export default function Home() {
               bestPracticesScore={seoData.bestPracticesScore}
               seoScore={seoData.seoScore}
               language={language}
+              onShareReport={createShareableLink}
+              isSharing={isSharing}
             />
 
             {/* Core Web Vitals */}
@@ -1167,6 +1139,11 @@ export default function Home() {
               <Share2 className="w-5 h-5 text-blue-600" />
               <span>{language === 'es' ? 'Compartir Análisis' : 'Share Analysis'}</span>
             </DialogTitle>
+            <div className="text-sm text-slate-600 dark:text-slate-400">
+              {language === 'es' 
+                ? 'Genera un enlace para compartir este análisis completo de SEO y rendimiento web.' 
+                : 'Generate a shareable link for this complete SEO and web performance analysis.'}
+            </div>
           </DialogHeader>
           <div className="space-y-4">
             <div className="text-sm text-slate-600 dark:text-slate-400">

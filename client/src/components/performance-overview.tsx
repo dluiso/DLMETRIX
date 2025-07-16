@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Shield, CheckCircle, Search, Monitor, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, Shield, CheckCircle, Search, Monitor, Smartphone, Share2 } from "lucide-react";
 import { getTranslations } from "@/lib/translations";
 
 interface PerformanceOverviewProps {
@@ -10,6 +11,8 @@ interface PerformanceOverviewProps {
   bestPracticesScore: number;
   seoScore: number;
   language?: 'en' | 'es';
+  onShareReport?: () => void;
+  isSharing?: boolean;
 }
 
 export default function PerformanceOverview({ 
@@ -17,7 +20,9 @@ export default function PerformanceOverview({
   accessibilityScore, 
   bestPracticesScore, 
   seoScore,
-  language = 'en'
+  language = 'en',
+  onShareReport,
+  isSharing = false
 }: PerformanceOverviewProps) {
   const t = getTranslations(language);
   const getScoreColor = (score: number) => {
@@ -70,9 +75,29 @@ export default function PerformanceOverview({
   return (
     <Card className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in" data-component="performance-overview">
       <CardHeader className="pb-3">
-        <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">
-          {t.performanceOverview}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            {t.performanceOverview}
+          </CardTitle>
+          {onShareReport && (
+            <Button
+              onClick={onShareReport}
+              disabled={isSharing}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300"
+            >
+              {isSharing ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              ) : (
+                <Share2 className="w-4 h-4" />
+              )}
+              <span className="font-medium">
+                {language === 'es' ? 'Compartir Reporte' : 'Share Report'}
+              </span>
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
