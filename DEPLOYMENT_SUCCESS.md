@@ -1,112 +1,121 @@
-# DLMETRIX - Despliegue Exitoso Documentado
+# DLMETRIX - Comandos de Despliegue Exitoso
 
-## Problema Resuelto ✅
+## Problema: pm2 no está instalado
 
-**Fecha**: 16 de Enero 2025  
-**Problema**: La aplicación mostraba código HTML/JavaScript en lugar de la interfaz React en servidores de producción  
-**Causa**: Scripts de obfuscación interfiriendo con el renderizado de React  
-**Solución**: Eliminación completa de sistemas de obfuscación que interferían con React  
+El comando `pm2` no se encuentra en tu servidor. Aquí están los comandos correctos para instalar pm2 y actualizar la aplicación:
 
-## Solución Implementada
+## Solución Completa
 
-### 1. Archivos Corregidos
-- **client/src/main.tsx**: Simplificado a solo inicialización básica de React (8 líneas)
-- **client/index.html**: Eliminados todos los scripts de obfuscación inline
-- **Dependencias**: Resolución de conflictos con `npm install --legacy-peer-deps`
+Ejecuta estos comandos en orden en tu servidor:
 
-### 2. Comandos de Despliegue Exitosos
 ```bash
-pm2 stop dlmetrix
+# 1. Ir al directorio del proyecto
 cd ~/DLMETRIX
-cat > client/src/main.tsx << 'EOF'
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
 
-const container = document.getElementById("root");
-if (!container) throw new Error("Root container missing in index.html");
+# 2. Actualizar código desde Git
+git stash
+git pull origin main
 
-const root = createRoot(container);
-root.render(<App />);
-EOF
+# 3. Instalar pm2 globalmente
+npm install -g pm2
+
+# 4. Limpiar y reconstruir
 rm -rf dist
 npm run build
-NODE_ENV=production npm start
+
+# 5. Detener cualquier proceso Node.js existente
+pkill -f "npm start" || true
+pkill -f "node" || true
+
+# 6. Iniciar con pm2 y configuración ARM64
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser NODE_ENV=production pm2 start npm --name "dlmetrix" -- start
+
+# 7. Configurar pm2 para autostart
+pm2 startup
+pm2 save
 ```
 
-## Lecciones Aprendidas
+## Alternativa sin pm2
 
-### ✅ Qué Funciona
-- React básico sin imports de obfuscación
-- Build process estándar con npm run build
-- NODE_ENV=production para variables de entorno
-- Instalación con --legacy-peer-deps para resolver conflictos
+Si prefieres no usar pm2, puedes ejecutar directamente:
 
-### ❌ Qué Evitar
-- Scripts de obfuscación en client/index.html
-- Imports de seguridad en main.tsx que puedan interferir
-- Obfuscación compleja que modifique el DOM durante renderizado
-- Builds sin limpiar directorio dist anterior
-
-## Arquitectura Final Estable
-
-```
-client/src/main.tsx (SIMPLE)
-├── import { createRoot } from "react-dom/client"
-├── import App from "./App"
-├── import "./index.css"
-└── root.render(<App />)
-
-client/index.html (LIMPIO)
-├── Meta tags básicos
-├── SEO optimization
-├── NO scripts de obfuscación
-└── Div root para React
-```
-
-## Verificación de Funcionamiento
-
-✅ **Interfaz React renderiza correctamente**  
-✅ **Análisis de sitios web funcional**  
-✅ **Core Web Vitals working**  
-✅ **PDF export disponible**  
-✅ **Responsive design activo**  
-✅ **Sin errores de JavaScript**  
-
-## Comandos de Mantenimiento
-
-### Actualizar aplicación
 ```bash
-pm2 stop dlmetrix
 cd ~/DLMETRIX
-git pull origin main  # Si usas git
+git stash
+git pull origin main
+rm -rf dist
 npm run build
-pm2 start dlmetrix
+
+# Detener procesos existentes
+pkill -f "npm start" || true
+
+# Ejecutar en background
+nohup bash -c 'PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser NODE_ENV=production npm start' > dlmetrix.log 2>&1 &
 ```
 
-### Verificar estado
+## Verificación
+
+Después de cualquiera de los dos métodos:
+
+1. **Verificar que la aplicación está corriendo**:
 ```bash
+# Con pm2:
 pm2 status
-pm2 logs dlmetrix
+
+# Sin pm2:
+ps aux | grep npm
 ```
 
-### Debugging si hay problemas
+2. **Ver logs**:
 ```bash
-NODE_ENV=development npm start
+# Con pm2:
+pm2 logs dlmetrix
+
+# Sin pm2:
+tail -f dlmetrix.log
 ```
 
-## Medidas Preventivas
+3. **Probar la aplicación**:
+   - Accede a tu dominio
+   - Analiza una URL
+   - Verifica que obtienes Core Web Vitals y Screenshots
 
-1. **Nunca agregar scripts de obfuscación en index.html**
-2. **Mantener main.tsx simple y sin imports complejos**
-3. **Probar builds localmente antes de desplegar**
-4. **Usar NODE_ENV=development para debugging**
-5. **Limpiar directorio dist antes de cada build**
+## Logs Esperados
 
-## Contacto y Soporte
+Deberías ver:
+```
+Starting manual performance analysis for mobile (ARM64 compatible)
+Starting manual performance analysis for desktop (ARM64 compatible)
+```
 
-- **Aplicación funcionando**: https://tu-dominio.com
-- **Soporte técnico**: support@dlmetrix.com
-- **Documentación**: Ver archivos README.md y DEPLOYMENT.md
+Y NO deberías ver:
+```
+Lighthouse analysis failed, falling back to SEO-only analysis
+```
 
-**Estado actual**: ✅ FUNCIONANDO CORRECTAMENTE
+## Comandos de Gestión
+
+### Con pm2:
+```bash
+pm2 start dlmetrix    # Iniciar
+pm2 stop dlmetrix     # Detener
+pm2 restart dlmetrix  # Reiniciar
+pm2 logs dlmetrix     # Ver logs
+pm2 delete dlmetrix   # Eliminar proceso
+```
+
+### Sin pm2:
+```bash
+pkill -f "npm start"  # Detener
+nohup bash -c 'PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser NODE_ENV=production npm start' > dlmetrix.log 2>&1 &  # Iniciar
+tail -f dlmetrix.log  # Ver logs
+```
+
+## Resultado Final
+
+Después de estos comandos:
+- ✅ Core Web Vitals con valores reales
+- ✅ Screenshots funcionando
+- ✅ Sin errores de Lighthouse 
+- ✅ Aplicación corriendo en producción
+- ✅ Performance analysis optimizado para ARM64
