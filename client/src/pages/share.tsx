@@ -247,19 +247,25 @@ export default function SharePage() {
   
   // Debug logging for Performance Overview specifically
   console.log('SharePage: Performance Overview Data Check:', {
-    originalData: {
-      performance: sharedReport.analysisData?.performanceOverview?.performance,
-      accessibility: sharedReport.analysisData?.performanceOverview?.accessibility,
-      bestPractices: sharedReport.analysisData?.performanceOverview?.bestPractices,
-      seo: sharedReport.analysisData?.performanceOverview?.seo
+    rawSharedReportData: {
+      performanceScore: sharedReport.analysisData?.performanceScore,
+      accessibilityScore: sharedReport.analysisData?.accessibilityScore,
+      bestPracticesScore: sharedReport.analysisData?.bestPracticesScore,
+      seoScore: sharedReport.analysisData?.seoScore,
+      performanceOverview: sharedReport.analysisData?.performanceOverview
     },
-    mappedData: {
-      performance: Number(sharedReport.analysisData?.performanceOverview?.performance) || 0,
-      accessibility: Number(sharedReport.analysisData?.performanceOverview?.accessibility) || 0,
-      bestPractices: Number(sharedReport.analysisData?.performanceOverview?.bestPractices) || 0,
-      seo: Number(sharedReport.analysisData?.performanceOverview?.seo) || 0
+    mappedAnalysisData: {
+      performanceScore: analysisData.performanceScore,
+      accessibilityScore: analysisData.accessibilityScore,
+      bestPracticesScore: analysisData.bestPracticesScore,
+      seoScore: analysisData.seoScore
     },
-    fullAnalysisData: sharedReport.analysisData
+    propsToComponent: {
+      performanceScore: analysisData.performanceScore,
+      accessibilityScore: analysisData.accessibilityScore,
+      bestPracticesScore: analysisData.bestPracticesScore,
+      seoScore: analysisData.seoScore
+    }
   });
   
   console.log('SharePage: About to render main content with safe analysisData:', !!analysisData);
@@ -364,10 +370,10 @@ export default function SharePage() {
         <div className="space-y-4 sm:space-y-6 lg:space-y-8">
           {/* Performance Overview */}
           <PerformanceOverview 
-            performanceScore={Number(analysisData.performanceOverview.performance) || 0}
-            accessibilityScore={Number(analysisData.performanceOverview.accessibility) || 0}
-            bestPracticesScore={Number(analysisData.performanceOverview.bestPractices) || 0}
-            seoScore={Number(analysisData.performanceOverview.seo) || 0}
+            performanceScore={analysisData.performanceScore}
+            accessibilityScore={analysisData.accessibilityScore}
+            bestPracticesScore={analysisData.bestPracticesScore}
+            seoScore={analysisData.seoScore}
             language="en"
           />
 
