@@ -1,4 +1,4 @@
-# Web Performance Analyzer
+# DLMETRIX
 
 ## Overview
 
@@ -115,6 +115,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### Complete Application Rebranding to DLMETRIX (January 16, 2025)
+- **Application Name Change**: Changed from "Web Performance Analyzer" to "DLMETRIX" across entire application
+- **Updated Components**: 
+  - Main page title and navigation header
+  - Help dialog titles in both English and Spanish
+  - Footer copyright notices and legal information
+  - PDF export headers and footers
+  - Translation files for both languages
+- **Documentation Updates**: Updated replit.md project title and references
+- **User Impact**: All user-facing text now consistently shows "DLMETRIX" branding
+
+## Previous Changes
+
 ### PDF Export Quality Enhancement (January 15, 2025)
 - **Complete PDF Report Generation**: Fixed PDF export to include ALL sections of the analysis report
 - **Multi-Page Layout**: Enhanced pagination with proper page breaks ensuring comprehensive coverage
@@ -180,7 +193,7 @@ Preferred communication style: Simple, everyday language.
 - **Screenshots View**: Device-specific preview with viewport information
 - **Technical SEO**: Expandable fix recommendations with detailed guidance
 - **PDF Export Button**: Smart export with loading states and error handling
-- **Updated Branding**: "Web Performance Analyzer" with comprehensive analysis description
+- **Updated Branding**: "DLMETRIX" with comprehensive analysis description
 
 ### Technical Implementation
 - **Puppeteer Integration**: Browser automation for Lighthouse and screenshot capture

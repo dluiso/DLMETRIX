@@ -1,4 +1,4 @@
-// Comprehensive translation system for the Web Performance Analyzer
+// Comprehensive translation system for DLMETRIX
 
 export interface Translations {
   // Header and Navigation
@@ -127,7 +127,7 @@ export interface Translations {
 export const translations: Record<'en' | 'es', Translations> = {
   en: {
     // Header and Navigation
-    title: "Web Performance Analyzer",
+    title: "DLMETRIX",
     subtitle: "Comprehensive website analysis with Core Web Vitals, SEO, and performance insights",
     history: "History",
     settings: "Settings", 
@@ -250,7 +250,7 @@ export const translations: Record<'en' | 'es', Translations> = {
   },
   es: {
     // Header and Navigation
-    title: "Analizador de Rendimiento Web",
+    title: "DLMETRIX",
     subtitle: "Análisis integral de sitios web con Core Web Vitals, SEO e insights de rendimiento",
     history: "Historial",
     settings: "Configuración",
@@ -277,7 +277,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     spanish: "Español",
     
     // Help Content
-    helpTitle: "Cómo Usar el Analizador de Rendimiento Web",
+    helpTitle: "Cómo Usar DLMETRIX",
     howItWorks: "Cómo Funciona",
     analysisTypes: "Tipos de Análisis",
     desktopAnalysis: "Análisis de Escritorio",

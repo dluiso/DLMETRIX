@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="text-center text-sm text-muted-foreground">
           <div className="flex items-center justify-center gap-1 flex-wrap">
-            <span>© {currentYear} Web Performance Analyzer. All rights reserved. Created by Luis Mena.</span>
+            <span>© {currentYear} DLMETRIX. All rights reserved. Created by Luis Mena.</span>
             <span className="mx-1">•</span>
             <Dialog open={isLegalOpen} onOpenChange={setIsLegalOpen}>
               <DialogTrigger asChild>
