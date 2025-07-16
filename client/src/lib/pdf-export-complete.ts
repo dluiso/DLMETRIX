@@ -62,39 +62,53 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     pdf.setFontSize(fontSize);
     const lines = pdf.splitTextToSize(text, maxWidth);
     pdf.text(lines, x, y);
-    return y + (lines.length * fontSize * 0.35);
+    return y + (lines.length * fontSize * 0.4); // Better line spacing
   };
 
   // Helper function to add section header - ALWAYS ENSURES SPACE
   const addSectionHeader = (title: string, bgColor = [59, 130, 246]) => {
-    checkPageBreak(40); // More space for headers
+    checkPageBreak(50); // More space for headers
+    
+    // Add some spacing before header if not at top of page
+    if (yPosition > margin + 10) {
+      yPosition += 10;
+    }
+    
     pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-    pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 15, 'F');
+    pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 18, 'F');
     pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(14);
+    pdf.setFontSize(16);
     pdf.setFont('helvetica', 'bold');
-    pdf.text(title, margin, yPosition + 5);
-    yPosition += 25; // More space after headers
+    pdf.text(title, margin, yPosition + 7);
+    yPosition += 28; // More space after headers
     pdf.setTextColor(0, 0, 0);
   };
 
-  // Header with styling
+  // Header with improved styling
   pdf.setFillColor(59, 130, 246);
-  pdf.rect(0, 0, pageWidth, 40, 'F');
+  pdf.rect(0, 0, pageWidth, 45, 'F');
   
   pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(20);
+  pdf.setFontSize(18);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('Complete Web Performance Analysis Report', margin, 25);
+  pdf.text('Complete Web Performance Analysis Report', margin, 20);
+  
+  pdf.setFontSize(11);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text('Comprehensive website analysis including performance, SEO, and accessibility insights', margin, 30);
   
   pdf.setTextColor(0, 0, 0);
   pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'normal');
-  yPosition = 50;
+  pdf.setFont('helvetica', 'bold');
+  yPosition = 55;
   pdf.text(`Website: ${data.url}`, margin, yPosition);
-  yPosition += 6;
+  yPosition += 8;
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(10);
+  pdf.setTextColor(107, 114, 128);
   pdf.text(`Generated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, margin, yPosition);
-  yPosition += 20;
+  pdf.setTextColor(0, 0, 0);
+  yPosition += 25;
 
   // 1. PERFORMANCE OVERVIEW SECTION
   addSectionHeader('Performance Overview');
@@ -259,9 +273,9 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
         checkPageBreak(6);
         const formattedName = checkName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
         pdf.text(`✗ ${formattedName}`, margin + 5, yPosition);
-        yPosition += 5;
+        yPosition += 4;
       });
-      yPosition += 5;
+      yPosition += 8;
     }
     
     if (passedChecks.length > 0) {
@@ -275,9 +289,9 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
         checkPageBreak(6);
         const formattedName = checkName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
         pdf.text(`✓ ${formattedName}`, margin + 5, yPosition);
-        yPosition += 5;
+        yPosition += 4;
       });
-      yPosition += 5;
+      yPosition += 8;
     }
     
     pdf.setTextColor(0, 0, 0);
@@ -328,38 +342,71 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
   if (data.aiSearchAnalysis) {
     addSectionHeader('AI Search Content Analysis', [168, 85, 247]);
     
+    // Content Quality Score with visual indicator
     if (data.aiSearchAnalysis.contentQuality !== undefined) {
+      pdf.setFillColor(240, 253, 244); // Light green background
+      pdf.rect(margin - 5, yPosition - 5, pageWidth - 2 * margin + 10, 20, 'F');
+      
       pdf.setFont('helvetica', 'bold');
-      pdf.text(`Content Quality Score: ${data.aiSearchAnalysis.contentQuality}/100`, margin, yPosition);
-      yPosition += 10;
+      pdf.setFontSize(12);
+      pdf.text('Content Quality Score:', margin, yPosition + 5);
+      
+      // Score with color coding
+      const score = data.aiSearchAnalysis.contentQuality;
+      const scoreColor = score >= 80 ? [34, 197, 94] : score >= 60 ? [245, 158, 11] : [239, 68, 68];
+      pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${score}/100`, margin + 60, yPosition + 5);
+      
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 25;
     }
     
+    // Content Insights
     if (data.aiSearchAnalysis.insights && data.aiSearchAnalysis.insights.length > 0) {
       pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(12);
       pdf.text('Content Insights:', margin, yPosition);
-      yPosition += 8;
+      yPosition += 10;
       pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
       
-      data.aiSearchAnalysis.insights.forEach((insight) => {
-        checkPageBreak(15);
-        yPosition = addWrappedText(`• ${insight.title}: ${insight.description}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
-        yPosition += 5;
-      });
-      yPosition += 5;
-    }
-    
-    if (data.aiSearchAnalysis.recommendations && data.aiSearchAnalysis.recommendations.length > 0) {
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('AI Content Recommendations:', margin, yPosition);
-      yPosition += 8;
-      pdf.setFont('helvetica', 'normal');
-      
-      data.aiSearchAnalysis.recommendations.forEach((rec) => {
-        checkPageBreak(15);
-        yPosition = addWrappedText(`• ${rec.title}: ${rec.description}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
-        yPosition += 5;
+      data.aiSearchAnalysis.insights.forEach((insight, index) => {
+        checkPageBreak(20);
+        pdf.setFont('helvetica', 'bold');
+        yPosition = addWrappedText(`${index + 1}. ${insight.title}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+        pdf.setFont('helvetica', 'normal');
+        yPosition = addWrappedText(`   ${insight.description}`, margin + 8, yPosition + 2, pageWidth - 2 * margin - 8, 9);
+        yPosition += 8;
       });
       yPosition += 10;
+    }
+    
+    // AI Content Recommendations
+    if (data.aiSearchAnalysis.recommendations && data.aiSearchAnalysis.recommendations.length > 0) {
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(12);
+      pdf.text('AI Content Recommendations:', margin, yPosition);
+      yPosition += 10;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      
+      data.aiSearchAnalysis.recommendations.forEach((rec, index) => {
+        checkPageBreak(20);
+        pdf.setFont('helvetica', 'bold');
+        yPosition = addWrappedText(`${index + 1}. ${rec.title}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 10);
+        pdf.setFont('helvetica', 'normal');
+        yPosition = addWrappedText(`   ${rec.description}`, margin + 8, yPosition + 2, pageWidth - 2 * margin - 8, 9);
+        yPosition += 8;
+      });
+      yPosition += 15;
+    } else {
+      pdf.setFont('helvetica', 'italic');
+      pdf.setTextColor(107, 114, 128);
+      pdf.text('No AI content analysis available for this website', margin, yPosition);
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 15;
     }
   }
 
@@ -381,10 +428,21 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
       
       data.keywordAnalysis.primaryKeywords.forEach((keyword) => {
         checkPageBreak(6);
-        pdf.text(`• ${keyword.term} (${keyword.frequency} occurrences)`, margin + 5, yPosition);
+        const term = keyword.term || 'Not specified';
+        const freq = keyword.frequency || 0;
+        pdf.text(`• ${term} (${freq} occurrences)`, margin + 5, yPosition);
         yPosition += 5;
       });
       yPosition += 5;
+    } else {
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Primary Keywords:', margin, yPosition);
+      yPosition += 8;
+      pdf.setFont('helvetica', 'italic');
+      pdf.setTextColor(107, 114, 128);
+      pdf.text('No primary keywords detected', margin + 5, yPosition);
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 10;
     }
     
     if (data.keywordAnalysis.secondaryKeywords && data.keywordAnalysis.secondaryKeywords.length > 0) {
@@ -395,10 +453,21 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
       
       data.keywordAnalysis.secondaryKeywords.forEach((keyword) => {
         checkPageBreak(6);
-        pdf.text(`• ${keyword.term} (${keyword.frequency} occurrences)`, margin + 5, yPosition);
+        const term = keyword.term || 'Not specified';
+        const freq = keyword.frequency || 0;
+        pdf.text(`• ${term} (${freq} occurrences)`, margin + 5, yPosition);
         yPosition += 5;
       });
       yPosition += 5;
+    } else {
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Secondary Keywords:', margin, yPosition);
+      yPosition += 8;
+      pdf.setFont('helvetica', 'italic');
+      pdf.setTextColor(107, 114, 128);
+      pdf.text('No secondary keywords detected', margin + 5, yPosition);
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 10;
     }
     
     if (data.keywordAnalysis.longTailKeywords && data.keywordAnalysis.longTailKeywords.length > 0) {
@@ -409,10 +478,20 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
       
       data.keywordAnalysis.longTailKeywords.forEach((keyword) => {
         checkPageBreak(6);
-        pdf.text(`• ${keyword}`, margin + 5, yPosition);
+        const keywordText = typeof keyword === 'string' ? keyword : (keyword.term || 'Not specified');
+        pdf.text(`• ${keywordText}`, margin + 5, yPosition);
         yPosition += 5;
       });
       yPosition += 10;
+    } else {
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Long-tail Keywords:', margin, yPosition);
+      yPosition += 8;
+      pdf.setFont('helvetica', 'italic');
+      pdf.setTextColor(107, 114, 128);
+      pdf.text('No long-tail keywords detected', margin + 5, yPosition);
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 15;
     }
   }
 
@@ -480,14 +559,24 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     }
   }
 
-  // Footer
+  // Enhanced Footer with better styling
   const totalPages = pdf.internal.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     pdf.setPage(i);
+    
+    // Footer line
+    pdf.setDrawColor(229, 231, 235);
+    pdf.line(margin, pageHeight - 20, pageWidth - margin, pageHeight - 20);
+    
+    // Footer text
     pdf.setFontSize(8);
     pdf.setTextColor(107, 114, 128);
-    pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin - 20, pageHeight - 10);
-    pdf.text(`Generated by Web Performance Analyzer - ${new Date().toLocaleDateString()}`, margin, pageHeight - 10);
+    pdf.text(`Generated by Web Performance Analyzer - ${new Date().toLocaleDateString()}`, margin, pageHeight - 12);
+    pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin - 20, pageHeight - 12);
+    
+    // Website URL in footer
+    pdf.setFontSize(7);
+    pdf.text(`Analysis for: ${data.url}`, margin, pageHeight - 6);
   }
 
   pdf.save(`web-analysis-complete-${data.url.replace(/https?:\/\//, '').replace(/[^\w]/g, '-')}.pdf`);
