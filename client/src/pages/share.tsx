@@ -165,26 +165,69 @@ export default function SharePage() {
         ttfb: sharedReport.analysisData?.coreWebVitals?.desktop?.ttfb || { value: null, score: 'N/A' }
       }
     },
+    // Map all the data fields correctly for compatibility
+    title: sharedReport.analysisData?.title || sharedReport.analysisData?.seoAnalysis?.title || '',
+    description: sharedReport.analysisData?.description || sharedReport.analysisData?.seoAnalysis?.description || null,
+    keywords: sharedReport.analysisData?.keywords || sharedReport.analysisData?.seoAnalysis?.keywords || null,
+    canonicalUrl: sharedReport.analysisData?.canonicalUrl || sharedReport.analysisData?.seoAnalysis?.canonicalUrl || null,
+    robotsMeta: sharedReport.analysisData?.robotsMeta || sharedReport.analysisData?.seoAnalysis?.robotsMeta || null,
+    viewportMeta: sharedReport.analysisData?.viewportMeta || sharedReport.analysisData?.seoAnalysis?.viewportMeta || null,
+    charset: sharedReport.analysisData?.charset || sharedReport.analysisData?.seoAnalysis?.charset || null,
+    langAttribute: sharedReport.analysisData?.langAttribute || sharedReport.analysisData?.seoAnalysis?.langAttribute || null,
+    
+    // Open Graph data
+    ogTitle: sharedReport.analysisData?.ogTitle || null,
+    ogDescription: sharedReport.analysisData?.ogDescription || null,
+    ogImage: sharedReport.analysisData?.ogImage || null,
+    ogUrl: sharedReport.analysisData?.ogUrl || null,
+    ogType: sharedReport.analysisData?.ogType || null,
+    
+    // Twitter Cards data  
+    twitterCard: sharedReport.analysisData?.twitterCard || null,
+    twitterTitle: sharedReport.analysisData?.twitterTitle || null,
+    twitterDescription: sharedReport.analysisData?.twitterDescription || null,
+    twitterImage: sharedReport.analysisData?.twitterImage || null,
+    
+    // Headings structure
+    headings: {
+      h1: sharedReport.analysisData?.headings?.h1 || [],
+      h2: sharedReport.analysisData?.headings?.h2 || [],
+      h3: sharedReport.analysisData?.headings?.h3 || [],
+      h4: sharedReport.analysisData?.headings?.h4 || [],
+      h5: sharedReport.analysisData?.headings?.h5 || [],
+      h6: sharedReport.analysisData?.headings?.h6 || []
+    },
+    headingStructure: sharedReport.analysisData?.headingStructure || [],
+    
+    // Performance scores for compatibility
+    performanceScore: Number(sharedReport.analysisData?.performanceScore || sharedReport.analysisData?.performanceOverview?.performance) || 0,
+    accessibilityScore: Number(sharedReport.analysisData?.accessibilityScore || sharedReport.analysisData?.performanceOverview?.accessibility) || 0,
+    bestPracticesScore: Number(sharedReport.analysisData?.bestPracticesScore || sharedReport.analysisData?.performanceOverview?.bestPractices) || 0,
+    seoScore: Number(sharedReport.analysisData?.seoScore || sharedReport.analysisData?.performanceOverview?.seo) || 0,
+    
+    // Technical checks
+    technicalChecks: sharedReport.analysisData?.technicalChecks || {},
+    
     seoAnalysis: {
-      title: sharedReport.analysisData?.seoAnalysis?.title || '',
-      description: sharedReport.analysisData?.seoAnalysis?.description || '',
-      keywords: sharedReport.analysisData?.seoAnalysis?.keywords || null,
-      canonicalUrl: sharedReport.analysisData?.seoAnalysis?.canonicalUrl || null,
-      robotsMeta: sharedReport.analysisData?.seoAnalysis?.robotsMeta || null,
-      viewportMeta: sharedReport.analysisData?.seoAnalysis?.viewportMeta || null,
-      charset: sharedReport.analysisData?.seoAnalysis?.charset || null,
-      langAttribute: sharedReport.analysisData?.seoAnalysis?.langAttribute || null,
-      openGraphTags: sharedReport.analysisData?.seoAnalysis?.openGraphTags || {},
-      twitterCardTags: sharedReport.analysisData?.seoAnalysis?.twitterCardTags || {},
+      title: sharedReport.analysisData?.title || sharedReport.analysisData?.seoAnalysis?.title || '',
+      description: sharedReport.analysisData?.description || sharedReport.analysisData?.seoAnalysis?.description || '',
+      keywords: sharedReport.analysisData?.keywords || sharedReport.analysisData?.seoAnalysis?.keywords || null,
+      canonicalUrl: sharedReport.analysisData?.canonicalUrl || sharedReport.analysisData?.seoAnalysis?.canonicalUrl || null,
+      robotsMeta: sharedReport.analysisData?.robotsMeta || sharedReport.analysisData?.seoAnalysis?.robotsMeta || null,
+      viewportMeta: sharedReport.analysisData?.viewportMeta || sharedReport.analysisData?.seoAnalysis?.viewportMeta || null,
+      charset: sharedReport.analysisData?.charset || sharedReport.analysisData?.seoAnalysis?.charset || null,
+      langAttribute: sharedReport.analysisData?.langAttribute || null,
+      openGraphTags: sharedReport.analysisData?.openGraphTags || {},
+      twitterCardTags: sharedReport.analysisData?.twitterCardTags || {},
       headings: {
-        h1: sharedReport.analysisData?.seoAnalysis?.headings?.h1 || [],
-        h2: sharedReport.analysisData?.seoAnalysis?.headings?.h2 || [],
-        h3: sharedReport.analysisData?.seoAnalysis?.headings?.h3 || [],
-        h4: sharedReport.analysisData?.seoAnalysis?.headings?.h4 || [],
-        h5: sharedReport.analysisData?.seoAnalysis?.headings?.h5 || [],
-        h6: sharedReport.analysisData?.seoAnalysis?.headings?.h6 || []
+        h1: sharedReport.analysisData?.headings?.h1 || [],
+        h2: sharedReport.analysisData?.headings?.h2 || [],
+        h3: sharedReport.analysisData?.headings?.h3 || [],
+        h4: sharedReport.analysisData?.headings?.h4 || [],
+        h5: sharedReport.analysisData?.headings?.h5 || [],
+        h6: sharedReport.analysisData?.headings?.h6 || []
       },
-      headingStructure: sharedReport.analysisData?.seoAnalysis?.headingStructure || []
+      headingStructure: sharedReport.analysisData?.headingStructure || []
     },
     technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis || [],
     recommendations: sharedReport.analysisData?.recommendations || [],
@@ -193,9 +236,11 @@ export default function SharePage() {
     aiSearchAnalysis: sharedReport.analysisData?.aiSearchAnalysis || null,
     keywordAnalysis: sharedReport.analysisData?.keywordAnalysis || null,
     screenshots: {
-      mobile: sharedReport.analysisData?.screenshots?.mobile || null,
-      desktop: sharedReport.analysisData?.screenshots?.desktop || null
-    }
+      mobile: sharedReport.analysisData?.screenshots?.mobile || sharedReport.analysisData?.mobileScreenshot || null,
+      desktop: sharedReport.analysisData?.screenshots?.desktop || sharedReport.analysisData?.desktopScreenshot || null
+    },
+    mobileScreenshot: sharedReport.analysisData?.mobileScreenshot || null,
+    desktopScreenshot: sharedReport.analysisData?.desktopScreenshot || null
   };
 
   const analysisData = safeAnalysisData;
