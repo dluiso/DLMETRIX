@@ -33,40 +33,12 @@ export default function SharePage() {
   const shareToken = params.token;
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
-  console.log('SharePage mounted with params:', params, 'token:', shareToken);
+  console.log('SharePage mounted with token:', shareToken);
 
   const { data: sharedReport, isLoading, error } = useQuery<SharedReportData>({
     queryKey: ['/api/share', shareToken],
     enabled: !!shareToken,
   });
-
-  // Debug logging
-  useEffect(() => {
-    console.log('SharePage Debug:', {
-      shareToken,
-      isLoading,
-      error: error ? error.message : null,
-      hasSharedReport: !!sharedReport,
-      sharedReportKeys: sharedReport ? Object.keys(sharedReport) : [],
-      analysisDataKeys: sharedReport?.analysisData ? Object.keys(sharedReport.analysisData) : [],
-      analysisDataType: sharedReport?.analysisData ? typeof sharedReport.analysisData : 'undefined',
-      url: sharedReport?.url,
-      createdAt: sharedReport?.createdAt,
-      expiresAt: sharedReport?.expiresAt
-    });
-    
-    // Additional check for analysisData structure
-    if (sharedReport?.analysisData) {
-      console.log('Analysis Data Structure:', {
-        hasPerformanceOverview: !!sharedReport.analysisData.performanceOverview,
-        hasCoreWebVitals: !!sharedReport.analysisData.coreWebVitals,
-        hasSeoAnalysis: !!sharedReport.analysisData.seoAnalysis,
-        hasTechnicalSeoAnalysis: !!sharedReport.analysisData.technicalSeoAnalysis,
-        hasRecommendations: !!sharedReport.analysisData.recommendations,
-        fullStructure: Object.keys(sharedReport.analysisData)
-      });
-    }
-  }, [shareToken, isLoading, error, sharedReport]);
 
   // Calculate time remaining
   useEffect(() => {
@@ -88,13 +60,12 @@ export default function SharePage() {
     };
 
     updateTimeRemaining();
-    const interval = setInterval(updateTimeRemaining, 60000); // Update every minute
+    const interval = setInterval(updateTimeRemaining, 60000);
 
     return () => clearInterval(interval);
   }, [sharedReport?.expiresAt]);
 
   if (isLoading) {
-    console.log('SharePage: Currently loading shared report...');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,9 +73,6 @@ export default function SharePage() {
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">Loading Shared Report</h3>
             <p className="text-slate-600 dark:text-slate-400">Please wait while we fetch the analysis...</p>
-            <div className="text-xs text-slate-500 mt-4">
-              Token: {shareToken}
-            </div>
           </Card>
         </div>
       </div>
@@ -112,7 +80,6 @@ export default function SharePage() {
   }
 
   if (error || !sharedReport) {
-    console.log('SharePage: Error or no shared report found:', { error, sharedReport });
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,12 +89,6 @@ export default function SharePage() {
             <p className="text-red-600 dark:text-red-300 mb-4">
               This shared report doesn't exist or has expired. Shared reports are only available for 12 hours.
             </p>
-            <div className="text-xs text-red-700 dark:text-red-400 mb-4 p-4 bg-red-100 dark:bg-red-900/40 rounded">
-              Debug Info: 
-              <br />Token: {shareToken}
-              <br />Error: {error ? error.message : 'No error'}
-              <br />Has Report: {!!sharedReport}
-            </div>
             <Button
               onClick={() => window.location.href = '/'}
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -140,228 +101,9 @@ export default function SharePage() {
     );
   }
 
-  // Create safe defaults for missing data to prevent component crashes
-  const safeAnalysisData = {
-    url: sharedReport.url || '',
-    performanceOverview: {
-      performance: sharedReport.analysisData?.performanceOverview?.performance || 0,
-      accessibility: sharedReport.analysisData?.performanceOverview?.accessibility || 0,
-      bestPractices: sharedReport.analysisData?.performanceOverview?.bestPractices || 0,
-      seo: sharedReport.analysisData?.performanceOverview?.seo || 0
-    },
-    coreWebVitals: {
-      mobile: {
-        lcp: sharedReport.analysisData?.coreWebVitals?.mobile?.lcp || { value: null, score: 'N/A' },
-        fid: sharedReport.analysisData?.coreWebVitals?.mobile?.fid || { value: null, score: 'N/A' },
-        cls: sharedReport.analysisData?.coreWebVitals?.mobile?.cls || { value: null, score: 'N/A' },
-        fcp: sharedReport.analysisData?.coreWebVitals?.mobile?.fcp || { value: null, score: 'N/A' },
-        ttfb: sharedReport.analysisData?.coreWebVitals?.mobile?.ttfb || { value: null, score: 'N/A' }
-      },
-      desktop: {
-        lcp: sharedReport.analysisData?.coreWebVitals?.desktop?.lcp || { value: null, score: 'N/A' },
-        fid: sharedReport.analysisData?.coreWebVitals?.desktop?.fid || { value: null, score: 'N/A' },
-        cls: sharedReport.analysisData?.coreWebVitals?.desktop?.cls || { value: null, score: 'N/A' },
-        fcp: sharedReport.analysisData?.coreWebVitals?.desktop?.fcp || { value: null, score: 'N/A' },
-        ttfb: sharedReport.analysisData?.coreWebVitals?.desktop?.ttfb || { value: null, score: 'N/A' }
-      }
-    },
-    // Map all the data fields correctly for compatibility
-    title: sharedReport.analysisData?.title || sharedReport.analysisData?.seoAnalysis?.title || '',
-    description: sharedReport.analysisData?.description || sharedReport.analysisData?.seoAnalysis?.description || null,
-    keywords: sharedReport.analysisData?.keywords || sharedReport.analysisData?.seoAnalysis?.keywords || null,
-    canonicalUrl: sharedReport.analysisData?.canonicalUrl || sharedReport.analysisData?.seoAnalysis?.canonicalUrl || null,
-    robotsMeta: sharedReport.analysisData?.robotsMeta || sharedReport.analysisData?.seoAnalysis?.robotsMeta || null,
-    viewportMeta: sharedReport.analysisData?.viewportMeta || sharedReport.analysisData?.seoAnalysis?.viewportMeta || null,
-    charset: sharedReport.analysisData?.charset || sharedReport.analysisData?.seoAnalysis?.charset || null,
-    langAttribute: sharedReport.analysisData?.langAttribute || sharedReport.analysisData?.seoAnalysis?.langAttribute || null,
-    
-    // Open Graph data - structured for components
-    ogTitle: sharedReport.analysisData?.ogTitle || null,
-    ogDescription: sharedReport.analysisData?.ogDescription || null,
-    ogImage: sharedReport.analysisData?.ogImage || null,
-    ogUrl: sharedReport.analysisData?.ogUrl || null,
-    ogType: sharedReport.analysisData?.ogType || null,
-    openGraphTags: sharedReport.analysisData?.openGraphTags || {
-      'og:title': sharedReport.analysisData?.ogTitle,
-      'og:description': sharedReport.analysisData?.ogDescription,
-      'og:image': sharedReport.analysisData?.ogImage,
-      'og:url': sharedReport.analysisData?.ogUrl,
-      'og:type': sharedReport.analysisData?.ogType,
-      'og:site_name': sharedReport.analysisData?.ogSiteName
-    },
-    
-    // Twitter Cards data - structured for components
-    twitterCard: sharedReport.analysisData?.twitterCard || null,
-    twitterTitle: sharedReport.analysisData?.twitterTitle || null,
-    twitterDescription: sharedReport.analysisData?.twitterDescription || null,
-    twitterImage: sharedReport.analysisData?.twitterImage || null,
-    twitterCardTags: sharedReport.analysisData?.twitterCardTags || {
-      'twitter:card': sharedReport.analysisData?.twitterCard,
-      'twitter:title': sharedReport.analysisData?.twitterTitle,
-      'twitter:description': sharedReport.analysisData?.twitterDescription,
-      'twitter:image': sharedReport.analysisData?.twitterImage,
-      'twitter:site': sharedReport.analysisData?.twitterSite,
-      'twitter:creator': sharedReport.analysisData?.twitterCreator
-    },
-    
-    // Headings structure
-    headings: {
-      h1: sharedReport.analysisData?.headings?.h1 || [],
-      h2: sharedReport.analysisData?.headings?.h2 || [],
-      h3: sharedReport.analysisData?.headings?.h3 || [],
-      h4: sharedReport.analysisData?.headings?.h4 || [],
-      h5: sharedReport.analysisData?.headings?.h5 || [],
-      h6: sharedReport.analysisData?.headings?.h6 || []
-    },
-    headingStructure: sharedReport.analysisData?.headingStructure || [],
-    
-    // Performance scores for compatibility - handle multiple data formats
-    performanceScore: Number(
-      sharedReport.analysisData?.performanceScore || 
-      sharedReport.analysisData?.performanceOverview?.performance ||
-      sharedReport.analysisData?.performance || 
-      0
-    ),
-    accessibilityScore: Number(
-      sharedReport.analysisData?.accessibilityScore || 
-      sharedReport.analysisData?.performanceOverview?.accessibility ||
-      sharedReport.analysisData?.accessibility || 
-      0
-    ),
-    bestPracticesScore: Number(
-      sharedReport.analysisData?.bestPracticesScore || 
-      sharedReport.analysisData?.performanceOverview?.bestPractices ||
-      sharedReport.analysisData?.bestPractices || 
-      0
-    ),
-    seoScore: Number(
-      sharedReport.analysisData?.seoScore || 
-      sharedReport.analysisData?.performanceOverview?.seo ||
-      sharedReport.analysisData?.seo || 
-      0
-    ),
-    
-    // Technical checks
-    technicalChecks: sharedReport.analysisData?.technicalChecks || {},
-    
-    seoAnalysis: {
-      title: sharedReport.analysisData?.title || sharedReport.analysisData?.seoAnalysis?.title || '',
-      description: sharedReport.analysisData?.description || sharedReport.analysisData?.seoAnalysis?.description || '',
-      keywords: sharedReport.analysisData?.keywords || sharedReport.analysisData?.seoAnalysis?.keywords || null,
-      canonicalUrl: sharedReport.analysisData?.canonicalUrl || sharedReport.analysisData?.seoAnalysis?.canonicalUrl || null,
-      robotsMeta: sharedReport.analysisData?.robotsMeta || sharedReport.analysisData?.seoAnalysis?.robotsMeta || null,
-      viewportMeta: sharedReport.analysisData?.viewportMeta || sharedReport.analysisData?.seoAnalysis?.viewportMeta || null,
-      charset: sharedReport.analysisData?.charset || sharedReport.analysisData?.seoAnalysis?.charset || null,
-      langAttribute: sharedReport.analysisData?.langAttribute || null,
-      openGraphTags: sharedReport.analysisData?.openGraphTags || {
-        'og:title': sharedReport.analysisData?.ogTitle,
-        'og:description': sharedReport.analysisData?.ogDescription,
-        'og:image': sharedReport.analysisData?.ogImage,
-        'og:url': sharedReport.analysisData?.ogUrl,
-        'og:type': sharedReport.analysisData?.ogType,
-        'og:site_name': sharedReport.analysisData?.ogSiteName
-      },
-      twitterCardTags: sharedReport.analysisData?.twitterCardTags || {
-        'twitter:card': sharedReport.analysisData?.twitterCard,
-        'twitter:title': sharedReport.analysisData?.twitterTitle,
-        'twitter:description': sharedReport.analysisData?.twitterDescription,
-        'twitter:image': sharedReport.analysisData?.twitterImage,
-        'twitter:site': sharedReport.analysisData?.twitterSite,
-        'twitter:creator': sharedReport.analysisData?.twitterCreator
-      },
-      headings: {
-        h1: sharedReport.analysisData?.headings?.h1 || [],
-        h2: sharedReport.analysisData?.headings?.h2 || [],
-        h3: sharedReport.analysisData?.headings?.h3 || [],
-        h4: sharedReport.analysisData?.headings?.h4 || [],
-        h5: sharedReport.analysisData?.headings?.h5 || [],
-        h6: sharedReport.analysisData?.headings?.h6 || []
-      },
-      headingStructure: sharedReport.analysisData?.headingStructure || []
-    },
-    technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis || 
-                          sharedReport.analysisData?.technicalChecks || 
-                          sharedReport.analysisData?.technicalAnalysis || 
-                          [],
-    recommendations: sharedReport.analysisData?.recommendations || [],
-    diagnostics: sharedReport.analysisData?.diagnostics || [],
-    insights: sharedReport.analysisData?.insights || [],
-    aiSearchAnalysis: sharedReport.analysisData?.aiSearchAnalysis || null,
-    keywordAnalysis: sharedReport.analysisData?.keywordAnalysis || null,
-    screenshots: {
-      mobile: sharedReport.analysisData?.screenshots?.mobile || sharedReport.analysisData?.mobileScreenshot || null,
-      desktop: sharedReport.analysisData?.screenshots?.desktop || sharedReport.analysisData?.desktopScreenshot || null
-    },
-    mobileScreenshot: sharedReport.analysisData?.mobileScreenshot || null,
-    desktopScreenshot: sharedReport.analysisData?.desktopScreenshot || null
-  };
+  // Use the analysis data directly
+  const analysisData = sharedReport.analysisData;
 
-  const analysisData = safeAnalysisData;
-  
-  // Debug logging for Production Server Compatibility
-  console.log('SharePage: Production Server Data Mapping:', {
-    rawData: {
-      performanceScore: sharedReport.analysisData?.performanceScore,
-      accessibilityScore: sharedReport.analysisData?.accessibilityScore,
-      bestPracticesScore: sharedReport.analysisData?.bestPracticesScore,
-      seoScore: sharedReport.analysisData?.seoScore,
-      performanceOverview: sharedReport.analysisData?.performanceOverview,
-      technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis,
-      technicalChecks: sharedReport.analysisData?.technicalChecks,
-      openGraphTags: sharedReport.analysisData?.openGraphTags,
-      twitterCardTags: sharedReport.analysisData?.twitterCardTags,
-      ogTitle: sharedReport.analysisData?.ogTitle,
-      twitterCard: sharedReport.analysisData?.twitterCard,
-      allKeys: Object.keys(sharedReport.analysisData || {})
-    },
-    finalMappedData: {
-      performanceScore: analysisData.performanceScore,
-      accessibilityScore: analysisData.accessibilityScore,
-      bestPracticesScore: analysisData.bestPracticesScore,
-      seoScore: analysisData.seoScore,
-      technicalSeoAnalysisCount: analysisData.technicalSeoAnalysis?.length || 0
-    }
-  });
-  
-  console.log('SharePage: About to render main content with safe analysisData:', !!analysisData);
-
-  // Additional safety check
-  if (!analysisData) {
-    console.error('No analysis data found in shared report:', {
-      sharedReport,
-      hasSharedReport: !!sharedReport,
-      sharedReportKeys: sharedReport ? Object.keys(sharedReport) : []
-    });
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="p-8 text-center border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800">
-            <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Invalid Report Data</h3>
-            <p className="text-yellow-600 dark:text-yellow-300 mb-4">
-              The shared report data appears to be corrupted or incomplete.
-            </p>
-            <div className="text-xs text-yellow-700 dark:text-yellow-400 mb-4 p-4 bg-yellow-100 dark:bg-yellow-900/40 rounded">
-              Debug Info: {JSON.stringify({
-                hasSharedReport: !!sharedReport,
-                sharedReportKeys: sharedReport ? Object.keys(sharedReport) : [],
-                analysisDataType: sharedReport?.analysisData ? typeof sharedReport.analysisData : 'undefined'
-              }, null, 2)}
-            </div>
-            <Button
-              onClick={() => window.location.href = '/'}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white"
-            >
-              Go to DLMETRIX
-            </Button>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  console.log('SharePage: Successfully rendering main content');
-  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Header */}
@@ -403,7 +145,7 @@ export default function SharePage() {
         </div>
       </div>
 
-      {/* Report Content - EXACT SAME STRUCTURE AS ORIGINAL */}
+      {/* Report Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Report Info Banner */}
         <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 mb-6">
@@ -437,13 +179,13 @@ export default function SharePage() {
 
           {/* Screenshots */}
           <ScreenshotsView 
-            mobileScreenshot={analysisData.screenshots?.mobile}
-            desktopScreenshot={analysisData.screenshots?.desktop}
+            mobileScreenshot={analysisData.mobileScreenshot}
+            desktopScreenshot={analysisData.desktopScreenshot}
             url={analysisData.url}
             language="en"
           />
 
-          {/* Legacy SEO Analysis - EXACT SAME STRUCTURE */}
+          {/* SEO Analysis */}
           <div className="grid gap-4 sm:gap-6">
             {/* Preview Tabs */}
             <PreviewTabs data={analysisData} language="en" />
@@ -474,7 +216,7 @@ export default function SharePage() {
             )}
 
             {/* Technical Checks */}
-            <TechnicalSeo checks={analysisData.technicalSeoAnalysis || analysisData.technicalChecks} />
+            <TechnicalSeo checks={analysisData.technicalChecks} />
           </div>
         </div>
       </main>
