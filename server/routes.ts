@@ -90,19 +90,19 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
     
     console.log(`Using browser executable: ${executablePath}`);
     
-    // Launch browser for Lighthouse and screenshots with ARM64 optimizations
+    // Launch browser with anti-detection for Cloudflare and ARM64 optimizations
     browser = await puppeteer.launch({
       executablePath,
       headless: true,
       timeout: 60000,
-      protocolTimeout: 45000, // Increased for ARM64 screenshot timeouts
+      protocolTimeout: 45000,
       args: [
         '--no-sandbox', 
         '--disable-setuid-sandbox', 
         '--disable-dev-shm-usage',
         '--disable-gpu',
         '--disable-web-security',
-        '--disable-features=VizDisplayCompositor',
+        '--disable-features=VizDisplayCompositor,AutofillAssistant,TranslateUI',
         '--disable-background-timer-throttling',
         '--disable-backgrounding-occluded-windows',
         '--disable-renderer-backgrounding',
@@ -121,7 +121,15 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
         '--allow-running-insecure-content',
         '--disable-component-extensions-with-background-pages',
         '--disable-background-networking',
-        '--disable-ipc-flooding-protection' // Additional ARM64 optimization
+        '--disable-ipc-flooding-protection',
+        // Anti-detection measures for Cloudflare
+        '--disable-blink-features=AutomationControlled',
+        '--disable-automation',
+        '--disable-features=VizDisplayCompositor',
+        '--exclude-switches=enable-automation',
+        '--disable-browser-side-navigation',
+        '--disable-client-side-phishing-detection',
+        '--disable-features=ChromeWhatsNewUI,HttpsUpgrades'
       ]
     });
 
@@ -249,13 +257,32 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
   const page = await browser.newPage();
   
   try {
+    // Anti-detection: Remove automation indicators
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, 'webdriver', {
+        get: () => undefined,
+      });
+      
+      // Remove automation properties
+      delete window.navigator.__proto__.webdriver;
+      
+      // Mock plugins and languages
+      Object.defineProperty(navigator, 'plugins', {
+        get: () => [1, 2, 3, 4, 5],
+      });
+      
+      Object.defineProperty(navigator, 'languages', {
+        get: () => ['en-US', 'en'],
+      });
+    });
+
     // Configure viewport for device
     if (device === 'mobile') {
       await page.setViewport({ width: 375, height: 667, deviceScaleFactor: 2 });
-      await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1');
+      await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1');
     } else {
       await page.setViewport({ width: 1350, height: 940, deviceScaleFactor: 1 });
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     }
 
     // Enable performance monitoring (with error handling for ARM64)
@@ -267,11 +294,53 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
     
     const startTime = Date.now();
     
-    // Navigate and measure performance
+    // Set additional headers to avoid Cloudflare detection
+    await page.setExtraHTTPHeaders({
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'DNT': '1',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1'
+    });
+
+    // Navigate and measure performance (with Cloudflare handling)
     const response = await page.goto(url, { 
       waitUntil: 'networkidle2', 
-      timeout: 30000 
+      timeout: 45000 // Increased for Cloudflare challenges
     });
+    
+    // Wait for potential Cloudflare challenges
+    try {
+      await page.waitForSelector('body', { timeout: 10000 });
+      
+      // Check for Cloudflare challenge and wait if needed
+      const isCloudflareChallenge = await page.evaluate(() => {
+        return document.title.includes('Just a moment') || 
+               document.body.textContent.includes('Cloudflare') ||
+               document.body.textContent.includes('checking your browser');
+      });
+      
+      if (isCloudflareChallenge) {
+        console.log('Cloudflare challenge detected, waiting...');
+        await page.waitForTimeout(12000); // Extended wait for challenge
+        
+        // Try to wait for content after challenge
+        try {
+          await page.waitForFunction(() => {
+            const body = document.body;
+            return body && 
+                   !document.title.includes('Just a moment') && 
+                   !body.textContent.includes('checking your browser') &&
+                   body.children.length > 1;
+          }, { timeout: 20000 });
+        } catch (e) {
+          // Continue even if challenge detection fails
+        }
+      }
+    } catch (e) {
+      // Continue if no challenge detected
+    }
     
     const endTime = Date.now();
     const loadTime = endTime - startTime;
@@ -516,10 +585,21 @@ async function fetchBasicSeoData(url: string) {
     
     const response = await axios.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9,es;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Cache-Control': 'max-age=0'
       },
-      timeout: 15000,
-      maxRedirects: 5
+      timeout: 20000,
+      maxRedirects: 10
     });
 
     console.log('DEBUG fetchBasicSeoData - Response status:', response.status);
@@ -810,7 +890,13 @@ async function checkEndpoint(url: string): Promise<boolean> {
       timeout: 5000,
       validateStatus: (status) => status < 400,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1'
       }
     });
     return response.status >= 200 && response.status < 400;
