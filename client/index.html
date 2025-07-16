@@ -4,15 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     
-    <!-- Technology & Hosting Obfuscation -->
-    <meta name="generator" content="DLMETRIX Custom Framework v2.5" />
-    <meta name="powered-by" content="DLM Advanced Engine" />
-    <meta name="framework" content="DLMETRIX Core Technology" />
-    <meta name="X-Powered-By" content="DLM-Server/2.5" />
-    <meta name="X-Framework" content="Custom Enterprise Solution" />
-    <meta name="hosting" content="Private Cloud Infrastructure" />
-    <meta name="environment" content="Production Enterprise" />
-    <meta name="cdn" content="DLMETRIX Global Network" />
+    <!-- Application Meta -->
+    <meta name="generator" content="DLMETRIX" />
+    <meta name="application" content="Web Analysis Platform" />
     
     <!-- Primary Meta Tags -->
     <title>DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker</title>
@@ -121,75 +115,13 @@
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     
-    <!-- Disable caching for security -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Security Script -->
-    <script>
-      // Additional security measures
-      (function() {
-        'use strict';
-        
-        // Disable drag and drop
-        document.addEventListener('dragstart', function(e) {
-          e.preventDefault();
-        });
-        
-        // Disable image saving
-        document.addEventListener('dragstart', function(e) {
-          if (e.target.tagName === 'IMG') {
-            e.preventDefault();
-          }
-        });
-        
-        // Obfuscate source view attempts
-        const originalOpen = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function() {
-          console.log('%cUnauthorized network access detected', 'color: red; font-size: 16px;');
-          return originalOpen.apply(this, arguments);
-        };
-        
-        // Disable common inspection shortcuts (only in production)
-        if (window.location.hostname !== 'localhost' && 
-            !window.location.hostname.includes('replit') &&
-            !window.location.hostname.includes('127.0.0.1')) {
-          document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) {
-              e.preventDefault();
-              return false;
-            }
-          });
-        }
-        
-        // Skip console override in development
-        if (window.location.hostname !== 'localhost' && 
-            !window.location.hostname.includes('replit') &&
-            !window.location.hostname.includes('127.0.0.1')) {
-          
-          // Clear window properties that might expose information
-          delete window.console;
-          
-          // Override console methods
-          const noop = function() {};
-          if (typeof window.console === 'undefined') {
-            window.console = {};
-          }
-          window.console.log = noop;
-          window.console.warn = noop;
-          window.console.error = noop;
-          window.console.info = noop;
-          window.console.debug = noop;
-        }
-      })();
-    </script>
-    
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+    <!-- Application Core -->
+    <script src="/app.js"></script>
   </body>
 </html>

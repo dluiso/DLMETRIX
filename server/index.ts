@@ -4,31 +4,16 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// Technology Obfuscation Headers Middleware
+// Security Headers Middleware
 app.use((req, res, next) => {
   // Remove standard technology headers
   res.removeHeader('X-Powered-By');
   
-  // Add obfuscated headers to hide real technology stack and hosting
-  res.setHeader('X-Powered-By', 'DLMETRIX Enterprise Server v2.5');
-  res.setHeader('Server', 'DLM-Server/2.5.0');
-  res.setHeader('X-Framework', 'DLMETRIX Custom Solution');
-  res.setHeader('X-Runtime', 'DLM-Runtime/Advanced');
-  res.setHeader('X-Technology', 'Proprietary Enterprise Stack');
-  res.setHeader('X-Engine', 'DLMETRIX Core Engine');
-  res.setHeader('X-Generator', 'DLMETRIX Custom Framework');
-  res.setHeader('X-Hosting', 'Private Cloud Infrastructure');
-  res.setHeader('X-Environment', 'Production Enterprise');
-  res.setHeader('X-CDN', 'DLMETRIX Global Network');
+  // Basic security headers
+  res.setHeader('X-Powered-By', 'DLMETRIX');
+  res.setHeader('Server', 'Web Server');
   
-  // Remove headers that could reveal Replit or development environment
-  res.removeHeader('X-Replit-Domain');
-  res.removeHeader('X-Replit-Cluster');
-  res.removeHeader('Via');
-  res.removeHeader('X-Forwarded-For');
-  res.removeHeader('X-Real-IP');
-  
-  // Additional security headers that help hide technology fingerprints
+  // Security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');

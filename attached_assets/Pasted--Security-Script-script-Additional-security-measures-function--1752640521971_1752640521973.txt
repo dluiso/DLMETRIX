@@ -1,0 +1,61 @@
+<!-- Security Script -->
+    <script>
+      // Additional security measures
+      (function() {
+        'use strict';
+        
+        // Disable drag and drop
+        document.addEventListener('dragstart', function(e) {
+          e.preventDefault();
+        });
+        
+        // Disable image saving
+        document.addEventListener('dragstart', function(e) {
+          if (e.target.tagName === 'IMG') {
+            e.preventDefault();
+          }
+        });
+        
+        // Obfuscate source view attempts
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function() {
+          console.log('%cUnauthorized network access detected', 'color: red; font-size: 16px;');
+          return originalOpen.apply(this, arguments);
+        };
+        
+        // Disable common inspection shortcuts (only in production)
+        if (window.location.hostname !== 'localhost' && 
+            !window.location.hostname.includes('replit') &&
+            !window.location.hostname.includes('127.0.0.1')) {
+          document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) {
+              e.preventDefault();
+              return false;
+            }
+          });
+        }
+        
+        // Skip console override in development
+        if (window.location.hostname !== 'localhost' && 
+            !window.location.hostname.includes('replit') &&
+            !window.location.hostname.includes('127.0.0.1')) {
+          
+          // Clear window properties that might expose information
+          delete window.console;
+          
+          // Override console methods
+          const noop = function() {};
+          if (typeof window.console === 'undefined') {
+            window.console = {};
+          }
+          window.console.log = noop;
+          window.console.warn = noop;
+          window.console.error = noop;
+          window.console.info = noop;
+          window.console.debug = noop;
+        }
+      })();
+    </script>
+    
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
