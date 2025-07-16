@@ -2,11 +2,8 @@
 // Hides information about Replit, development tools, and hosting environment
 
 export function initHostingObfuscation() {
-  // Check if running in development mode
-  const isDev = import.meta.env.NODE_ENV === 'development';
-  
-  if (isDev) {
-    console.log('🔓 DLMETRIX Hosting Obfuscation: Bypassed for development');
+  // Only run in production builds
+  if (!import.meta.env.PROD) {
     return;
   }
 
@@ -166,8 +163,13 @@ export function initHostingObfuscation() {
 
 // Override user agent to hide development tools
 export function obfuscateUserAgent() {
+  // Only run in production builds
+  if (!import.meta.env.PROD) {
+    return;
+  }
+  
   try {
-    if (navigator.userAgent.includes('Chrome') && import.meta.env.NODE_ENV !== 'development') {
+    if (navigator.userAgent.includes('Chrome')) {
       Object.defineProperty(navigator, 'userAgent', {
         value: navigator.userAgent.replace(/Chrome\/[\d.]+/, 'DLMETRIX-Browser/2.5'),
         writable: false
@@ -180,6 +182,11 @@ export function obfuscateUserAgent() {
 
 // Clean any references to development or hosting in localStorage/sessionStorage
 export function cleanStorageReferences() {
+  // Only run in production builds
+  if (!import.meta.env.PROD) {
+    return;
+  }
+  
   try {
     ['localStorage', 'sessionStorage'].forEach(storageType => {
       const storage = window[storageType];

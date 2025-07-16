@@ -12,19 +12,17 @@ if (!container) throw new Error("Root container missing in index.html");
 const root = createRoot(container);
 root.render(<App />);
 
-// Initialize obfuscation systems after React renders (only in production)
-setTimeout(() => {
-  if (import.meta.env.NODE_ENV !== 'development') {
+// Initialize obfuscation systems only in production
+if (import.meta.env.PROD) {
+  setTimeout(() => {
     initSimpleObfuscation();
     initHostingObfuscation();
     obfuscateUserAgent();
-  }
-}, 500);
+  }, 500);
 
-// Safe cleanup and storage cleaning (only in production)
-setTimeout(() => {
-  if (import.meta.env.NODE_ENV !== 'development') {
+  // Safe cleanup and storage cleaning
+  setTimeout(() => {
     safeCleanup();
     cleanStorageReferences();
-  }
-}, 3000);
+  }, 3000);
+}

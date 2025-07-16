@@ -2,11 +2,8 @@
 // Safer approach to prevent technology detection
 
 export function initSimpleObfuscation() {
-  // Check if running in development mode
-  const isDev = import.meta.env.NODE_ENV === 'development';
-  
-  if (isDev) {
-    console.log('🔓 DLMETRIX Simple Obfuscation: Bypassed for development');
+  // Only run in production builds
+  if (!import.meta.env.PROD) {
     return;
   }
 
@@ -118,6 +115,11 @@ export function initSimpleObfuscation() {
 
 // Safe DOM cleanup
 export function safeCleanup() {
+  // Only run in production builds
+  if (!import.meta.env.PROD) {
+    return;
+  }
+  
   try {
     // Basic cleanup without complex operations
     const viteElements = document.querySelectorAll('[data-vite-dev-id]');
