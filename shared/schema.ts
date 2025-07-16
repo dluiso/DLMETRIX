@@ -1,9 +1,9 @@
-import { pgTable, text, serial, integer, boolean, json, timestamp } from "drizzle-orm/pg-core";
+import { mysqlTable, text, int, boolean, json, timestamp } from "drizzle-orm/mysql-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const webAnalyses = pgTable("web_analyses", {
-  id: serial("id").primaryKey(),
+export const webAnalyses = mysqlTable("web_analyses", {
+  id: int("id").primaryKey().autoincrement(),
   url: text("url").notNull(),
   
   // Basic SEO fields
@@ -20,10 +20,10 @@ export const webAnalyses = pgTable("web_analyses", {
   
   // Performance & Core Web Vitals
   coreWebVitals: json("core_web_vitals"), // LCP, FID, CLS for mobile & desktop
-  performanceScore: integer("performance_score").default(0),
-  accessibilityScore: integer("accessibility_score").default(0),
-  bestPracticesScore: integer("best_practices_score").default(0),
-  seoScore: integer("seo_score").default(0),
+  performanceScore: int("performance_score").default(0),
+  accessibilityScore: int("accessibility_score").default(0),
+  bestPracticesScore: int("best_practices_score").default(0),
+  seoScore: int("seo_score").default(0),
   
   // Screenshots and insights
   mobileScreenshot: text("mobile_screenshot"), // base64 or URL
@@ -36,8 +36,8 @@ export const webAnalyses = pgTable("web_analyses", {
   technicalChecks: json("technical_checks"),
 });
 
-export const sharedReports = pgTable("shared_reports", {
-  id: serial("id").primaryKey(),
+export const sharedReports = mysqlTable("shared_reports", {
+  id: int("id").primaryKey().autoincrement(),
   shareToken: text("share_token").unique().notNull(),
   url: text("url").notNull(),
   analysisData: json("analysis_data").notNull(),

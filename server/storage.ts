@@ -1,4 +1,6 @@
 import { webAnalyses, sharedReports, type WebAnalysis, type InsertWebAnalysis, type SharedReport, type InsertSharedReport } from "@shared/schema";
+import { db } from "./db";
+import { eq, lt } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<any | undefined>;
@@ -124,4 +126,92 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// DatabaseStorage implementation for MySQL
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<any | undefined> {
+    // User functionality not needed for shared reports
+    return undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<any | undefined> {
+    // User functionality not needed for shared reports
+    return undefined;
+  }
+
+  async createUser(user: any): Promise<any> {
+    // User functionality not needed for shared reports
+    return user;
+  }
+
+  async createWebAnalysis(insertAnalysis: InsertWebAnalysis): Promise<WebAnalysis> {
+    if (!db) throw new Error('Database not available');
+    const [result] = await db.insert(webAnalyses).values(insertAnalysis).execute();
+    return { id: result.insertId as number, ...insertAnalysis } as WebAnalysis;
+  }
+
+  async getWebAnalysis(id: number): Promise<WebAnalysis | undefined> {
+    if (!db) return undefined;
+    const [analysis] = await db.select().from(webAnalyses).where(eq(webAnalyses.id, id));
+    return analysis || undefined;
+  }
+
+  async getWebAnalysesByUrl(url: string): Promise<WebAnalysis[]> {
+    if (!db) return [];
+    return await db.select().from(webAnalyses).where(eq(webAnalyses.url, url));
+  }
+
+  async createSharedReport(insertReport: InsertSharedReport): Promise<SharedReport> {
+    if (!db) throw new Error('Database not available');
+    
+    console.log(`💾 Saving shared report to database with token: ${insertReport.shareToken}`);
+    
+    const [result] = await db.insert(sharedReports).values({
+      ...insertReport,
+      createdAt: new Date()
+    }).execute();
+    
+    const report: SharedReport = {
+      id: result.insertId as number,
+      ...insertReport,
+      createdAt: new Date()
+    };
+    
+    console.log(`✅ Shared report saved to database with ID: ${report.id}`);
+    return report;
+  }
+
+  async getSharedReport(shareToken: string): Promise<SharedReport | undefined> {
+    if (!db) return undefined;
+    
+    console.log(`🔍 Searching for shared report with token: ${shareToken}`);
+    
+    const [report] = await db.select().from(sharedReports)
+      .where(eq(sharedReports.shareToken, shareToken));
+    
+    if (report) {
+      console.log(`📄 Found shared report: ${report.url} (expires: ${report.expiresAt})`);
+      
+      // Check if expired
+      if (report.expiresAt <= new Date()) {
+        console.log(`⏰ Report expired, deleting...`);
+        await db.delete(sharedReports).where(eq(sharedReports.shareToken, shareToken));
+        return undefined;
+      }
+      
+      return report;
+    }
+    
+    console.log(`❌ No shared report found with token: ${shareToken}`);
+    return undefined;
+  }
+
+  async cleanExpiredSharedReports(): Promise<void> {
+    if (!db) return;
+    const now = new Date();
+    await db.delete(sharedReports).where(lt(sharedReports.expiresAt, now));
+    console.log(`🧹 Cleaned expired shared reports`);
+  }
+}
+
+// Use MemStorage for development, DatabaseStorage for production
+export const storage = process.env.NODE_ENV === 'production' ? new DatabaseStorage() : new MemStorage();
