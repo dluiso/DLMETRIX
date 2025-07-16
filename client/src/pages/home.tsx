@@ -343,60 +343,64 @@ export default function Home() {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden lg:flex items-center space-x-3">
+            <div className="hidden md:flex items-center space-x-2">
               <WhyDlmetrixDialog language={language} />
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setShowHistory(!showHistory)}
-                className="relative"
-              >
-                <History className="w-4 h-4" />
-                {analysisHistory.length > 0 && (
+              <HelpDialog language={language} />
+              {analysisHistory.length > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowHistory(!showHistory)}
+                  className="relative"
+                >
+                  <History className="w-4 h-4" />
                   <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {analysisHistory.length}
                   </span>
-                )}
-                <span className="ml-2">{t.history}</span>
-              </Button>
+                  <span className="hidden lg:inline ml-2">{t.history}</span>
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={() => setShowSettings(!showSettings)}
               >
                 <Settings className="w-4 h-4" />
-                <span className="ml-2">{t.settings}</span>
+                <span className="hidden lg:inline ml-2">{t.settings}</span>
               </Button>
-              <HelpDialog language={language} />
               {seoData && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={handleExportCSV}
-                  disabled={!seoData}
-                >
-                  <FileDown className="w-4 h-4" />
-                  <span className="ml-2">CSV</span>
-                </Button>
+                <>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleExportCSV}
+                    disabled={!seoData}
+                  >
+                    <FileDown className="w-4 h-4" />
+                    <span className="hidden lg:inline ml-2">CSV</span>
+                  </Button>
+                  <Button 
+                    className="bg-primary hover:bg-blue-700 text-sm"
+                    onClick={handleExportPDF}
+                    disabled={!seoData || isExporting}
+                  >
+                    {isExporting ? (
+                      <Download className="w-4 h-4 mr-1 animate-spin" />
+                    ) : (
+                      <Bookmark className="w-4 h-4 mr-1" />
+                    )}
+                    <span className="hidden lg:inline">
+                      {isExporting ? t.generating : t.saveReport}
+                    </span>
+                  </Button>
+                </>
               )}
-              <Button 
-                className="bg-primary hover:bg-blue-700 text-sm"
-                onClick={handleExportPDF}
-                disabled={!seoData || isExporting}
-              >
-                {isExporting ? (
-                  <Download className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Bookmark className="w-4 h-4 mr-2" />
-                )}
-                {isExporting ? t.generating : t.saveReport}
-              </Button>
               <ContactDialog language={language} />
               <SupportDialog language={language} />
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="lg:hidden">
+            <div className="md:hidden">
               <Button
                 variant="ghost"
                 size="sm"
@@ -414,32 +418,16 @@ export default function Home() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="lg:hidden border-t border-slate-200 dark:border-slate-700 py-4">
+            <div className="md:hidden border-t border-slate-200 dark:border-slate-700 py-4 bg-white dark:bg-slate-800">
               <div className="flex flex-col space-y-3">
-                <div className="flex items-center justify-between px-4 py-2">
+                {/* Main Navigation */}
+                <div className="grid grid-cols-2 gap-3 px-4">
                   <WhyDlmetrixDialog language={language} />
                   <HelpDialog language={language} />
                 </div>
                 
+                {/* Settings and History */}
                 <div className="grid grid-cols-2 gap-3 px-4">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => {
-                      setShowHistory(!showHistory);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="relative justify-start"
-                  >
-                    <History className="w-4 h-4 mr-2" />
-                    {t.history}
-                    {analysisHistory.length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {analysisHistory.length}
-                      </span>
-                    )}
-                  </Button>
-                  
                   <Button 
                     variant="ghost" 
                     size="sm"
@@ -452,10 +440,29 @@ export default function Home() {
                     <Settings className="w-4 h-4 mr-2" />
                     {t.settings}
                   </Button>
+                  
+                  {analysisHistory.length > 0 && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => {
+                        setShowHistory(!showHistory);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="relative justify-start"
+                    >
+                      <History className="w-4 h-4 mr-2" />
+                      {t.history}
+                      <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {analysisHistory.length}
+                      </span>
+                    </Button>
+                  )}
                 </div>
 
+                {/* Export Options - Only show if there's data */}
                 {seoData && (
-                  <div className="grid grid-cols-1 gap-3 px-4">
+                  <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -467,11 +474,11 @@ export default function Home() {
                       className="justify-start"
                     >
                       <FileDown className="w-4 h-4 mr-2" />
-                      {t.exportCSV || 'Export CSV'}
+                      CSV
                     </Button>
                     
                     <Button 
-                      className="bg-primary hover:bg-blue-700 justify-start"
+                      className="bg-primary hover:bg-blue-700 justify-start text-white"
                       onClick={() => {
                         handleExportPDF();
                         setIsMobileMenuOpen(false);
@@ -483,12 +490,13 @@ export default function Home() {
                       ) : (
                         <Bookmark className="w-4 h-4 mr-2" />
                       )}
-                      {isExporting ? t.generating : t.saveReport}
+                      PDF
                     </Button>
                   </div>
                 )}
 
-                <div className="flex items-center justify-center space-x-4 px-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+                {/* Contact and Support */}
+                <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
                   <ContactDialog language={language} />
                   <SupportDialog language={language} />
                 </div>
