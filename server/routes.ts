@@ -59,8 +59,40 @@ async function performComprehensiveAnalysis(url: string): Promise<WebAnalysisRes
 async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult> {
   let browser;
   try {
+    // Detect Chromium executable path for ARM64
+    const chromiumPaths = [
+      '/usr/bin/chromium-browser',
+      '/usr/bin/google-chrome-stable',
+      '/usr/bin/google-chrome',
+      '/usr/bin/chromium'
+    ];
+    
+    let executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+    
+    if (!executablePath) {
+      // Try to find Chromium automatically
+      const fs = require('fs');
+      for (const path of chromiumPaths) {
+        try {
+          if (fs.existsSync(path)) {
+            executablePath = path;
+            break;
+          }
+        } catch (e) {
+          // Continue to next path
+        }
+      }
+    }
+    
+    if (!executablePath) {
+      throw new Error('No Chrome/Chromium executable found. Please install chromium-browser.');
+    }
+    
+    console.log(`Using browser executable: ${executablePath}`);
+    
     // Launch browser for Lighthouse and screenshots
     browser = await puppeteer.launch({
+      executablePath,
       headless: true,
       args: [
         '--no-sandbox', 
@@ -68,7 +100,10 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
         '--disable-dev-shm-usage',
         '--disable-gpu',
         '--disable-web-security',
-        '--disable-features=VizDisplayCompositor'
+        '--disable-features=VizDisplayCompositor',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding'
       ]
     });
 
