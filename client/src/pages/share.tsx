@@ -199,11 +199,31 @@ export default function SharePage() {
     },
     headingStructure: sharedReport.analysisData?.headingStructure || [],
     
-    // Performance scores for compatibility
-    performanceScore: Number(sharedReport.analysisData?.performanceScore || sharedReport.analysisData?.performanceOverview?.performance) || 0,
-    accessibilityScore: Number(sharedReport.analysisData?.accessibilityScore || sharedReport.analysisData?.performanceOverview?.accessibility) || 0,
-    bestPracticesScore: Number(sharedReport.analysisData?.bestPracticesScore || sharedReport.analysisData?.performanceOverview?.bestPractices) || 0,
-    seoScore: Number(sharedReport.analysisData?.seoScore || sharedReport.analysisData?.performanceOverview?.seo) || 0,
+    // Performance scores for compatibility - handle multiple data formats
+    performanceScore: Number(
+      sharedReport.analysisData?.performanceScore || 
+      sharedReport.analysisData?.performanceOverview?.performance ||
+      sharedReport.analysisData?.performance || 
+      0
+    ),
+    accessibilityScore: Number(
+      sharedReport.analysisData?.accessibilityScore || 
+      sharedReport.analysisData?.performanceOverview?.accessibility ||
+      sharedReport.analysisData?.accessibility || 
+      0
+    ),
+    bestPracticesScore: Number(
+      sharedReport.analysisData?.bestPracticesScore || 
+      sharedReport.analysisData?.performanceOverview?.bestPractices ||
+      sharedReport.analysisData?.bestPractices || 
+      0
+    ),
+    seoScore: Number(
+      sharedReport.analysisData?.seoScore || 
+      sharedReport.analysisData?.performanceOverview?.seo ||
+      sharedReport.analysisData?.seo || 
+      0
+    ),
     
     // Technical checks
     technicalChecks: sharedReport.analysisData?.technicalChecks || {},
@@ -229,7 +249,10 @@ export default function SharePage() {
       },
       headingStructure: sharedReport.analysisData?.headingStructure || []
     },
-    technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis || [],
+    technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis || 
+                          sharedReport.analysisData?.technicalChecks || 
+                          sharedReport.analysisData?.technicalAnalysis || 
+                          [],
     recommendations: sharedReport.analysisData?.recommendations || [],
     diagnostics: sharedReport.analysisData?.diagnostics || [],
     insights: sharedReport.analysisData?.insights || [],
@@ -245,26 +268,24 @@ export default function SharePage() {
 
   const analysisData = safeAnalysisData;
   
-  // Debug logging for Performance Overview specifically
-  console.log('SharePage: Performance Overview Data Check:', {
-    rawSharedReportData: {
+  // Debug logging for Production Server Compatibility
+  console.log('SharePage: Production Server Data Mapping:', {
+    rawData: {
       performanceScore: sharedReport.analysisData?.performanceScore,
       accessibilityScore: sharedReport.analysisData?.accessibilityScore,
       bestPracticesScore: sharedReport.analysisData?.bestPracticesScore,
       seoScore: sharedReport.analysisData?.seoScore,
-      performanceOverview: sharedReport.analysisData?.performanceOverview
+      performanceOverview: sharedReport.analysisData?.performanceOverview,
+      technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis,
+      technicalChecks: sharedReport.analysisData?.technicalChecks,
+      allKeys: Object.keys(sharedReport.analysisData || {})
     },
-    mappedAnalysisData: {
+    finalMappedData: {
       performanceScore: analysisData.performanceScore,
       accessibilityScore: analysisData.accessibilityScore,
       bestPracticesScore: analysisData.bestPracticesScore,
-      seoScore: analysisData.seoScore
-    },
-    propsToComponent: {
-      performanceScore: analysisData.performanceScore,
-      accessibilityScore: analysisData.accessibilityScore,
-      bestPracticesScore: analysisData.bestPracticesScore,
-      seoScore: analysisData.seoScore
+      seoScore: analysisData.seoScore,
+      technicalSeoAnalysisCount: analysisData.technicalSeoAnalysis?.length || 0
     }
   });
   
