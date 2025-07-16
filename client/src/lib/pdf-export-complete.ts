@@ -49,7 +49,7 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
   
   // Function to add new page if needed - MORE AGGRESSIVE PAGE BREAKS
   const checkPageBreak = (requiredSpace: number) => {
-    if (yPosition + requiredSpace > pageHeight - margin - 20) {
+    if (yPosition + requiredSpace > pageHeight - 30) { // More conservative margin
       pdf.addPage();
       yPosition = margin;
       return true;
@@ -57,12 +57,12 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     return false;
   };
 
-  // Helper function to add text with line wrapping
+  // Helper function to add text with line wrapping - FIXED SPACING
   const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize = 10): number => {
     pdf.setFontSize(fontSize);
     const lines = pdf.splitTextToSize(text, maxWidth);
     pdf.text(lines, x, y);
-    return y + (lines.length * fontSize * 0.4); // Better line spacing
+    return y + (lines.length * (fontSize * 0.5)); // More conservative line spacing to prevent overlap
   };
 
   // Helper function to add section header - ALWAYS ENSURES SPACE
@@ -210,15 +210,17 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
   ];
   
   seoInfo.forEach(([label, value]) => {
-    checkPageBreak(15);
+    checkPageBreak(18);
     pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(10);
     pdf.text(`${label}:`, margin, yPosition);
     pdf.setFont('helvetica', 'normal');
-    yPosition = addWrappedText(value, margin + 35, yPosition, pageWidth - 2 * margin - 35, 10);
-    yPosition += 5;
+    pdf.setFontSize(9);
+    yPosition = addWrappedText(value, margin + 35, yPosition, pageWidth - 2 * margin - 35, 9);
+    yPosition += 8;
   });
   
-  yPosition += 15;
+  yPosition += 20;
 
   // 4. OPEN GRAPH TAGS SECTION
   if (data.openGraphTags && Object.keys(data.openGraphTags).length > 0) {
@@ -303,9 +305,9 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     addSectionHeader('Optimization Recommendations', [245, 158, 11]);
     
     data.recommendations.forEach((rec, index) => {
-      checkPageBreak(50); // More space for recommendations
+      checkPageBreak(60); // Even more space for recommendations
       
-      // Priority badge
+      // Priority badge with better positioning
       const priorityColors = {
         high: [239, 68, 68],
         medium: [245, 158, 11],
@@ -314,27 +316,34 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
       const color = priorityColors[rec.priority] || [107, 114, 128];
       
       pdf.setFillColor(color[0], color[1], color[2]);
-      pdf.rect(margin - 5, yPosition - 3, 25, 8, 'F');
+      pdf.rect(margin - 5, yPosition - 3, 25, 10, 'F');
       pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(8);
+      pdf.setFontSize(7);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(rec.priority.toUpperCase(), margin, yPosition + 2);
+      pdf.text(rec.priority.toUpperCase(), margin - 2, yPosition + 3);
       
+      // Title with better spacing
       pdf.setTextColor(0, 0, 0);
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
-      yPosition = addWrappedText(`${index + 1}. ${rec.title}`, margin + 30, yPosition, pageWidth - 2 * margin - 30, 11);
+      yPosition = addWrappedText(`${index + 1}. ${rec.title}`, margin + 28, yPosition, pageWidth - 2 * margin - 28, 11);
+      yPosition += 5;
       
-      pdf.setFontSize(10);
+      // Description with proper spacing
+      pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
-      yPosition = addWrappedText(rec.description, margin + 5, yPosition + 3, pageWidth - 2 * margin - 5, 10);
+      yPosition = addWrappedText(rec.description, margin + 5, yPosition, pageWidth - 2 * margin - 5, 9);
+      yPosition += 5;
       
+      // How to fix with proper spacing
       if (rec.howToFix) {
         pdf.setFont('helvetica', 'italic');
-        yPosition = addWrappedText(`How to fix: ${rec.howToFix}`, margin + 5, yPosition + 3, pageWidth - 2 * margin - 5, 9);
+        pdf.setFontSize(8);
+        yPosition = addWrappedText(`How to fix: ${rec.howToFix}`, margin + 5, yPosition, pageWidth - 2 * margin - 5, 8);
+        yPosition += 5;
       }
       
-      yPosition += 15; // More space between recommendations
+      yPosition += 18; // More space between recommendations
     });
   }
 
@@ -559,24 +568,24 @@ export async function exportCompletePDF(data: WebAnalysisResult): Promise<void> 
     }
   }
 
-  // Enhanced Footer with better styling
+  // Enhanced Footer with better styling - FIXED OVERLAP
   const totalPages = pdf.internal.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     pdf.setPage(i);
     
     // Footer line
     pdf.setDrawColor(229, 231, 235);
-    pdf.line(margin, pageHeight - 20, pageWidth - margin, pageHeight - 20);
+    pdf.line(margin, pageHeight - 25, pageWidth - margin, pageHeight - 25);
     
-    // Footer text
+    // Footer text with proper spacing
     pdf.setFontSize(8);
     pdf.setTextColor(107, 114, 128);
-    pdf.text(`Generated by Web Performance Analyzer - ${new Date().toLocaleDateString()}`, margin, pageHeight - 12);
-    pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin - 20, pageHeight - 12);
+    pdf.text(`Generated by Web Performance Analyzer - ${new Date().toLocaleDateString()}`, margin, pageHeight - 18);
+    pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin - 25, pageHeight - 18);
     
-    // Website URL in footer
+    // Website URL in footer with more space
     pdf.setFontSize(7);
-    pdf.text(`Analysis for: ${data.url}`, margin, pageHeight - 6);
+    pdf.text(`Analysis for: ${data.url}`, margin, pageHeight - 10);
   }
 
   pdf.save(`web-analysis-complete-${data.url.replace(/https?:\/\//, '').replace(/[^\w]/g, '-')}.pdf`);
