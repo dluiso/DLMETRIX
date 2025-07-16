@@ -12,11 +12,29 @@ export default function TechnicalSeo({ checks }: TechnicalSeoProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   // Handle both array format (from shared reports) and object format (from original reports)
-  const checksArray = Array.isArray(checks) ? checks : Object.entries(checks || {}).map(([key, value]) => ({
-    check: key,
-    status: value ? 'pass' : 'fail',
-    description: `${key} check`
-  }));
+  const checksArray = Array.isArray(checks) ? checks : Object.entries(checks || {}).map(([key, value]) => {
+    // Create more descriptive labels and descriptions for better display
+    const checkLabels: Record<string, { label: string; description: string }> = {
+      hasViewportMeta: { label: 'Viewport Meta Tag', description: 'hasViewportMeta check' },
+      hasCharset: { label: 'Character Encoding', description: 'hasCharset check' },
+      hasSSL: { label: 'SSL Certificate', description: 'hasSSL check' },
+      minifiedHTML: { label: 'HTML Minification', description: 'minifiedHTML check' },
+      noInlineStyles: { label: 'External Stylesheets', description: 'noInlineStyles check' },
+      hasH1Tag: { label: 'H1 Tag Present', description: 'hasH1Tag check' },
+      hasMultipleHeadings: { label: 'Multiple Headings', description: 'hasMultipleHeadings check' },
+      hasMetaDescription: { label: 'Meta Description', description: 'hasMetaDescription check' },
+      sufficientContent: { label: 'Content Length', description: 'sufficientContent check' },
+      keywordInTitle: { label: 'Descriptive Title', description: 'keywordInTitle check' }
+    };
+    
+    const labelInfo = checkLabels[key] || { label: key, description: `${key} check` };
+    
+    return {
+      check: labelInfo.label,
+      status: value ? 'pass' : 'fail',
+      description: labelInfo.description
+    };
+  });
 
   const toggleExpanded = (key: string) => {
     const newExpanded = new Set(expandedItems);

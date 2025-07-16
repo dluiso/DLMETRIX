@@ -175,18 +175,34 @@ export default function SharePage() {
     charset: sharedReport.analysisData?.charset || sharedReport.analysisData?.seoAnalysis?.charset || null,
     langAttribute: sharedReport.analysisData?.langAttribute || sharedReport.analysisData?.seoAnalysis?.langAttribute || null,
     
-    // Open Graph data
+    // Open Graph data - structured for components
     ogTitle: sharedReport.analysisData?.ogTitle || null,
     ogDescription: sharedReport.analysisData?.ogDescription || null,
     ogImage: sharedReport.analysisData?.ogImage || null,
     ogUrl: sharedReport.analysisData?.ogUrl || null,
     ogType: sharedReport.analysisData?.ogType || null,
+    openGraphTags: sharedReport.analysisData?.openGraphTags || {
+      'og:title': sharedReport.analysisData?.ogTitle,
+      'og:description': sharedReport.analysisData?.ogDescription,
+      'og:image': sharedReport.analysisData?.ogImage,
+      'og:url': sharedReport.analysisData?.ogUrl,
+      'og:type': sharedReport.analysisData?.ogType,
+      'og:site_name': sharedReport.analysisData?.ogSiteName
+    },
     
-    // Twitter Cards data  
+    // Twitter Cards data - structured for components
     twitterCard: sharedReport.analysisData?.twitterCard || null,
     twitterTitle: sharedReport.analysisData?.twitterTitle || null,
     twitterDescription: sharedReport.analysisData?.twitterDescription || null,
     twitterImage: sharedReport.analysisData?.twitterImage || null,
+    twitterCardTags: sharedReport.analysisData?.twitterCardTags || {
+      'twitter:card': sharedReport.analysisData?.twitterCard,
+      'twitter:title': sharedReport.analysisData?.twitterTitle,
+      'twitter:description': sharedReport.analysisData?.twitterDescription,
+      'twitter:image': sharedReport.analysisData?.twitterImage,
+      'twitter:site': sharedReport.analysisData?.twitterSite,
+      'twitter:creator': sharedReport.analysisData?.twitterCreator
+    },
     
     // Headings structure
     headings: {
@@ -237,8 +253,22 @@ export default function SharePage() {
       viewportMeta: sharedReport.analysisData?.viewportMeta || sharedReport.analysisData?.seoAnalysis?.viewportMeta || null,
       charset: sharedReport.analysisData?.charset || sharedReport.analysisData?.seoAnalysis?.charset || null,
       langAttribute: sharedReport.analysisData?.langAttribute || null,
-      openGraphTags: sharedReport.analysisData?.openGraphTags || {},
-      twitterCardTags: sharedReport.analysisData?.twitterCardTags || {},
+      openGraphTags: sharedReport.analysisData?.openGraphTags || {
+        'og:title': sharedReport.analysisData?.ogTitle,
+        'og:description': sharedReport.analysisData?.ogDescription,
+        'og:image': sharedReport.analysisData?.ogImage,
+        'og:url': sharedReport.analysisData?.ogUrl,
+        'og:type': sharedReport.analysisData?.ogType,
+        'og:site_name': sharedReport.analysisData?.ogSiteName
+      },
+      twitterCardTags: sharedReport.analysisData?.twitterCardTags || {
+        'twitter:card': sharedReport.analysisData?.twitterCard,
+        'twitter:title': sharedReport.analysisData?.twitterTitle,
+        'twitter:description': sharedReport.analysisData?.twitterDescription,
+        'twitter:image': sharedReport.analysisData?.twitterImage,
+        'twitter:site': sharedReport.analysisData?.twitterSite,
+        'twitter:creator': sharedReport.analysisData?.twitterCreator
+      },
       headings: {
         h1: sharedReport.analysisData?.headings?.h1 || [],
         h2: sharedReport.analysisData?.headings?.h2 || [],
@@ -278,6 +308,10 @@ export default function SharePage() {
       performanceOverview: sharedReport.analysisData?.performanceOverview,
       technicalSeoAnalysis: sharedReport.analysisData?.technicalSeoAnalysis,
       technicalChecks: sharedReport.analysisData?.technicalChecks,
+      openGraphTags: sharedReport.analysisData?.openGraphTags,
+      twitterCardTags: sharedReport.analysisData?.twitterCardTags,
+      ogTitle: sharedReport.analysisData?.ogTitle,
+      twitterCard: sharedReport.analysisData?.twitterCard,
       allKeys: Object.keys(sharedReport.analysisData || {})
     },
     finalMappedData: {
@@ -440,7 +474,7 @@ export default function SharePage() {
             )}
 
             {/* Technical Checks */}
-            <TechnicalSeo checks={analysisData.technicalSeoAnalysis} />
+            <TechnicalSeo checks={analysisData.technicalSeoAnalysis || analysisData.technicalChecks} />
           </div>
         </div>
       </main>
