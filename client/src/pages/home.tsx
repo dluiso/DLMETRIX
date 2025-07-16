@@ -10,6 +10,7 @@ import SeoScore from "@/components/seo-score";
 import SeoSummaryCards from "@/components/seo-summary-cards";
 import MetaTagAnalysis from "@/components/meta-tag-analysis";
 import MetaDescriptionAnalysis from "@/components/meta-description-analysis";
+import HeadingStructureAnalysis from "@/components/heading-structure-analysis";
 import OpenGraphAnalysis from "@/components/open-graph-analysis";
 import TwitterCardsAnalysis from "@/components/twitter-cards-analysis";
 import VisualRecommendations from "@/components/visual-recommendations";
@@ -891,6 +892,9 @@ export default function Home() {
 
               {/* Meta Description Analysis */}
               <MetaDescriptionAnalysis data={seoData} />
+
+              {/* Heading Structure Analysis */}
+              <HeadingStructureAnalysis data={seoData} language={language} />
 
               {/* Open Graph and Twitter Cards */}
               <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
