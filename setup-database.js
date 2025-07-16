@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const readline = require('readline');
-const fs = require('fs');
-const { exec } = require('child_process');
+import readline from 'readline';
+import fs from 'fs';
+import { exec } from 'child_process';
+import { Pool } from 'pg';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -59,7 +60,6 @@ NODE_ENV="production"
 
     // Test connection using pg
     try {
-      const { Pool } = require('pg');
       const pool = new Pool({
         connectionString: databaseUrl,
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
@@ -132,6 +132,4 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-if (require.main === module) {
-  main();
-}
+main();
