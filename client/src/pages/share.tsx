@@ -9,6 +9,8 @@ import SeoSummaryCards from "@/components/seo-summary-cards";
 import MetaTagAnalysis from "@/components/meta-tag-analysis";
 import HeadingStructureAnalysis from "@/components/heading-structure-analysis";
 import OpenGraphAnalysis from "@/components/open-graph-analysis";
+import TwitterCardsAnalysis from "@/components/twitter-cards-analysis";
+import VisualRecommendations from "@/components/visual-recommendations";
 import PreviewTabs from "@/components/preview-tabs";
 import TechnicalSeo from "@/components/technical-seo";
 import CoreWebVitalsComponent from "@/components/core-web-vitals";
@@ -278,28 +280,28 @@ export default function SharePage() {
         </div>
       </div>
 
-      {/* Report Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
-          {/* Report Info */}
-          <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm text-blue-800 dark:text-blue-200">
-                    Generated: {new Date(sharedReport.createdAt).toLocaleString()}
-                  </span>
-                </div>
-                <div className="text-sm text-blue-600 dark:text-blue-400">
-                  Expires: {new Date(sharedReport.expiresAt).toLocaleString()}
-                </div>
+      {/* Report Content - EXACT SAME STRUCTURE AS ORIGINAL */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* Report Info Banner */}
+        <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Calendar className="w-4 h-4 text-blue-600" />
+                <span className="text-sm text-blue-800 dark:text-blue-200">
+                  Generated: {new Date(sharedReport.createdAt).toLocaleString()}
+                </span>
               </div>
-            </CardContent>
-          </Card>
+              <div className="text-sm text-blue-600 dark:text-blue-400">
+                Expires: {new Date(sharedReport.expiresAt).toLocaleString()}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
+        <div className="space-y-4 sm:space-y-6 lg:space-y-8">
           {/* Performance Overview */}
-          <PerformanceOverview
+          <PerformanceOverview 
             performanceScore={Number(analysisData.performanceOverview.performance) || 0}
             accessibilityScore={Number(analysisData.performanceOverview.accessibility) || 0}
             bestPracticesScore={Number(analysisData.performanceOverview.bestPractices) || 0}
@@ -308,73 +310,51 @@ export default function SharePage() {
           />
 
           {/* Core Web Vitals */}
-          {analysisData.coreWebVitals && (
-            <CoreWebVitalsComponent data={analysisData.coreWebVitals} language="en" />
-          )}
+          <CoreWebVitalsComponent data={analysisData.coreWebVitals} language="en" />
 
           {/* Screenshots */}
-          {(analysisData.screenshots?.mobile || analysisData.screenshots?.desktop) && (
-            <ScreenshotsView
-              mobileScreenshot={analysisData.screenshots.mobile}
-              desktopScreenshot={analysisData.screenshots.desktop}
-              url={analysisData.url}
-              language="en"
-            />
-          )}
-
-          {/* SEO Analysis with real data */}
-          <SeoScore data={{
-            score: Number(analysisData.performanceOverview.seo) || 25,
-            title: analysisData.seoAnalysis.title,
-            description: analysisData.seoAnalysis.description,
-            keywords: analysisData.seoAnalysis.keywords,
-            canonicalUrl: analysisData.seoAnalysis.canonicalUrl,
-            robotsMeta: analysisData.seoAnalysis.robotsMeta,
-            viewportMeta: analysisData.seoAnalysis.viewportMeta,
-            openGraphTags: analysisData.seoAnalysis.openGraphTags,
-            twitterCardTags: analysisData.seoAnalysis.twitterCardTags,
-            technicalSeoChecks: analysisData.technicalSeoAnalysis || [],
-            recommendations: analysisData.recommendations || []
-          }} />
-          
-          <MetaTagAnalysis data={analysisData} language="en" />
-
-          {/* Heading Structure */}
-          <HeadingStructureAnalysis 
-            data={{
-              headings: {
-                h1: analysisData.seoAnalysis.headings?.h1 || [],
-                h2: analysisData.seoAnalysis.headings?.h2 || [],
-                h3: analysisData.seoAnalysis.headings?.h3 || [],
-                h4: analysisData.seoAnalysis.headings?.h4 || [],
-                h5: analysisData.seoAnalysis.headings?.h5 || [],
-                h6: analysisData.seoAnalysis.headings?.h6 || []
-              },
-              headingStructure: analysisData.seoAnalysis.headingStructure || []
-            }}
+          <ScreenshotsView 
+            mobileScreenshot={analysisData.screenshots?.mobile}
+            desktopScreenshot={analysisData.screenshots?.desktop}
+            url={analysisData.url}
             language="en"
           />
 
-          {/* Social Media */}
-          <OpenGraphAnalysis data={analysisData} language="en" />
-          <PreviewTabs data={analysisData} language="en" />
+          {/* Legacy SEO Analysis - EXACT SAME STRUCTURE */}
+          <div className="grid gap-4 sm:gap-6">
+            {/* Preview Tabs */}
+            <PreviewTabs data={analysisData} language="en" />
 
-          {/* Technical SEO */}
-          {analysisData.technicalSeoAnalysis && analysisData.technicalSeoAnalysis.length > 0 && (
+            {/* Meta Tags Analysis */}
+            <MetaTagAnalysis data={analysisData} language="en" />
+
+            {/* Heading Structure Analysis */}
+            <HeadingStructureAnalysis data={analysisData} language="en" />
+
+            {/* Open Graph and Twitter Cards */}
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+              <OpenGraphAnalysis data={analysisData} language="en" />
+              <TwitterCardsAnalysis data={analysisData} language="en" />
+            </div>
+
+            {/* Visual Recommendations */}
+            <VisualRecommendations recommendations={analysisData.recommendations} language="en" />
+
+            {/* AI Search Content Analysis */}
+            {analysisData.aiSearchAnalysis && (
+              <AiSearchAnalysisComponent data={analysisData.aiSearchAnalysis} />
+            )}
+
+            {/* SEO Keyword Analysis */}
+            {analysisData.keywordAnalysis && (
+              <KeywordAnalysis data={analysisData.keywordAnalysis} />
+            )}
+
+            {/* Technical Checks */}
             <TechnicalSeo checks={analysisData.technicalSeoAnalysis} language="en" />
-          )}
-
-          {/* AI Search Analysis */}
-          {analysisData.aiSearchAnalysis && (
-            <AiSearchAnalysisComponent data={analysisData.aiSearchAnalysis} />
-          )}
-
-          {/* Keyword Analysis */}
-          {analysisData.keywordAnalysis && (
-            <KeywordAnalysis data={analysisData.keywordAnalysis} />
-          )}
+          </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>
