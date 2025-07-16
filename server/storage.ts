@@ -1,6 +1,7 @@
 import { webAnalyses, sharedReports, type WebAnalysis, type InsertWebAnalysis, type SharedReport, type InsertSharedReport } from "@shared/schema";
-import { db } from "./db";
+import { getDatabase } from "./db";
 import { eq, lt } from "drizzle-orm";
+import { nanoid } from "nanoid";
 
 export interface IStorage {
   getUser(id: number): Promise<any | undefined>;
@@ -144,6 +145,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createWebAnalysis(insertAnalysis: InsertWebAnalysis): Promise<WebAnalysis> {
+    const { db } = await getDatabase();
+    
     if (!db) {
       console.error('❌ Database not available for web analysis storage');
       // Fallback to memory storage for critical functionality
@@ -155,17 +158,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getWebAnalysis(id: number): Promise<WebAnalysis | undefined> {
+    const { db } = await getDatabase();
     if (!db) return undefined;
     const [analysis] = await db.select().from(webAnalyses).where(eq(webAnalyses.id, id));
     return analysis || undefined;
   }
 
   async getWebAnalysesByUrl(url: string): Promise<WebAnalysis[]> {
+    const { db } = await getDatabase();
     if (!db) return [];
     return await db.select().from(webAnalyses).where(eq(webAnalyses.url, url));
   }
 
   async createSharedReport(insertReport: InsertSharedReport): Promise<SharedReport> {
+    const { db } = await getDatabase();
+    
     if (!db) {
       console.error('❌ Database not available for shared reports, using memory fallback');
       // Fallback to memory storage for shared reports
@@ -191,6 +198,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSharedReport(shareToken: string): Promise<SharedReport | undefined> {
+    const { db } = await getDatabase();
+    
     if (!db) {
       console.log(`⚠️ Database not available, checking memory fallback for token: ${shareToken}`);
       // Try memory storage as fallback
@@ -221,6 +230,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async cleanExpiredSharedReports(): Promise<void> {
+    const { db } = await getDatabase();
     if (!db) return;
     const now = new Date();
     await db.delete(sharedReports).where(lt(sharedReports.expiresAt, now));
@@ -228,5 +238,5 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Use MemStorage for development, DatabaseStorage for production (with fallback)
-export const storage = process.env.NODE_ENV === 'production' && process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();
+// Use MemStorage for development, DatabaseStorage for production
+export const storage = process.env.NODE_ENV === 'production' ? new DatabaseStorage() : new MemStorage();
