@@ -125,11 +125,11 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
       ]
     });
 
-    // Run analysis for both mobile and desktop
-    const [mobileAnalysis, desktopAnalysis, basicSeoData] = await Promise.all([
-      runLighthouseAnalysis(url, 'mobile', browser),
-      runLighthouseAnalysis(url, 'desktop', browser),
-      fetchBasicSeoData(url)
+    // First get SEO data, then run analysis for both mobile and desktop
+    const basicSeoData = await fetchBasicSeoData(url);
+    const [mobileAnalysis, desktopAnalysis] = await Promise.all([
+      runLighthouseAnalysis(url, 'mobile', browser, basicSeoData),
+      runLighthouseAnalysis(url, 'desktop', browser, basicSeoData)
     ]);
 
     // Generate screenshots
@@ -243,7 +243,7 @@ async function performEnhancedSeoAnalysis(url: string): Promise<WebAnalysisResul
 }
 
 // Alternative Lighthouse analysis using Puppeteer directly for ARM64 compatibility
-async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', browser: any) {
+async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', browser: any, basicSeoData?: any) {
   console.log(`Starting manual performance analysis for ${device} (ARM64 compatible)`);
   
   const page = await browser.newPage();
@@ -361,7 +361,7 @@ async function runLighthouseAnalysis(url: string, device: 'mobile' | 'desktop', 
       diagnostics: generateBasicDiagnostics(loadTime, performanceMetrics),
       insights: generateBasicInsights(loadTime, performanceMetrics),
       recommendations: generateBasicRecommendations(loadTime, device),
-      technicalChecks: generateBasicTechnicalChecks({ status: response?.status() }, url)
+      technicalChecks: generateBasicTechnicalChecks(basicSeoData || { status: response?.status() }, url)
     };
   } catch (error) {
     await page.close();
