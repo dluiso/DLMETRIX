@@ -31,6 +31,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
 import { getTranslations } from "@/lib/translations";
 import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner, AIContentSpinner } from "@/components/loading-spinners";
+import AnimatedBackground from "@/components/animated-background";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -460,8 +461,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors relative">
+      {/* Animated Background - Web Transformation */}
+      <AnimatedBackground />
+      
       {/* Header */}
-      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
+      <header className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo and Title - Improved Mobile */}
@@ -639,7 +643,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className={seoData ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8" : ""}>
+      <main className={seoData ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 relative z-10" : "relative z-10"}>
         {/* Settings Panel */}
         {showSettings && (
           <Card className="mb-6 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
@@ -806,6 +810,9 @@ export default function Home() {
             {/* Elegant Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.1),rgba(255,255,255,0))]" />
+            
+            {/* Animated Background - Web Transformation */}
+            <AnimatedBackground />
             
             {/* Performance Analytics Background Pattern */}
             <div className="absolute inset-0 opacity-5 dark:opacity-10">
@@ -1173,8 +1180,8 @@ export default function Home() {
 
       {/* Enhanced Loading Overlay with Custom Spinners */}
       {analyzeMutation.isPending && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-slate-200 dark:border-slate-700">
             <div className="text-center">
               {/* Main DLMETRIX branded spinner */}
               <div className="mb-6">
