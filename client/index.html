@@ -61,66 +61,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Anti-Detection Script -->
+    <!-- Technology Obfuscation (Production Only) -->
     <script>
-      // Technology Fingerprint Obfuscation
-      (function() {
-        // Remove React/Framework indicators
-        if (typeof window !== 'undefined') {
-          delete window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-          delete window.React;
-          delete window.ReactDOM;
-          delete window.__vite__;
-          delete window.__VITE_HMR_PORT__;
-          delete window.Vue;
-          delete window.Angular;
-          delete window.$;
-          delete window.jQuery;
-          
-          // Mask framework globals
-          const frameworks = ['React', 'Vue', 'Angular', 'Vite', 'webpack', 'Babel'];
-          frameworks.forEach(fw => {
-            try {
-              Object.defineProperty(window, fw, {
-                value: undefined,
-                writable: false,
-                enumerable: false,
-                configurable: false
-              });
-            } catch(e) {}
+      // Only run obfuscation when not in development
+      if (window.location.hostname !== 'localhost' && 
+          !window.location.hostname.includes('127.0.0.1') && 
+          window.location.port !== '5000' &&
+          !window.location.hostname.includes('replit.app')) {
+        
+        // Basic technology hiding
+        setTimeout(function() {
+          // Remove source maps only
+          document.querySelectorAll('script[src*=".map"], link[href*=".map"]').forEach(function(el) {
+            el.remove();
           });
           
-          // Hide source maps and development indicators
-          const hideSourceMaps = () => {
-            document.querySelectorAll('script[src*=".map"], link[href*=".map"]').forEach(el => el.remove());
-            
-            // Hide any references to replit.app or development
-            document.querySelectorAll('script, link, meta').forEach(el => {
-              if (el.src && el.src.includes('replit')) {
-                el.src = el.src.replace(/replit\.app/g, 'dlmetrix.com');
-              }
-              if (el.href && el.href.includes('replit')) {
-                el.href = el.href.replace(/replit\.app/g, 'dlmetrix.com');
-              }
-              if (el.content && el.content.includes('replit')) {
-                el.content = el.content.replace(/replit/gi, 'DLMETRIX');
-              }
-            });
-          };
-          
-          // Override console to hide framework logs
-          const originalConsole = console.log;
-          console.log = (...args) => {
-            const msg = args.join(' ');
-            if (msg.includes('React') || msg.includes('Vite') || msg.includes('HMR')) return;
-            originalConsole.apply(console, args);
-          };
-          
-          // Run cleanup
-          setTimeout(hideSourceMaps, 100);
-          setInterval(hideSourceMaps, 5000);
-        }
-      })();
+          // Hide React DevTools
+          if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+            delete window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+          }
+        }, 1000);
+      }
     </script>
     
     <!-- Structured Data -->

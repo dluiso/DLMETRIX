@@ -13,16 +13,24 @@ const root = createRoot(container);
 root.render(<App />);
 
 // Initialize obfuscation systems only in production
-if (import.meta.env.PROD) {
+if (import.meta.env.PROD && window.location.hostname !== 'localhost') {
   setTimeout(() => {
-    initSimpleObfuscation();
-    initHostingObfuscation();
-    obfuscateUserAgent();
-  }, 500);
+    try {
+      initSimpleObfuscation();
+      initHostingObfuscation();
+      obfuscateUserAgent();
+    } catch (e) {
+      console.error('Obfuscation init failed:', e);
+    }
+  }, 1000);
 
   // Safe cleanup and storage cleaning
   setTimeout(() => {
-    safeCleanup();
-    cleanStorageReferences();
+    try {
+      safeCleanup();
+      cleanStorageReferences();
+    } catch (e) {
+      console.error('Cleanup failed:', e);
+    }
   }, 3000);
 }
