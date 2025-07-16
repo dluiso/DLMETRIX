@@ -144,7 +144,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createWebAnalysis(insertAnalysis: InsertWebAnalysis): Promise<WebAnalysis> {
-    if (!db) throw new Error('Database not available');
+    if (!db) {
+      console.error('❌ Database not available for web analysis storage');
+      // Fallback to memory storage for critical functionality
+      const memStorage = new MemStorage();
+      return await memStorage.createWebAnalysis(insertAnalysis);
+    }
     const [result] = await db.insert(webAnalyses).values(insertAnalysis).execute();
     return { id: result.insertId as number, ...insertAnalysis } as WebAnalysis;
   }
@@ -161,7 +166,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createSharedReport(insertReport: InsertSharedReport): Promise<SharedReport> {
-    if (!db) throw new Error('Database not available');
+    if (!db) {
+      console.error('❌ Database not available for shared reports, using memory fallback');
+      // Fallback to memory storage for shared reports
+      const memStorage = new MemStorage();
+      return await memStorage.createSharedReport(insertReport);
+    }
     
     console.log(`💾 Saving shared report to database with token: ${insertReport.shareToken}`);
     
