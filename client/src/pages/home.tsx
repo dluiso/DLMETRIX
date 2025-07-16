@@ -675,10 +675,13 @@ export default function Home() {
                           </address>
                         </div>
                         <div className="space-y-2">
-                          <p className="font-medium">Application Registration Number:</p>
-                          <p className="text-slate-600 dark:text-slate-400 font-mono">
-                            EU VAT: EU847629301
-                          </p>
+                          <p className="font-medium">Application Registration:</p>
+                          <div className="text-slate-600 dark:text-slate-400 font-mono space-y-1">
+                            <p>DLMETRIX™</p>
+                            <p>App Registration No. DLM-2025-US-01783</p>
+                            <p>© 2025 DLMETRIX. All rights reserved.</p>
+                            <p>Copyright Reference: TXu 2-974-635</p>
+                          </div>
                         </div>
                       </div>
                     </DialogContent>

@@ -156,7 +156,7 @@ Preferred communication style: Simple, everyday language.
 - **Complete Legal Information**: Added Luis Mena Hernandez full legal details including address and EU VAT registration
 - **Professional Presentation**: Modal includes structured sections for rights, legal address, and registration number
 - **Consistent Implementation**: Updated across all pages using the centralized Footer component and homepage footer
-- **Generated EU VAT Number**: Created realistic registration number (EU847629301) following EU VAT format standards
+- **Updated Legal Registration Information**: Now shows official DLMETRIX trademark and US registration details (DLM-2025-US-01783) with copyright reference (TXu 2-974-635)
 - **Dual Footer Support**: Updated both general Footer component and homepage-specific footer with identical Legal Notice functionality
 
 ### SSL/HTTPS Detection Fix (January 15, 2025)
