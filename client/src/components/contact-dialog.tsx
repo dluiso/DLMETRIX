@@ -35,9 +35,10 @@ export default function ContactDialog({ language = 'en' }: ContactDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" className="w-full justify-start md:justify-center">
           <Mail className="w-4 h-4" />
-          <span className="hidden sm:inline ml-2">{t.contact}</span>
+          <span className="ml-2 md:hidden lg:inline">{t.contact}</span>
+          <span className="hidden md:inline lg:hidden ml-2">{t.contact}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

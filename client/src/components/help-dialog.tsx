@@ -31,9 +31,10 @@ export default function HelpDialog({ language }: HelpDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" className="w-full justify-start md:justify-center">
           <HelpCircle className="w-4 h-4" />
-          <span className="hidden sm:inline ml-2">{t.help}</span>
+          <span className="ml-2 md:hidden lg:inline">{t.help}</span>
+          <span className="hidden md:inline lg:hidden ml-2">{t.help}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">

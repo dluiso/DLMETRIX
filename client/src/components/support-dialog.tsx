@@ -15,9 +15,10 @@ export default function SupportDialog({ language = 'en' }: SupportDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300">
+        <Button variant="ghost" size="sm" className="w-full justify-start md:justify-center text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300">
           <Coffee className="w-4 h-4" />
-          <span className="hidden sm:inline ml-2">{t.enjoyingDlmetrix}</span>
+          <span className="ml-2 md:hidden lg:inline">{t.enjoyingDlmetrix}</span>
+          <span className="hidden md:inline lg:hidden ml-2">{t.enjoyingDlmetrix}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

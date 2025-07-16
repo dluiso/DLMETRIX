@@ -44,10 +44,7 @@ export default function Home() {
   const [language, setLanguage] = useState<'en' | 'es'>('en');
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showWhyDlmetrix, setShowWhyDlmetrix] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
-  const [showContact, setShowContact] = useState(false);
-  const [showSupport, setShowSupport] = useState(false);
+
   const { toast } = useToast();
 
   const analyzeMutation = useMutation({
@@ -426,31 +423,13 @@ export default function Home() {
               <div className="flex flex-col space-y-3">
                 {/* Main Navigation */}
                 <div className="grid grid-cols-2 gap-3 px-4">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setShowWhyDlmetrix(true);
-                    }}
-                    className="justify-start"
-                  >
-                    <Info className="w-4 h-4 mr-2" />
-                    {t.whyDlmetrix}
-                  </Button>
+                  <div onClick={() => setIsMobileMenuOpen(false)}>
+                    <WhyDlmetrixDialog language={language} />
+                  </div>
                   
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setShowHelp(true);
-                    }}
-                    className="justify-start"
-                  >
-                    <HelpCircle className="w-4 h-4 mr-2" />
-                    {t.help}
-                  </Button>
+                  <div onClick={() => setIsMobileMenuOpen(false)}>
+                    <HelpDialog language={language} />
+                  </div>
                 </div>
                 
                 {/* Settings and History */}
@@ -524,31 +503,13 @@ export default function Home() {
 
                 {/* Contact and Support */}
                 <div className="grid grid-cols-2 gap-3 px-4 pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setShowContact(true);
-                    }}
-                    className="justify-start"
-                  >
-                    <Globe className="w-4 h-4 mr-2" />
-                    {t.contact}
-                  </Button>
+                  <div onClick={() => setIsMobileMenuOpen(false)}>
+                    <ContactDialog language={language} />
+                  </div>
                   
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setShowSupport(true);
-                    }}
-                    className="justify-start"
-                  >
-                    <Coffee className="w-4 h-4 mr-2" />
-                    {t.enjoyingDlmetrix}
-                  </Button>
+                  <div onClick={() => setIsMobileMenuOpen(false)}>
+                    <SupportDialog language={language} />
+                  </div>
                 </div>
               </div>
             </div>
