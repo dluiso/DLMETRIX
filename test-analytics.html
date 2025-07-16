@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Google Analytics</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ2SPJYM5Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-EQ2SPJYM5Y');
+    </script>
+</head>
+<body>
+    <h1>Test Google Analytics</h1>
+    <button onclick="testEvent()">Test Event</button>
+    
+    <script>
+        function testEvent() {
+            gtag('event', 'test_event', {
+                event_category: 'test',
+                event_label: 'button_click',
+                value: 1
+            });
+            alert('Event sent to Google Analytics');
+        }
+        
+        // Test page view
+        gtag('config', 'G-EQ2SPJYM5Y', {
+            page_path: '/test'
+        });
+    </script>
+</body>
+</html>
