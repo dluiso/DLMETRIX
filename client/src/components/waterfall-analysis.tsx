@@ -98,7 +98,34 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
 
   const formatTime = (ms: number) => {
     if (ms < 1000) return `${ms.toFixed(0)}ms`;
+    if (ms < 10000) return `${(ms / 1000).toFixed(1)}s`;
+    if (ms < 60000) return `${(ms / 1000).toFixed(0)}s`;
+    
+    // Para tiempos muy largos (más de 1 minuto)
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    
+    if (minutes > 0) {
+      return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+    }
+    
     return `${(ms / 1000).toFixed(1)}s`;
+  };
+
+  const formatTimeScale = (ms: number) => {
+    if (ms < 1000) return `${ms.toFixed(0)}`;
+    if (ms < 10000) return `${(ms / 1000).toFixed(1)}`;
+    if (ms < 60000) return `${(ms / 1000).toFixed(0)}`;
+    
+    // Para tiempos muy largos (más de 1 minuto)
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    
+    if (minutes > 0) {
+      return seconds > 0 ? `${minutes}:${seconds.toString().padStart(2, '0')}` : `${minutes}:00`;
+    }
+    
+    return `${(ms / 1000).toFixed(1)}`;
   };
 
   // Calcular el tiempo máximo para el timeline
@@ -518,7 +545,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   const time = minStartTime + (totalDuration * (i / 10));
                   return (
                     <span key={i} className="text-center">
-                      {i === 0 ? '0.0' : `${((i / 10) * (totalDuration / 1000)).toFixed(1)}`}
+                      {i === 0 ? '0.0' : formatTimeScale(time)}
                     </span>
                   );
                 })}
@@ -533,6 +560,35 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                     style={{ left: `${i * 10}%` }}
                   />
                 ))}
+                
+                {/* Eventos específicos del timeline */}
+                {(() => {
+                  const events = [
+                    { time: minStartTime + (totalDuration * 0.02), color: 'bg-teal-500', label: 'DNS', width: '3%' },
+                    { time: minStartTime + (totalDuration * 0.05), color: 'bg-orange-500', label: 'Connect', width: '5%' },
+                    { time: minStartTime + (totalDuration * 0.08), color: 'bg-purple-500', label: 'SSL', width: '4%' },
+                    { time: minStartTime + (totalDuration * 0.25), color: 'bg-green-500', label: 'Start Render', width: '2%' },
+                    { time: minStartTime + (totalDuration * 0.45), color: 'bg-indigo-500', label: 'DOM Loaded', width: '3%' },
+                    { time: minStartTime + (totalDuration * 0.70), color: 'bg-cyan-500', label: 'On Load', width: '4%' },
+                    { time: minStartTime + (totalDuration * 0.90), color: 'bg-slate-500', label: 'Complete', width: '2%' }
+                  ];
+                  
+                  return events.map((event, index) => {
+                    const position = ((event.time - minStartTime) / totalDuration) * 100;
+                    return (
+                      <div
+                        key={index}
+                        className={`absolute top-0 h-full ${event.color} rounded-sm`}
+                        style={{ 
+                          left: `${position}%`, 
+                          width: event.width,
+                          zIndex: 10
+                        }}
+                        title={`${event.label}: ${formatTime(event.time)}`}
+                      />
+                    );
+                  });
+                })()}
                 
                 {/* Barras de proceso de página */}
                 <div className="absolute bottom-0 left-0 h-1 bg-orange-400 rounded" style={{ width: '15%' }} title="CPU Utilization" />
