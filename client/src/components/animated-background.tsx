@@ -21,7 +21,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '4px', 
           height: '75%', 
-          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.6), rgba(234, 88, 12, 0.6), rgba(202, 138, 4, 0.6), rgba(37, 99, 235, 0.6), rgba(22, 163, 74, 0.6))',
+          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.3), rgba(234, 88, 12, 0.3), rgba(202, 138, 4, 0.3), rgba(37, 99, 235, 0.3), rgba(22, 163, 74, 0.3))',
           transformOrigin: 'bottom',
           animationDelay: '0s',
           animationDuration: '10s'
@@ -38,7 +38,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '2.5px', 
           height: '30%', 
-          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.6), rgba(234, 88, 12, 0.6), rgba(202, 138, 4, 0.6))',
+          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.3), rgba(234, 88, 12, 0.3), rgba(202, 138, 4, 0.3))',
           transformOrigin: 'bottom',
           animationDelay: '0.8s',
           animationDuration: '6s'
@@ -55,7 +55,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '1.5px', 
           height: '45%', 
-          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.6), rgba(234, 88, 12, 0.6), rgba(202, 138, 4, 0.6), rgba(37, 99, 235, 0.6))',
+          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.3), rgba(234, 88, 12, 0.3), rgba(202, 138, 4, 0.3), rgba(37, 99, 235, 0.3))',
           transformOrigin: 'bottom',
           animationDelay: '1.5s',
           animationDuration: '7s'
@@ -72,7 +72,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '3px', 
           height: '55%', 
-          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.6), rgba(234, 88, 12, 0.6), rgba(202, 138, 4, 0.6), rgba(37, 99, 235, 0.6))',
+          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.3), rgba(234, 88, 12, 0.3), rgba(202, 138, 4, 0.3), rgba(37, 99, 235, 0.3))',
           transformOrigin: 'bottom',
           animationDelay: '0.3s',
           animationDuration: '8s'
@@ -89,7 +89,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '3.5px', 
           height: '75%', 
-          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.6), rgba(234, 88, 12, 0.6), rgba(202, 138, 4, 0.6), rgba(37, 99, 235, 0.6), rgba(22, 163, 74, 0.6))',
+          background: 'linear-gradient(to top, rgba(220, 38, 38, 0.3), rgba(234, 88, 12, 0.3), rgba(202, 138, 4, 0.3), rgba(37, 99, 235, 0.3), rgba(22, 163, 74, 0.3))',
           transformOrigin: 'bottom',
           animationDelay: '1.2s',
           animationDuration: '10s'
