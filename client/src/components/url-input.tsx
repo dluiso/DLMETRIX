@@ -65,57 +65,7 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
 
   return (
     <div className="relative mb-6 sm:mb-8">
-      {/* Neon border effect - elegant and visible */}
-      <div className="absolute inset-0 rounded-lg pointer-events-none overflow-hidden">
-        {/* Top line - from center left to center right */}
-        <div 
-          className="absolute left-0 top-0 h-1 w-full"
-          style={{
-            background: 'linear-gradient(to right, transparent 0%, #ef4444 15%, #f97316 40%, #eab308 70%, #22c55e 100%)',
-            boxShadow: '0 0 15px rgba(239, 68, 68, 0.8), 0 0 30px rgba(34, 197, 94, 0.4)',
-            filter: 'blur(0.3px)',
-            animation: 'neon-glow 3s ease-in-out infinite alternate'
-          }}
-        />
-        
-        {/* Bottom line - from center left to center right */}
-        <div 
-          className="absolute left-0 bottom-0 h-1 w-full"
-          style={{
-            background: 'linear-gradient(to right, transparent 0%, #ef4444 15%, #f97316 40%, #eab308 70%, #22c55e 100%)',
-            boxShadow: '0 0 15px rgba(239, 68, 68, 0.8), 0 0 30px rgba(34, 197, 94, 0.4)',
-            filter: 'blur(0.3px)',
-            animation: 'neon-glow 3s ease-in-out infinite alternate',
-            animationDelay: '1s'
-          }}
-        />
-        
-        {/* Right vertical line - connecting the two lines */}
-        <div 
-          className="absolute right-0 top-0 w-1 h-full"
-          style={{
-            background: 'linear-gradient(to bottom, #22c55e 0%, #22c55e 100%)',
-            boxShadow: '0 0 15px rgba(34, 197, 94, 0.9), 0 0 30px rgba(34, 197, 94, 0.5)',
-            filter: 'blur(0.3px)',
-            animation: 'neon-glow 3s ease-in-out infinite alternate',
-            animationDelay: '2s'
-          }}
-        />
-        
-        {/* Left vertical line - starting point */}
-        <div 
-          className="absolute left-0 top-0 w-1 h-full"
-          style={{
-            background: 'linear-gradient(to bottom, #ef4444 0%, #ef4444 100%)',
-            boxShadow: '0 0 15px rgba(239, 68, 68, 0.9), 0 0 30px rgba(239, 68, 68, 0.5)',
-            filter: 'blur(0.3px)',
-            animation: 'neon-glow 3s ease-in-out infinite alternate',
-            animationDelay: '0.5s'
-          }}
-        />
-      </div>
-      
-      <Card className="relative z-10 shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
+      <Card className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
         <CardContent className="p-4 sm:p-6">
 
         <div className="flex items-center space-x-2 mb-4">
