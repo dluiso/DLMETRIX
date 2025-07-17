@@ -149,6 +149,19 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     return 'bg-gradient-to-r from-red-400 to-red-600 shadow-red-300';
   };
 
+  const getResourceTypeColor = (type: string) => {
+    switch (type) {
+      case 'document': return 'bg-teal-500';
+      case 'stylesheet': return 'bg-blue-500';
+      case 'script': return 'bg-yellow-500';
+      case 'image': return 'bg-green-500';
+      case 'font': return 'bg-purple-500';
+      case 'fetch': return 'bg-orange-500';
+      case 'xhr': return 'bg-pink-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
   const getPerformanceLabel = (duration: number) => {
     if (duration <= 100) return t.waterfallExcellent;
     if (duration <= 300) return t.waterfallGood;
@@ -217,6 +230,19 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 <span className="text-sm font-medium">{language === 'es' ? 'Tiempo de Bloqueo' : 'Total Blocking Time'}</span>
               </div>
               <div className="text-2xl font-bold text-red-600">{formatTime(totalBlockingTime)}</div>
+            </div>
+          </div>
+
+          {/* Leyenda de tipos de recursos */}
+          <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border">
+            <h4 className="text-sm font-medium mb-3">{language === 'es' ? 'Tipos de Recursos' : 'Resource Types'}</h4>
+            <div className="flex flex-wrap gap-3">
+              {resourceTypes.filter(rt => rt.key !== 'all').map(resourceType => (
+                <div key={resourceType.key} className="flex items-center gap-2">
+                  <div className={`w-4 h-4 rounded ${getResourceTypeColor(resourceType.key)}`}></div>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">{resourceType.label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -446,6 +472,97 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             </div>
           </div>
 
+          {/* Vista de conexión mejorada */}
+          <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <Wifi className="h-4 w-4" />
+              {language === 'es' ? 'Vista de Conexión' : 'Connection View'}
+            </h4>
+            
+            {/* Etiquetas de fases de conexión */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-teal-500 rounded-sm"></div>
+                <span className="text-xs">DNS Lookup</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-orange-500 rounded-sm"></div>
+                <span className="text-xs">Initial Connection</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-purple-500 rounded-sm"></div>
+                <span className="text-xs">SSL Negotiation</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-green-500 rounded-sm"></div>
+                <span className="text-xs">Start Render</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-indigo-500 rounded-sm"></div>
+                <span className="text-xs">DOM Content Loaded</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-cyan-500 rounded-sm"></div>
+                <span className="text-xs">On Load</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-slate-500 rounded-sm"></div>
+                <span className="text-xs">Document Complete</span>
+              </div>
+            </div>
+
+            {/* Timeline con escala de tiempo más detallada */}
+            <div className="relative mb-4">
+              <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 mb-2">
+                {Array.from({ length: 11 }, (_, i) => {
+                  const time = minStartTime + (totalDuration * (i / 10));
+                  return (
+                    <span key={i} className="text-center">
+                      {i === 0 ? '0.0' : `${((i / 10) * (totalDuration / 1000)).toFixed(1)}`}
+                    </span>
+                  );
+                })}
+              </div>
+              
+              <div className="relative h-8 bg-slate-200 dark:bg-slate-700 rounded">
+                {/* Grid de referencia */}
+                {Array.from({ length: 11 }, (_, i) => (
+                  <div
+                    key={i}
+                    className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600"
+                    style={{ left: `${i * 10}%` }}
+                  />
+                ))}
+                
+                {/* Barras de proceso de página */}
+                <div className="absolute bottom-0 left-0 h-1 bg-orange-400 rounded" style={{ width: '15%' }} title="CPU Utilization" />
+                <div className="absolute bottom-2 left-0 h-1 bg-blue-400 rounded" style={{ width: '60%' }} title="Bandwidth (0-5,000 Kbps)" />
+                <div className="absolute bottom-4 left-0 h-1 bg-purple-400 rounded" style={{ width: '85%' }} title="Browser Main Thread" />
+                <div className="absolute bottom-6 left-0 h-1 bg-green-400 rounded" style={{ width: '95%' }} title="Long Tasks" />
+              </div>
+              
+              {/* Etiquetas de proceso */}
+              <div className="mt-2 text-xs text-slate-600 dark:text-slate-400">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-2 h-2 bg-orange-400 rounded"></div>
+                  <span>CPU Utilization</span>
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-2 h-2 bg-blue-400 rounded"></div>
+                  <span>Bandwidth (0 - 5,000 Kbps)</span>
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-2 h-2 bg-purple-400 rounded"></div>
+                  <span>Browser Main Thread</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-400 rounded"></div>
+                  <span>Long Tasks</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Timeline de recursos */}
           <div className="space-y-2">
             <h4 className="font-medium mb-3">{t.resourceLoadingTimeline}:</h4>
@@ -487,8 +604,9 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                       <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '50%' }}></div>
                       <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '75%' }}></div>
                       
+                      {/* Barra de recurso con código de colores por tipo */}
                       <div
-                        className={`absolute top-0 h-full rounded-md shadow-sm transition-all duration-300 ${getPerformanceColor(resource.duration)}`}
+                        className={`absolute top-0 h-full rounded-md shadow-sm transition-all duration-300 ${getResourceTypeColor(resource.type)}`}
                         style={{
                           left: `${getResourceBarOffset(resource)}%`,
                           width: `${getResourceBarWidth(resource)}%`
