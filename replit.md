@@ -189,7 +189,7 @@ Preferred communication style: Simple, everyday language.
 - **SUBTLE INTEGRATION**:
   - Balanced opacity at 8% (light) / 6% (dark) for optimal visibility
   - Lines positioned from 15% to 80% horizontally
-  - More tenue colors with softer gradient transitions (rgba 0.6 opacity)
+  - Ultra-subtle colors with very soft gradient transitions (rgba 0.15 opacity)
   - Numbers positioned with fixed transform to prevent stretching
 - **USER IMPACT**: Background now shows realistic incremental progress with live counters that match line growth, representing varied website improvement levels with smooth, non-intrusive animations
 
