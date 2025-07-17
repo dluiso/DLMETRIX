@@ -628,13 +628,13 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 {t.noResourcesFound}
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {filteredResources.slice(0, 50).map((resource, index) => (
                   <div
                     key={index}
-                    className="group relative border border-slate-200 dark:border-slate-700 rounded-lg p-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    className="group relative border border-slate-200 dark:border-slate-700 rounded-md p-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
                         {getResourceIcon(resource.type)}
                         <span className="text-sm font-medium truncate" title={resource.url}>
@@ -643,18 +643,18 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                         {getStatusIcon(resource.status)}
                       </div>
                       
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="text-xs">
+                      <div className="flex items-center gap-1">
+                        <Badge variant="secondary" className="text-xs py-0 px-1">
                           {formatBytes(resource.size)}
                         </Badge>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs py-0 px-1">
                           {formatTime(resource.duration)}
                         </Badge>
                       </div>
                     </div>
 
                     {/* Barra de tiempo visual proporcional */}
-                    <div className="relative h-6 bg-slate-100 dark:bg-slate-700 rounded-md overflow-hidden">
+                    <div className="relative h-4 bg-slate-100 dark:bg-slate-700 rounded-sm overflow-hidden mb-1">
                       {/* Líneas de referencia sutiles */}
                       <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '25%' }}></div>
                       <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '50%' }}></div>
@@ -662,14 +662,14 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                       
                       {/* Barra de recurso con código de colores por tipo */}
                       <div
-                        className={`absolute top-0 h-full rounded-md shadow-sm transition-all duration-300 ${getResourceTypeColor(resource.type)}`}
+                        className={`absolute top-0 h-full rounded-sm shadow-sm transition-all duration-300 ${getResourceTypeColor(resource.type)}`}
                         style={{
                           left: `${getResourceBarOffset(resource)}%`,
                           width: `${getResourceBarWidth(resource)}%`
                         }}
                       >
                         {/* Mostrar tiempo solo si la barra es lo suficientemente ancha */}
-                        {getResourceBarWidth(resource) > 8 && (
+                        {getResourceBarWidth(resource) > 10 && (
                           <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white mix-blend-overlay">
                             {formatTime(resource.duration)}
                           </span>
@@ -683,31 +683,31 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                       ></div>
                     </div>
 
-                    {/* Badges de estado */}
-                    <div className="flex flex-wrap gap-1 mt-2">
+                    {/* Badges de estado - compactos */}
+                    <div className="flex flex-wrap gap-1">
                       {resource.cached && (
-                        <Badge variant="success" className="text-xs">
+                        <Badge variant="success" className="text-xs py-0 px-1 h-4">
                           {t.cached}
                         </Badge>
                       )}
                       {resource.isBlocking && (
-                        <Badge variant="destructive" className="text-xs">
+                        <Badge variant="destructive" className="text-xs py-0 px-1 h-4">
                           {t.blocking}
                         </Badge>
                       )}
                       {resource.isCritical && (
-                        <Badge variant="warning" className="text-xs">
+                        <Badge variant="warning" className="text-xs py-0 px-1 h-4">
                           {t.critical}
                         </Badge>
                       )}
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs py-0 px-1 h-4">
                         {getPerformanceLabel(resource.duration)}
                       </Badge>
                     </div>
 
                     {/* Información detallada visible en hover */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-2 text-xs text-slate-600 dark:text-slate-400">
-                      <div className="grid grid-cols-2 gap-2">
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 text-xs text-slate-600 dark:text-slate-400">
+                      <div className="grid grid-cols-2 gap-1">
                         <div>Start: {formatTime(resource.startTime)}</div>
                         <div>End: {formatTime(resource.endTime)}</div>
                         <div>Status: {resource.status}</div>
