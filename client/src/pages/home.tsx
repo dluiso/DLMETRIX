@@ -569,87 +569,95 @@ export default function Home() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-slate-200 dark:border-slate-700 py-3 bg-white dark:bg-slate-800">
-              <div className="flex flex-col space-y-3">
+            <div className="md:hidden border-t border-slate-200 dark:border-slate-700 py-2 bg-white dark:bg-slate-800 overflow-hidden">
+              <div className="flex flex-col space-y-2 max-w-full">
                 {/* Main Navigation */}
-                <div className="grid grid-cols-2 gap-2 px-3">
-                  <WhyDlmetrixDialog language={language} />
-                  <HelpDialog language={language} />
+                <div className="flex flex-col space-y-2 px-2">
+                  <div className="flex space-x-2">
+                    <div className="flex-1"><WhyDlmetrixDialog language={language} /></div>
+                    <div className="flex-1"><HelpDialog language={language} /></div>
+                  </div>
                 </div>
                 
                 {/* Settings and History */}
-                <div className="grid grid-cols-2 gap-2 px-3">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      setShowSettings(!showSettings);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="justify-start"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    {t.settings}
-                  </Button>
-                  
-                  {analysisHistory.length > 0 && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => {
-                        setShowHistory(!showHistory);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="relative justify-start"
-                    >
-                      <History className="w-4 h-4 mr-2" />
-                      {t.history}
-                      <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {analysisHistory.length}
-                      </span>
-                    </Button>
-                  )}
-                </div>
-
-                {/* Export Options - Only show if there's data */}
-                {seoData && (
-                  <div className="grid grid-cols-2 gap-2 px-3 pt-2 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex flex-col space-y-2 px-2">
+                  <div className="flex space-x-2">
                     <Button 
                       variant="ghost" 
                       size="sm"
                       onClick={() => {
-                        handleExportCSV();
+                        setShowSettings(!showSettings);
                         setIsMobileMenuOpen(false);
                       }}
-                      disabled={!seoData}
-                      className="justify-start"
+                      className="justify-start flex-1 text-xs"
                     >
-                      <FileDown className="w-4 h-4 mr-2" />
-                      CSV
+                      <Settings className="w-4 h-4 mr-1" />
+                      {t.settings}
                     </Button>
                     
-                    <Button 
-                      className="bg-primary hover:bg-blue-700 justify-start text-white"
-                      onClick={() => {
-                        handleExportPDF();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      disabled={!seoData || isExporting}
-                    >
-                      {isExporting ? (
-                        <Download className="w-4 h-4 mr-2 animate-spin" />
-                      ) : (
-                        <Bookmark className="w-4 h-4 mr-2" />
-                      )}
-                      PDF
-                    </Button>
+                    {analysisHistory.length > 0 && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => {
+                          setShowHistory(!showHistory);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="relative justify-start flex-1 text-xs"
+                      >
+                        <History className="w-4 h-4 mr-1" />
+                        {t.history}
+                        <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                          {analysisHistory.length}
+                        </span>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Export Options - Only show if there's data */}
+                {seoData && (
+                  <div className="flex flex-col space-y-2 px-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          handleExportCSV();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        disabled={!seoData}
+                        className="justify-start flex-1 text-xs"
+                      >
+                        <FileDown className="w-4 h-4 mr-1" />
+                        CSV
+                      </Button>
+                      
+                      <Button 
+                        className="bg-primary hover:bg-blue-700 justify-start text-white flex-1 text-xs"
+                        onClick={() => {
+                          handleExportPDF();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        disabled={!seoData || isExporting}
+                      >
+                        {isExporting ? (
+                          <Download className="w-4 h-4 mr-1 animate-spin" />
+                        ) : (
+                          <Bookmark className="w-4 h-4 mr-1" />
+                        )}
+                        PDF
+                      </Button>
+                    </div>
                   </div>
                 )}
 
                 {/* Contact and Support */}
-                <div className="grid grid-cols-2 gap-2 px-3 pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <ContactDialog language={language} />
-                  <SupportDialog language={language} />
+                <div className="flex flex-col space-y-2 px-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                  <div className="flex space-x-2">
+                    <div className="flex-1"><ContactDialog language={language} /></div>
+                    <div className="flex-1"><SupportDialog language={language} /></div>
+                  </div>
                 </div>
               </div>
             </div>

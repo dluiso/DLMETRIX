@@ -68,7 +68,7 @@ export default function OpenGraphAnalysis({ data }: OpenGraphAnalysisProps) {
             
             return (
               <div key={tag.key} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                <div className="flex items-start justify-between mb-1">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-1 gap-2">
                   <div className="flex items-center space-x-2">
                     {getStatusIcon(hasValue ? 'good' : 'error')}
                     <span className="font-medium text-slate-900 dark:text-white text-sm">{tag.label}</span>

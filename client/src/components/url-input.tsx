@@ -76,20 +76,20 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
         </div>
         
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative min-w-0">
             <Input
               type="text"
               placeholder={t.enterUrl}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="pl-4 pr-10 text-sm sm:text-base h-11 sm:h-12"
+              className="pl-4 pr-10 text-sm sm:text-base h-11 sm:h-12 w-full"
               disabled={isLoading}
             />
             <Link className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
           </div>
           <Button 
             type="submit" 
-            className="gradient-button h-11 sm:h-12 text-sm sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200 font-medium"
+            className="gradient-button h-11 sm:h-12 text-sm sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200 font-medium flex-shrink-0"
             disabled={isLoading}
           >
             {isLoading ? (

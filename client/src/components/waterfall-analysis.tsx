@@ -287,9 +287,9 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             <div>
               <label className="block text-sm font-medium mb-2">{language === 'es' ? 'Tipo de Recurso' : 'Resource Type'}:</label>
               <Tabs value={selectedResourceType} onValueChange={setSelectedResourceType}>
-                <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-1">
                   {resourceTypes.map(type => (
-                    <TabsTrigger key={type.key} value={type.key} className="text-xs">
+                    <TabsTrigger key={type.key} value={type.key} className="text-xs px-1 py-1">
                       {type.label}
                     </TabsTrigger>
                   ))}
@@ -334,8 +334,8 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
               <Zap className="h-4 w-4" />
               {language === 'es' ? 'Métricas de Rendimiento de Página' : 'Page Performance Metrics'}
             </h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 text-center">
-              <div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4 text-center">
+              <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
                   {language === 'es' ? 'Primer Byte' : 'First Byte'}
                 </div>
@@ -343,7 +343,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   {formatTime(minStartTime)}
                 </div>
               </div>
-              <div>
+              <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
                   {language === 'es' ? 'Primer Paint' : 'First Paint'}
                 </div>
@@ -351,15 +351,15 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   {formatTime(firstContentfulPaint === Infinity ? 0 : firstContentfulPaint)}
                 </div>
               </div>
-              <div>
+              <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
-                  {language === 'es' ? 'Paint Más Grande' : 'Largest Paint'}
+                  {language === 'es' ? 'Paint Grande' : 'Largest Paint'}
                 </div>
                 <div className="text-sm font-bold text-orange-600">
                   {formatTime(largestContentfulPaint)}
                 </div>
               </div>
-              <div>
+              <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
                   {language === 'es' ? 'T. Bloqueo' : 'Blocking Time'}
                 </div>
@@ -367,7 +367,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   {formatTime(totalBlockingTime)}
                 </div>
               </div>
-              <div>
+              <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
                   {language === 'es' ? 'Recursos' : 'Resources'}
                 </div>
@@ -375,7 +375,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   {currentData.resources.length}
                 </div>
               </div>
-              <div>
+              <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
                 <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
                   {language === 'es' ? 'Peso Total' : 'Total Weight'}
                 </div>

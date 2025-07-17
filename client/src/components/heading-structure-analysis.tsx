@@ -351,9 +351,9 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
         {/* Statistics */}
         <div>
           <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">{t.statistics}</h4>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-3">
             {Object.entries(stats).map(([level, count]) => (
-              <div key={level} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 text-center">
+              <div key={level} className="p-2 sm:p-3 rounded-lg bg-gray-50 dark:bg-gray-700 text-center">
                 <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                   {level.toUpperCase()}
                 </div>
