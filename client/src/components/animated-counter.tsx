@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 interface AnimatedCounterProps {
   targetValue: number;
@@ -13,16 +13,17 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
   delay, 
   className = "" 
 }) => {
-  const counterRef = useRef<HTMLDivElement>(null);
+  const [currentValue, setCurrentValue] = useState(0);
   const animationRef = useRef<number>();
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const isAnimatingRef = useRef(false);
 
   useEffect(() => {
     const runAnimation = () => {
-      if (!counterRef.current) return;
+      if (isAnimatingRef.current) return;
       
-      // Reset to 0
-      counterRef.current.textContent = "0%";
+      isAnimatingRef.current = true;
+      setCurrentValue(0);
       
       const startTime = Date.now();
       
@@ -32,20 +33,18 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
         
         // Smooth easing function
         const easeOut = 1 - Math.pow(1 - progress, 3);
+        const newValue = Math.round(targetValue * easeOut);
         
-        const currentValue = Math.round(targetValue * easeOut);
-        
-        if (counterRef.current) {
-          counterRef.current.textContent = `${currentValue}%`;
-        }
+        setCurrentValue(newValue);
         
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
         } else {
+          isAnimatingRef.current = false;
           // Schedule next animation cycle
           timeoutRef.current = setTimeout(() => {
             runAnimation();
-          }, 1000); // 1 second pause between cycles
+          }, 2000); // 2 seconds pause between cycles
         }
       };
       
@@ -62,22 +61,26 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      isAnimatingRef.current = false;
     };
   }, [targetValue, duration, delay]);
 
   return (
     <div 
-      ref={counterRef}
-      className={`font-bold text-gray-600 dark:text-gray-400 opacity-75 ${className}`}
+      className={`font-bold text-gray-600 dark:text-gray-400 opacity-70 ${className}`}
       style={{ 
-        transform: 'none',
-        position: 'relative',
-        display: 'inline-block',
+        position: 'absolute',
+        top: '0',
+        left: '100%',
+        marginLeft: '0.5rem',
+        whiteSpace: 'nowrap',
+        fontSize: 'inherit',
+        lineHeight: '1',
         minWidth: '3rem',
-        textAlign: 'center'
+        textAlign: 'left'
       }}
     >
-      0%
+      {currentValue}%
     </div>
   );
 };

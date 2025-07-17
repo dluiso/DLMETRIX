@@ -164,11 +164,13 @@ Preferred communication style: Simple, everyday language.
   - Partial lines: red → orange → yellow → blue (appropriate to their completion)
   - Represents website improvement from problematic (red) to optimized (green)
 - **REAL-TIME INCREMENTAL COUNTERS**:
-  - Custom AnimatedCounter component with JavaScript-based animation
+  - Custom AnimatedCounter component with React state-based animation
   - Counters start at 0% and increment smoothly to target value
   - Each counter matches its line's completion percentage (30%, 45%, 55%, 100%)
   - Easing animation with smooth transitions and proper timing
   - No static elements - all numbers animated dynamically
+  - Fixed positioning prevents number stretching and deformation
+  - Improved cycle management with proper animation state control
 - **VARIED COMPLETION HEIGHTS**:
   - Only extreme lines (left and right) reach 100% completion
   - Center lines reach moderate completion (30%, 45%, 55%)
@@ -185,9 +187,10 @@ Preferred communication style: Simple, everyday language.
   - fireworks animation with scale and fade effects
   - Staggered delays across lines for natural progression
 - **SUBTLE INTEGRATION**:
-  - Reduced opacity to 8% (light) / 5% (dark) for more subtle appearance
+  - Balanced opacity at 8% (light) / 6% (dark) for optimal visibility
   - Lines positioned from 15% to 80% horizontally
-  - More tenue colors with softer gradient transitions
+  - More tenue colors with softer gradient transitions (rgba 0.6 opacity)
+  - Numbers positioned with fixed transform to prevent stretching
 - **USER IMPACT**: Background now shows realistic incremental progress with live counters that match line growth, representing varied website improvement levels with smooth, non-intrusive animations
 
 ### Shared Reports System Fix - COMPLETED (January 16, 2025)
