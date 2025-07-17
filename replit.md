@@ -151,30 +151,36 @@ Preferred communication style: Simple, everyday language.
 - **USER IMPACT**: Loading states now reflect DLMETRIX brand personality with playful yet professional animations, improving user engagement during analysis wait times
 
 ### Progressive Growth Lines Animated Background - COMPLETED (January 16, 2025)
-- **FEATURE REDESIGNED**: New animated background with progressive growth lines showing 0-100% website improvement
-- **VISUAL CONCEPT**: 5 vertical lines of varying widths growing from bottom to 75% screen height with progressive numbering
+- **FEATURE REDESIGNED**: New animated background with progressive growth lines showing incremental percentage improvement
+- **VISUAL CONCEPT**: 5 vertical lines of varying widths and heights with different completion percentages
 - **ANIMATED LINES**: 
-  - Line 1 (Left, thick): 4px width, 8s animation duration
-  - Line 2 (Center-left, medium): 2.5px width, 8.5s animation duration  
-  - Line 3 (Center, thin): 1.5px width, 7.5s animation duration
-  - Line 4 (Center-right, medium-thick): 3px width, 9s animation duration
-  - Line 5 (Right, thick): 3.5px width, 8.2s animation duration
+  - Line 1 (Left, thick): 4px width, 75% height, reaches 100% (10s animation)
+  - Line 2 (Center-left, medium): 2.5px width, 30% height, reaches 30% (6s animation)
+  - Line 3 (Center, thin): 1.5px width, 45% height, reaches 45% (7s animation)
+  - Line 4 (Center-right, medium-thick): 3px width, 55% height, reaches 55% (8s animation)
+  - Line 5 (Right, thick): 3.5px width, 75% height, reaches 100% (10s animation)
 - **COLOR PROGRESSION**:
-  - Gradient from red (0%) → orange (25%) → yellow (50%) → blue (75%) → green (100%)
-  - Each line shows complete color transition as it grows
+  - Full lines: red → orange → yellow → blue → green (complete spectrum)
+  - Partial lines: red → orange → yellow → blue (appropriate to their completion)
   - Represents website improvement from problematic (red) to optimized (green)
-- **PROGRESSIVE NUMBERING**:
-  - Numbers appear sequentially: 0, 25, 50, 75, 100
+- **INCREMENTAL PERCENTAGE DISPLAY**:
+  - Numbers show as percentages (10%, 25%, 50%, 75%, 100%)
   - Each number has pop animation with scale effect
   - Numbers positioned at corresponding gradient color sections
   - Staggered timing across all lines for organic flow
+  - No initial "0%" marker - starts with incremental progress
+- **VARIED COMPLETION HEIGHTS**:
+  - Only extreme lines (left and right) reach 100% completion
+  - Center lines reach moderate completion (30%, 45%, 55%)
+  - Creates varied visual landscape representing different optimization levels
 - **DISCRETE FIREWORKS EFFECT**:
-  - Triggered when lines reach 100% completion
+  - Triggered when lines reach their maximum completion
   - Central burst with 8 radiating sparkles
   - Small, subtle particles in multiple colors
   - Positioned at 25% from top (75% completion point)
 - **TECHNICAL FEATURES**:
-  - progressLine animation with scaleY transformation (8s duration)
+  - Multiple animation classes for different completion levels
+  - progressLineFull (10s), progressLine30 (6s), progressLine45 (7s), progressLine55 (8s)
   - numberPop animation with scale and opacity effects
   - fireworks animation with scale and fade effects
   - Staggered delays across lines for natural progression
@@ -182,7 +188,7 @@ Preferred communication style: Simple, everyday language.
   - Opacity 15% (light) / 10% (dark) for non-intrusive background
   - Lines positioned from 15% to 80% horizontally
   - Enhanced with floating improvement particles
-- **USER IMPACT**: Background now clearly visualizes website improvement journey from 0-100%, with DLMETRIX guiding the progressive growth to success
+- **USER IMPACT**: Background now clearly visualizes varied website improvement levels with incremental percentage display, showing DLMETRIX can optimize sites to different completion levels
 
 ### Shared Reports System Fix - COMPLETED (January 16, 2025)
 - **ISSUE RESOLVED**: Fixed shared reports appearing blank when accessed via share links

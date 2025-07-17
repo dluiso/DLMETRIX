@@ -14,8 +14,8 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
       {/* Progressive Growth Lines Animation */}
       <div className="absolute inset-0 opacity-15 dark:opacity-10">
         
-        {/* Line 1 - Thick, left side */}
-        <div className="absolute animate-progress-line" style={{ 
+        {/* Line 1 - Thick, left side - reaches 100% */}
+        <div className="absolute animate-progress-line-full" style={{ 
           left: '15%', 
           bottom: '0%', 
           width: '4px', 
@@ -23,75 +23,69 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6, #10B981)',
           transformOrigin: 'bottom',
           animationDelay: '0s',
-          animationDuration: '8s'
+          animationDuration: '10s'
         }}>
-          {/* Progress numbers */}
-          <div className="absolute left-6 bottom-0 w-8 h-8 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '0.5s' }}>0</div>
-          <div className="absolute left-6 bottom-1/5 w-8 h-8 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2s' }}>25</div>
-          <div className="absolute left-6 bottom-2/5 w-8 h-8 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '3.5s' }}>50</div>
-          <div className="absolute left-6 bottom-3/5 w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5s' }}>75</div>
-          <div className="absolute left-6 bottom-4/5 w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.5s' }}>100</div>
+          {/* Incremental progress numbers */}
+          <div className="absolute left-6 bottom-1/10 w-8 h-8 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '1s' }}>10%</div>
+          <div className="absolute left-6 bottom-1/5 w-8 h-8 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2s' }}>25%</div>
+          <div className="absolute left-6 bottom-2/5 w-8 h-8 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4s' }}>50%</div>
+          <div className="absolute left-6 bottom-3/5 w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6s' }}>75%</div>
+          <div className="absolute left-6 bottom-4/5 w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '8s' }}>100%</div>
         </div>
         
-        {/* Line 2 - Medium, center-left */}
-        <div className="absolute animate-progress-line" style={{ 
+        {/* Line 2 - Medium, center-left - reaches 30% */}
+        <div className="absolute animate-progress-line-30" style={{ 
           left: '35%', 
           bottom: '0%', 
           width: '2.5px', 
-          height: '75%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6, #10B981)',
+          height: '30%', 
+          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308)',
           transformOrigin: 'bottom',
           animationDelay: '0.8s',
-          animationDuration: '8.5s'
+          animationDuration: '6s'
         }}>
-          {/* Progress numbers */}
-          <div className="absolute left-5 bottom-0 w-7 h-7 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '1.3s' }}>0</div>
-          <div className="absolute left-5 bottom-1/5 w-7 h-7 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.8s' }}>25</div>
-          <div className="absolute left-5 bottom-2/5 w-7 h-7 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4.3s' }}>50</div>
-          <div className="absolute left-5 bottom-3/5 w-7 h-7 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5.8s' }}>75</div>
-          <div className="absolute left-5 bottom-4/5 w-7 h-7 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '7.3s' }}>100</div>
+          {/* Progress numbers for 30% */}
+          <div className="absolute left-5 bottom-1/3 w-7 h-7 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.5s' }}>10%</div>
+          <div className="absolute left-5 bottom-2/3 w-7 h-7 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4s' }}>20%</div>
+          <div className="absolute left-5 top-0 w-7 h-7 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5.5s' }}>30%</div>
         </div>
         
-        {/* Line 3 - Thin, center */}
-        <div className="absolute animate-progress-line" style={{ 
+        {/* Line 3 - Thin, center - reaches 45% */}
+        <div className="absolute animate-progress-line-45" style={{ 
           left: '50%', 
           bottom: '0%', 
           width: '1.5px', 
-          height: '75%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6, #10B981)',
+          height: '45%', 
+          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6)',
           transformOrigin: 'bottom',
           animationDelay: '1.5s',
-          animationDuration: '7.5s'
+          animationDuration: '7s'
         }}>
-          {/* Progress numbers */}
-          <div className="absolute left-4 bottom-0 w-6 h-6 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2s' }}>0</div>
-          <div className="absolute left-4 bottom-1/5 w-6 h-6 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '3.5s' }}>25</div>
-          <div className="absolute left-4 bottom-2/5 w-6 h-6 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5s' }}>50</div>
-          <div className="absolute left-4 bottom-3/5 w-6 h-6 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.5s' }}>75</div>
-          <div className="absolute left-4 bottom-4/5 w-6 h-6 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '8s' }}>100</div>
+          {/* Progress numbers for 45% */}
+          <div className="absolute left-4 bottom-1/4 w-6 h-6 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.8s' }}>15%</div>
+          <div className="absolute left-4 bottom-2/4 w-6 h-6 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4.5s' }}>30%</div>
+          <div className="absolute left-4 top-0 w-6 h-6 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.5s' }}>45%</div>
         </div>
         
-        {/* Line 4 - Medium-thick, center-right */}
-        <div className="absolute animate-progress-line" style={{ 
+        {/* Line 4 - Medium-thick, center-right - reaches 55% */}
+        <div className="absolute animate-progress-line-55" style={{ 
           left: '65%', 
           bottom: '0%', 
           width: '3px', 
-          height: '75%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6, #10B981)',
+          height: '55%', 
+          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6)',
           transformOrigin: 'bottom',
           animationDelay: '0.3s',
-          animationDuration: '9s'
+          animationDuration: '8s'
         }}>
-          {/* Progress numbers */}
-          <div className="absolute left-5 bottom-0 w-7 h-7 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '0.8s' }}>0</div>
-          <div className="absolute left-5 bottom-1/5 w-7 h-7 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.3s' }}>25</div>
-          <div className="absolute left-5 bottom-2/5 w-7 h-7 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '3.8s' }}>50</div>
-          <div className="absolute left-5 bottom-3/5 w-7 h-7 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5.3s' }}>75</div>
-          <div className="absolute left-5 bottom-4/5 w-7 h-7 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.8s' }}>100</div>
+          {/* Progress numbers for 55% */}
+          <div className="absolute left-5 bottom-1/5 w-7 h-7 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2s' }}>15%</div>
+          <div className="absolute left-5 bottom-2/5 w-7 h-7 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4s' }}>35%</div>
+          <div className="absolute left-5 top-0 w-7 h-7 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.5s' }}>55%</div>
         </div>
         
-        {/* Line 5 - Thick, right side */}
-        <div className="absolute animate-progress-line" style={{ 
+        {/* Line 5 - Thick, right side - reaches 100% */}
+        <div className="absolute animate-progress-line-full" style={{ 
           left: '80%', 
           bottom: '0%', 
           width: '3.5px', 
@@ -99,14 +93,14 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6, #10B981)',
           transformOrigin: 'bottom',
           animationDelay: '1.2s',
-          animationDuration: '8.2s'
+          animationDuration: '10s'
         }}>
-          {/* Progress numbers */}
-          <div className="absolute left-5 bottom-0 w-8 h-8 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '1.7s' }}>0</div>
-          <div className="absolute left-5 bottom-1/5 w-8 h-8 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '3.2s' }}>25</div>
-          <div className="absolute left-5 bottom-2/5 w-8 h-8 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4.7s' }}>50</div>
-          <div className="absolute left-5 bottom-3/5 w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.2s' }}>75</div>
-          <div className="absolute left-5 bottom-4/5 w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '7.7s' }}>100</div>
+          {/* Incremental progress numbers */}
+          <div className="absolute left-5 bottom-1/10 w-8 h-8 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.2s' }}>10%</div>
+          <div className="absolute left-5 bottom-1/5 w-8 h-8 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '3.2s' }}>25%</div>
+          <div className="absolute left-5 bottom-2/5 w-8 h-8 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5.2s' }}>50%</div>
+          <div className="absolute left-5 bottom-3/5 w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '7.2s' }}>75%</div>
+          <div className="absolute left-5 bottom-4/5 w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '9.2s' }}>100%</div>
         </div>
         
         {/* Discrete Fireworks Effect at 100% completion */}
