@@ -65,52 +65,52 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
 
   return (
     <div className="relative mb-6 sm:mb-8">
-      {/* Neon border effect - two lines meeting at center right */}
+      {/* Neon border effect - elegant and visible */}
       <div className="absolute inset-0 rounded-lg pointer-events-none overflow-hidden">
         {/* Top line - from center left to center right */}
         <div 
-          className="absolute left-0 top-0 h-0.5 w-full"
+          className="absolute left-0 top-0 h-1 w-full"
           style={{
-            background: 'linear-gradient(to right, transparent 0%, #ef4444 10%, #f97316 30%, #eab308 60%, #22c55e 100%)',
-            boxShadow: '0 0 8px rgba(239, 68, 68, 0.4)',
-            filter: 'blur(0.5px)',
-            animation: 'neon-glow 2s ease-in-out infinite alternate'
+            background: 'linear-gradient(to right, transparent 0%, #ef4444 15%, #f97316 40%, #eab308 70%, #22c55e 100%)',
+            boxShadow: '0 0 15px rgba(239, 68, 68, 0.8), 0 0 30px rgba(34, 197, 94, 0.4)',
+            filter: 'blur(0.3px)',
+            animation: 'neon-glow 3s ease-in-out infinite alternate'
           }}
         />
         
         {/* Bottom line - from center left to center right */}
         <div 
-          className="absolute left-0 bottom-0 h-0.5 w-full"
+          className="absolute left-0 bottom-0 h-1 w-full"
           style={{
-            background: 'linear-gradient(to right, transparent 0%, #ef4444 10%, #f97316 30%, #eab308 60%, #22c55e 100%)',
-            boxShadow: '0 0 8px rgba(239, 68, 68, 0.4)',
-            filter: 'blur(0.5px)',
-            animation: 'neon-glow 2s ease-in-out infinite alternate',
-            animationDelay: '0.5s'
+            background: 'linear-gradient(to right, transparent 0%, #ef4444 15%, #f97316 40%, #eab308 70%, #22c55e 100%)',
+            boxShadow: '0 0 15px rgba(239, 68, 68, 0.8), 0 0 30px rgba(34, 197, 94, 0.4)',
+            filter: 'blur(0.3px)',
+            animation: 'neon-glow 3s ease-in-out infinite alternate',
+            animationDelay: '1s'
           }}
         />
         
         {/* Right vertical line - connecting the two lines */}
         <div 
-          className="absolute right-0 top-0 w-0.5 h-full"
+          className="absolute right-0 top-0 w-1 h-full"
           style={{
             background: 'linear-gradient(to bottom, #22c55e 0%, #22c55e 100%)',
-            boxShadow: '0 0 8px rgba(34, 197, 94, 0.6)',
-            filter: 'blur(0.5px)',
-            animation: 'neon-glow 2s ease-in-out infinite alternate',
-            animationDelay: '1s'
+            boxShadow: '0 0 15px rgba(34, 197, 94, 0.9), 0 0 30px rgba(34, 197, 94, 0.5)',
+            filter: 'blur(0.3px)',
+            animation: 'neon-glow 3s ease-in-out infinite alternate',
+            animationDelay: '2s'
           }}
         />
         
         {/* Left vertical line - starting point */}
         <div 
-          className="absolute left-0 top-0 w-0.5 h-full"
+          className="absolute left-0 top-0 w-1 h-full"
           style={{
             background: 'linear-gradient(to bottom, #ef4444 0%, #ef4444 100%)',
-            boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)',
-            filter: 'blur(0.5px)',
-            animation: 'neon-glow 2s ease-in-out infinite alternate',
-            animationDelay: '1.5s'
+            boxShadow: '0 0 15px rgba(239, 68, 68, 0.9), 0 0 30px rgba(239, 68, 68, 0.5)',
+            filter: 'blur(0.3px)',
+            animation: 'neon-glow 3s ease-in-out infinite alternate',
+            animationDelay: '0.5s'
           }}
         />
       </div>
