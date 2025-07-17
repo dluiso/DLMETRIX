@@ -41,7 +41,7 @@ export default function SeoSummaryCards({ data }: SeoSummaryCardsProps) {
     return { score, total: 4, percentage: Math.round((score / 4) * 100) };
   };
 
-  // Calculate Twitter Cards summary
+  // Calculate X Cards summary
   const getTwitterSummary = () => {
     if (!data.twitterCardTags) return { score: 0, total: 3, percentage: 0 };
     
@@ -87,10 +87,10 @@ export default function SeoSummaryCards({ data }: SeoSummaryCardsProps) {
       description: 'Facebook sharing optimization'
     },
     {
-      title: 'Twitter Cards',
+      title: 'X Cards',
       icon: MessageSquare,
       summary: getTwitterSummary(),
-      description: 'Twitter sharing optimization'
+      description: 'X sharing optimization'
     },
     {
       title: 'Technical SEO',

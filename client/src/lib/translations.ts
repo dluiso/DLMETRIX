@@ -227,7 +227,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     feature6: "PDF and CSV export capabilities",
     feature7: "AI Search Content Analysis for search engine indexing",
     feature8: "SEO Keyword Analysis with trend visualization",
-    feature9: "Social media preview optimization (Open Graph, Twitter Cards)",
+    feature9: "Social media preview optimization (Open Graph, X Cards)",
     feature10: "Technical SEO auditing with detailed fix guides",
     howToUse: "How to Use",
     step1: "Enter a website URL in the search box above",
@@ -274,7 +274,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     seoAnalysisResults: "SEO Analysis Results",
     metaDescription: "Meta Description",
     openGraphTags: "Open Graph Tags",
-    twitterCards: "Twitter Cards",
+    twitterCards: "X Cards",
     technicalSeo: "Technical SEO",
     recommendations: "Recommendations",
     
@@ -465,7 +465,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     seoAnalysisResults: "Resultados del Análisis SEO",
     metaDescription: "Meta Descripción",
     openGraphTags: "Etiquetas Open Graph",
-    twitterCards: "Twitter Cards",
+    twitterCards: "Tarjetas X",
     technicalSeo: "SEO Técnico",
     recommendations: "Recomendaciones",
     

@@ -42,12 +42,12 @@ export default function TwitterCardsAnalysis({ data }: TwitterCardsAnalysisProps
   };
 
   const twitterTags = [
-    { key: 'twitter:card', label: 'Card Type', description: 'The type of Twitter Card (summary, summary_large_image, etc.)' },
-    { key: 'twitter:title', label: 'Title', description: 'The title to display in the Twitter Card' },
-    { key: 'twitter:description', label: 'Description', description: 'A description for the Twitter Card' },
-    { key: 'twitter:image', label: 'Image', description: 'The image to display in the Twitter Card' },
-    { key: 'twitter:site', label: 'Site', description: 'The Twitter username of the website (e.g., @username)' },
-    { key: 'twitter:creator', label: 'Creator', description: 'The Twitter username of the content creator' }
+    { key: 'twitter:card', label: 'Card Type', description: 'The type of X Card (summary, summary_large_image, etc.)' },
+    { key: 'twitter:title', label: 'Title', description: 'The title to display in the X Card' },
+    { key: 'twitter:description', label: 'Description', description: 'A description for the X Card' },
+    { key: 'twitter:image', label: 'Image', description: 'The image to display in the X Card' },
+    { key: 'twitter:site', label: 'Site', description: 'The X username of the website (e.g., @username)' },
+    { key: 'twitter:creator', label: 'Creator', description: 'The X username of the content creator' }
   ];
 
   return (
@@ -56,7 +56,7 @@ export default function TwitterCardsAnalysis({ data }: TwitterCardsAnalysisProps
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <MessageSquare className="w-5 h-5 text-primary flex-shrink-0" />
-            <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">Twitter Cards</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">X Cards</h3>
           </div>
           {getStatusBadge(getTwitterStatus())}
         </div>
