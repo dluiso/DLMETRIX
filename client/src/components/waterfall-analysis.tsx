@@ -95,6 +95,40 @@ export function WaterfallAnalysis({ analysis }: WaterfallAnalysisProps) {
     return (resource.startTime / maxEndTime) * 100;
   };
 
+  // Nueva función para obtener el color basado en el tiempo de carga
+  const getPerformanceColor = (duration: number) => {
+    // Definir rangos de tiempo (en ms)
+    if (duration <= 100) return 'bg-gradient-to-r from-green-400 to-green-500'; // Excelente
+    if (duration <= 300) return 'bg-gradient-to-r from-green-300 to-yellow-400'; // Bueno
+    if (duration <= 500) return 'bg-gradient-to-r from-yellow-400 to-orange-400'; // Aceptable
+    if (duration <= 1000) return 'bg-gradient-to-r from-orange-400 to-red-400'; // Lento
+    return 'bg-gradient-to-r from-red-400 to-red-600'; // Muy lento
+  };
+
+  // Nueva función para obtener el color del texto basado en el tiempo
+  const getPerformanceTextColor = (duration: number) => {
+    if (duration <= 100) return 'text-green-600 dark:text-green-400';
+    if (duration <= 300) return 'text-yellow-600 dark:text-yellow-400';
+    if (duration <= 500) return 'text-orange-600 dark:text-orange-400';
+    if (duration <= 1000) return 'text-red-600 dark:text-red-400';
+    return 'text-red-700 dark:text-red-500';
+  };
+
+  // Función para obtener íconos específicos mejorados para cada tipo de recurso
+  const getEnhancedResourceIcon = (type: string) => {
+    switch (type) {
+      case 'document': return <FileText className="h-4 w-4 text-blue-600" />;
+      case 'stylesheet': return <FileText className="h-4 w-4 text-blue-500" />;
+      case 'script': return <Zap className="h-4 w-4 text-yellow-600" />;
+      case 'image': return <Image className="h-4 w-4 text-green-600" />;
+      case 'font': return <FileText className="h-4 w-4 text-purple-600" />;
+      case 'fetch': return <Download className="h-4 w-4 text-cyan-600" />;
+      case 'xhr': return <Download className="h-4 w-4 text-indigo-600" />;
+      case 'other': return <FileText className="h-4 w-4 text-gray-600" />;
+      default: return <FileText className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Overview Cards */}
@@ -163,12 +197,14 @@ export function WaterfallAnalysis({ analysis }: WaterfallAnalysisProps) {
             onResourceTypeChange={setSelectedResourceType}
             resourceTypes={resourceTypes}
             filteredResources={filteredResources}
-            getResourceIcon={getResourceIcon}
+            getResourceIcon={getEnhancedResourceIcon}
             getStatusIcon={getStatusIcon}
             formatBytes={formatBytes}
             formatTime={formatTime}
             getResourceBarWidth={getResourceBarWidth}
             getResourceBarOffset={getResourceBarOffset}
+            getPerformanceColor={getPerformanceColor}
+            getPerformanceTextColor={getPerformanceTextColor}
           />
         </TabsContent>
 
@@ -180,12 +216,14 @@ export function WaterfallAnalysis({ analysis }: WaterfallAnalysisProps) {
             onResourceTypeChange={setSelectedResourceType}
             resourceTypes={resourceTypes}
             filteredResources={filteredResources}
-            getResourceIcon={getResourceIcon}
+            getResourceIcon={getEnhancedResourceIcon}
             getStatusIcon={getStatusIcon}
             formatBytes={formatBytes}
             formatTime={formatTime}
             getResourceBarWidth={getResourceBarWidth}
             getResourceBarOffset={getResourceBarOffset}
+            getPerformanceColor={getPerformanceColor}
+            getPerformanceTextColor={getPerformanceTextColor}
           />
         </TabsContent>
       </Tabs>
@@ -273,6 +311,8 @@ interface WaterfallViewProps {
   formatTime: (ms: number) => string;
   getResourceBarWidth: (resource: any) => number;
   getResourceBarOffset: (resource: any) => number;
+  getPerformanceColor: (duration: number) => string;
+  getPerformanceTextColor: (duration: number) => string;
 }
 
 function WaterfallView({
@@ -287,7 +327,9 @@ function WaterfallView({
   formatBytes,
   formatTime,
   getResourceBarWidth,
-  getResourceBarOffset
+  getResourceBarOffset,
+  getPerformanceColor,
+  getPerformanceTextColor
 }: WaterfallViewProps) {
   return (
     <div className="space-y-4">
@@ -320,37 +362,81 @@ function WaterfallView({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Performance Legend */}
+          <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+            <div className="text-sm font-medium mb-2">Performance Legend:</div>
+            <div className="flex flex-wrap gap-3 text-xs">
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded"></div>
+                <span>≤100ms (Excelente)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-2 bg-gradient-to-r from-green-300 to-yellow-400 rounded"></div>
+                <span>≤300ms (Bueno)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded"></div>
+                <span>≤500ms (Aceptable)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-2 bg-gradient-to-r from-orange-400 to-red-400 rounded"></div>
+                <span>≤1000ms (Lento)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-2 bg-gradient-to-r from-red-400 to-red-600 rounded"></div>
+                <span>&gt;1000ms (Muy lento)</span>
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-1">
             {filteredResources.map((resource, index) => (
-              <div key={index} className="flex items-center gap-2 py-1 hover:bg-muted/50 rounded px-2">
+              <div key={index} className="flex items-center gap-2 py-1.5 hover:bg-muted/50 rounded px-2 transition-colors">
                 <div className="flex items-center gap-2 w-1/3 min-w-0">
                   {getResourceIcon(resource.type)}
                   {getStatusIcon(resource.status)}
-                  <span className="text-sm truncate" title={resource.url}>
+                  <span className="text-sm truncate font-medium" title={resource.url}>
                     {resource.url.split('/').pop() || resource.url}
                   </span>
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="relative h-4 bg-gray-100 dark:bg-gray-800 rounded">
+                  <div className="relative h-5 bg-gray-100 dark:bg-gray-800 rounded-md shadow-sm">
+                    {/* Barra de progreso con gradiente basado en rendimiento */}
                     <div
-                      className={`absolute h-full rounded ${
-                        resource.isRenderBlocking ? 'bg-red-500' : 
-                        resource.isCritical ? 'bg-yellow-500' : 
-                        'bg-blue-500'
-                      }`}
+                      className={`absolute h-full rounded-md shadow-sm ${getPerformanceColor(resource.duration)}`}
                       style={{
                         left: `${getResourceBarOffset(resource)}%`,
                         width: `${getResourceBarWidth(resource)}%`
                       }}
                     />
+                    
+                    {/* Indicadores adicionales para recursos críticos */}
+                    {resource.isRenderBlocking && (
+                      <div className="absolute top-0 left-0 w-full h-full border-2 border-red-500 rounded-md opacity-50"></div>
+                    )}
+                    
+                    {/* Pequeño indicador de tiempo en la barra */}
+                    <div 
+                      className="absolute top-0 text-xs text-white bg-black bg-opacity-70 px-1 rounded-sm"
+                      style={{
+                        left: `${getResourceBarOffset(resource) + (getResourceBarWidth(resource) / 2)}%`,
+                        transform: 'translateX(-50%)'
+                      }}
+                    >
+                      {formatTime(resource.duration)}
+                    </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{formatBytes(resource.size)}</span>
-                  <span>{formatTime(resource.duration)}</span>
+                <div className="flex items-center gap-2 text-xs min-w-0">
+                  <span className="text-muted-foreground">{formatBytes(resource.size)}</span>
+                  <span className={`font-medium ${getPerformanceTextColor(resource.duration)}`}>
+                    {formatTime(resource.duration)}
+                  </span>
                   {resource.cached && <Badge variant="outline" className="text-xs">Cached</Badge>}
+                  {resource.isRenderBlocking && <Badge variant="destructive" className="text-xs">Blocking</Badge>}
+                  {resource.isCritical && <Badge variant="default" className="text-xs">Critical</Badge>}
                 </div>
               </div>
             ))}
