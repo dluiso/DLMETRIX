@@ -66,21 +66,23 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
   }, [targetValue, duration, delay]);
 
   return (
-    <div 
+    <span 
       className={`font-bold text-gray-600 dark:text-gray-400 opacity-70 ${className}`}
       style={{ 
         position: 'absolute',
-        top: '0',
+        top: '0px',
         left: '100%',
-        marginLeft: '0.5rem',
+        marginLeft: '8px',
         whiteSpace: 'nowrap',
-        fontSize: 'inherit',
         lineHeight: '1',
-        minWidth: '3rem',
-        textAlign: 'left'
+        width: '40px',
+        textAlign: 'left',
+        fontSize: 'inherit',
+        fontWeight: 'bold',
+        display: 'inline-block'
       }}
     >
       {currentValue}%
-    </div>
+    </span>
   );
 };

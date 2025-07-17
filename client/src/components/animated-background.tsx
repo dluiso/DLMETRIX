@@ -16,7 +16,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
       <div className="absolute inset-0 opacity-8 dark:opacity-6">
         
         {/* Gray overlay for attenuation */}
-        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 opacity-30 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 opacity-15 pointer-events-none"></div>
         
         {/* Line 1 - Thick, left side - reaches 100% */}
         <div className="absolute animate-progress-line-full" style={{ 
@@ -30,7 +30,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           animationDuration: '10s'
         }}>
           {/* Incremental counter */}
-          <div className="absolute left-0 top-0" style={{ transform: 'translateX(6px)' }}>
+          <div className="absolute" style={{ left: '6px', top: '0px' }}>
             <AnimatedCounter targetValue={100} duration={10} delay={0.5} className="text-xl" />
           </div>
         </div>
@@ -47,7 +47,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           animationDuration: '6s'
         }}>
           {/* Counter for 30% */}
-          <div className="absolute left-0 top-0" style={{ transform: 'translateX(5px)' }}>
+          <div className="absolute" style={{ left: '5px', top: '0px' }}>
             <AnimatedCounter targetValue={30} duration={6} delay={1.3} className="text-lg" />
           </div>
         </div>
@@ -64,7 +64,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           animationDuration: '7s'
         }}>
           {/* Counter for 45% */}
-          <div className="absolute left-0 top-0" style={{ transform: 'translateX(4px)' }}>
+          <div className="absolute" style={{ left: '4px', top: '0px' }}>
             <AnimatedCounter targetValue={45} duration={7} delay={2} className="text-base" />
           </div>
         </div>
@@ -81,7 +81,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           animationDuration: '8s'
         }}>
           {/* Counter for 55% */}
-          <div className="absolute left-0 top-0" style={{ transform: 'translateX(5px)' }}>
+          <div className="absolute" style={{ left: '5px', top: '0px' }}>
             <AnimatedCounter targetValue={55} duration={8} delay={0.8} className="text-lg" />
           </div>
         </div>
@@ -98,7 +98,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           animationDuration: '10s'
         }}>
           {/* Incremental counter */}
-          <div className="absolute left-0 top-0" style={{ transform: 'translateX(5px)' }}>
+          <div className="absolute" style={{ left: '5px', top: '0px' }}>
             <AnimatedCounter targetValue={100} duration={10} delay={1.7} className="text-xl" />
           </div>
         </div>
