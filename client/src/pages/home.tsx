@@ -1160,7 +1160,7 @@ export default function Home() {
 
             {/* Waterfall Analysis */}
             {seoData.waterfallAnalysis && (
-              <WaterfallAnalysis analysis={seoData.waterfallAnalysis} />
+              <WaterfallAnalysis analysis={seoData.waterfallAnalysis} language={language} />
             )}
 
             {/* Legacy SEO Analysis */}

@@ -151,6 +151,32 @@ export interface Translations {
   // Support Dialog
   supportTitle: string;
   supportDescription: string;
+  
+  // Waterfall Analysis
+  waterfallAnalysis: string;
+  waterfallAnalysisDesc: string;
+  resourceLoadingTimeline: string;
+  visualRepresentation: string;
+  performanceLegend: string;
+  waterfallExcellent: string;
+  waterfallGood: string;
+  waterfallAcceptable: string;
+  waterfallSlow: string;
+  waterfallVerySlow: string;
+  timeScale: string;
+  cached: string;
+  blocking: string;
+  critical: string;
+  noResourcesFound: string;
+  all: string;
+  document: string;
+  stylesheet: string;
+  script: string;
+  image: string;
+  font: string;
+  fetch: string;
+  xhr: string;
+  other: string;
 }
 
 export const translations: Record<'en' | 'es', Translations> = {
@@ -314,7 +340,33 @@ export const translations: Record<'en' | 'es', Translations> = {
     
     // Support Dialog
     supportTitle: "Support DLMETRIX",
-    supportDescription: "If you'd like to support this project, consider buying me a coffee ☕—your contribution helps keep the platform free and growing!"
+    supportDescription: "If you'd like to support this project, consider buying me a coffee ☕—your contribution helps keep the platform free and growing!",
+    
+    // Waterfall Analysis
+    waterfallAnalysis: "Waterfall Analysis",
+    waterfallAnalysisDesc: "Resource Loading Timeline",
+    resourceLoadingTimeline: "Resource Loading Timeline",
+    visualRepresentation: "Visual representation of resource loading sequence and timing",
+    performanceLegend: "Performance Legend",
+    waterfallExcellent: "Excellent",
+    waterfallGood: "Good",
+    waterfallAcceptable: "Acceptable",
+    waterfallSlow: "Slow",
+    waterfallVerySlow: "Very Slow",
+    timeScale: "Time Scale",
+    cached: "Cached",
+    blocking: "Blocking",
+    critical: "Critical",
+    noResourcesFound: "No resources found for the selected filter",
+    all: "All",
+    document: "Document",
+    stylesheet: "Stylesheet",
+    script: "Script",
+    image: "Image",
+    font: "Font",
+    fetch: "Fetch",
+    xhr: "XHR",
+    other: "Other"
   },
   es: {
     // Header and Navigation
@@ -476,7 +528,33 @@ export const translations: Record<'en' | 'es', Translations> = {
     
     // Support Dialog
     supportTitle: "Apoyar DLMETRIX",
-    supportDescription: "Si te gustaría apoyar este proyecto, considera comprarme un café ☕—tu contribución ayuda a mantener la plataforma gratuita y en crecimiento!"
+    supportDescription: "Si te gustaría apoyar este proyecto, considera comprarme un café ☕—tu contribución ayuda a mantener la plataforma gratuita y en crecimiento!",
+    
+    // Waterfall Analysis
+    waterfallAnalysis: "Análisis de Cascada",
+    waterfallAnalysisDesc: "Cronología de Carga de Recursos",
+    resourceLoadingTimeline: "Cronología de Carga de Recursos",
+    visualRepresentation: "Representación visual de la secuencia y tiempo de carga de recursos",
+    performanceLegend: "Leyenda de Rendimiento",
+    waterfallExcellent: "Excelente",
+    waterfallGood: "Bueno",
+    waterfallAcceptable: "Aceptable",
+    waterfallSlow: "Lento",
+    waterfallVerySlow: "Muy Lento",
+    timeScale: "Escala de Tiempo",
+    cached: "En Caché",
+    blocking: "Bloqueante",
+    critical: "Crítico",
+    noResourcesFound: "No se encontraron recursos para el filtro seleccionado",
+    all: "Todos",
+    document: "Documento",
+    stylesheet: "Hoja de Estilo",
+    script: "Script",
+    image: "Imagen",
+    font: "Fuente",
+    fetch: "Fetch",
+    xhr: "XHR",
+    other: "Otro"
   }
 };
 
