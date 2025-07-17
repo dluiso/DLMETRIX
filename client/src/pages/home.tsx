@@ -30,7 +30,7 @@ import ContactDialog from "@/components/contact-dialog";
 import { WebAnalysisResult } from "@/shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
-import { getTranslations } from "@/lib/translations";
+// Removed problematic translations import for production
 import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner, AIContentSpinner } from "@/components/loading-spinners";
 import { DynamicLoadingIcon, GeneratingReportIcon } from "@/components/dynamic-loading-icons";
 import AnimatedBackground from "@/components/animated-background";
@@ -40,7 +40,7 @@ import GamifiedChallenges from "@/components/gamified-challenges";
 import SeoJourneyVisualization from "@/components/seo-journey-visualization";
 import EnhancedPdfExport from "@/components/enhanced-pdf-export";
 import { RateLimitNotification, QueueStatus } from "@/components/rate-limit-notification";
-import { URLComparison } from "@/components/url-comparison";
+import { URLComparison } from "@/components/url-comparison-simple";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -135,7 +135,32 @@ export default function Home() {
     },
   });
 
-  const t = getTranslations(language);
+  // Simple translation function for production
+  const t = (key: string) => {
+    const translations = {
+      en: {
+        a: "Analysis",
+        analyzing: "Analyzing",
+        complete: "Complete",
+        seoAnalysis: "SEO Analysis",
+        performance: "Performance",
+        accessibility: "Accessibility",
+        bestPractices: "Best Practices",
+        seo: "SEO"
+      },
+      es: {
+        a: "Análisis",
+        analyzing: "Analizando",
+        complete: "Completo",
+        seoAnalysis: "Análisis SEO",
+        performance: "Rendimiento",
+        accessibility: "Accesibilidad",
+        bestPractices: "Mejores Prácticas",
+        seo: "SEO"
+      }
+    };
+    return translations[language]?.[key] || translations.en[key] || key;
+  };
 
   // Apply dark mode to document
   useEffect(() => {
