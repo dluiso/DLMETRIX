@@ -239,6 +239,8 @@ export const translations: Record<'en' | 'es', Translations> = {
     enterUrl: "Enter website URL to analyze",
     analyze: "Analyze",
     analyzing: "Analyzing...",
+    generatingReport: "Generating Report",
+    generatingReportDesc: "Almost done! Creating your comprehensive analysis report...",
     
     // Performance Overview
     performanceOverview: "Performance Overview",
@@ -430,6 +432,8 @@ export const translations: Record<'en' | 'es', Translations> = {
     enterUrl: "Ingresa URL del sitio web a analizar",
     analyze: "Analizar",
     analyzing: "Analizando...",
+    generatingReport: "Generando Reporte",
+    generatingReportDesc: "¡Casi terminado! Creando tu reporte de análisis integral...",
     
     // Performance Overview
     performanceOverview: "Resumen de Rendimiento",

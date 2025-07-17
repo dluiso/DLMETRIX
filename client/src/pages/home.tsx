@@ -32,6 +32,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
 import { getTranslations } from "@/lib/translations";
 import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner, AIContentSpinner } from "@/components/loading-spinners";
+import { DynamicLoadingIcon, GeneratingReportIcon } from "@/components/dynamic-loading-icons";
 import AnimatedBackground from "@/components/animated-background";
 
 export default function Home() {
@@ -45,6 +46,8 @@ export default function Home() {
   const [compareData, setCompareData] = useState<WebAnalysisResult | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es'>('en');
   const [isLegalOpen, setIsLegalOpen] = useState(false);
@@ -122,36 +125,47 @@ export default function Home() {
   const handleAnalyze = async (url: string) => {
     setError(null);
     setProtectionError(null);
+    setCurrentStep(0);
+    setIsGeneratingReport(false);
     setAnalysisProgress('Initializing analysis...');
     
     // Track analysis start event
     trackEvent('analysis_started', 'seo_analysis', url);
     
-    // Simulate progress updates
+    // Define analysis steps with more specific descriptions
     const progressSteps = [
-      'Launching browser automation...',
-      'Running Lighthouse analysis for mobile...',
-      'Running Lighthouse analysis for desktop...',
+      'Starting browser automation...',
+      'Connecting to website...',
+      'Running mobile performance analysis...',
+      'Running desktop performance analysis...',
       'Capturing mobile screenshot...',
       'Capturing desktop screenshot...',
       'Analyzing SEO metadata...',
       'Processing Core Web Vitals...',
-      'Generating recommendations...',
-      'Finalizing results...'
+      'Analyzing waterfall resources...',
+      'Generating AI content analysis...',
+      'Compiling recommendations...'
     ];
     
     let stepIndex = 0;
     const progressInterval = setInterval(() => {
       if (stepIndex < progressSteps.length - 1) {
         stepIndex++;
+        setCurrentStep(stepIndex);
         setAnalysisProgress(progressSteps[stepIndex]);
+      } else {
+        // Switch to final state
+        setIsGeneratingReport(true);
+        setAnalysisProgress('Generating report...');
       }
-    }, 1000);
+    }, 1200);
 
     analyzeMutation.mutate(url, {
       onSettled: () => {
         clearInterval(progressInterval);
         setAnalysisProgress('');
+        setCurrentStep(0);
+        setIsGeneratingReport(false);
       }
     });
   };
@@ -1205,12 +1219,18 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <Card className="p-6 sm:p-8 max-w-sm sm:max-w-md mx-auto w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-slate-200 dark:border-slate-700">
             <div className="text-center">
-              {/* Main DLMETRIX branded spinner */}
+              {/* Dynamic icon based on current step */}
               <div className="mb-6">
-                <DLMETRIXSpinner size="lg" />
+                {isGeneratingReport ? (
+                  <GeneratingReportIcon size="lg" />
+                ) : (
+                  <DynamicLoadingIcon step={currentStep} size="lg" />
+                )}
               </div>
               
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">{t.analyzingWebsite}</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                {isGeneratingReport ? t.generatingReport : t.analyzingWebsite}
+              </h3>
               <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4">
                 {analysisProgress || (language === 'en' ? 'Running comprehensive web performance analysis...' : 'Ejecutando análisis integral de rendimiento web...')}
               </p>
@@ -1218,39 +1238,17 @@ export default function Home() {
               {/* Progress bar */}
               <div className="bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden mb-4">
                 <div 
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-500 ease-out rounded-full animate-pulse"
-                  style={{ width: '75%' }}
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-500 ease-out rounded-full"
+                  style={{ width: isGeneratingReport ? '100%' : `${Math.min((currentStep / 10) * 100, 85)}%` }}
                 />
               </div>
               
-              {/* Analysis stages with themed spinners in pairs */}
-              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400 space-y-3">
-                {/* First row: Desktop & Mobile Analysis */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center justify-center space-x-1.5">
-                    <PerformanceSpinner size="sm" className="scale-75" />
-                    <span className="text-center">{t.desktopAnalysis}</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-1.5">
-                    <PerformanceSpinner size="sm" className="scale-75" />
-                    <span className="text-center">{t.mobileAnalysis}</span>
-                  </div>
+              {/* Show final message when generating report */}
+              {isGeneratingReport && (
+                <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="animate-pulse">{t.generatingReportDesc}</p>
                 </div>
-                
-                {/* Second row: SEO & AI Content Analysis */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center justify-center space-x-1.5">
-                    <SEOAnalysisSpinner size="sm" className="scale-75" />
-                    <span className="text-center">{t.seoAnalysis}</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-1.5">
-                    <AIContentSpinner size="sm" className="scale-75" />
-                    <span className="text-center">
-                      {language === 'en' ? 'AI Content Analysis' : 'Análisis de Contenido AI'}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </Card>
         </div>
