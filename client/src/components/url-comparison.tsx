@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from '@/hooks/use-translation';
 import { TrendingUp, TrendingDown, Minus, Calendar, BarChart3, Target } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
+import { getTranslations } from '@/lib/translations';
 
 interface ComparisonData {
   url: string;
@@ -26,11 +26,12 @@ interface ComparisonData {
 
 interface URLComparisonProps {
   analysisData: any;
+  language?: 'en' | 'es';
 }
 
-export function URLComparison({ analysisData }: URLComparisonProps) {
-  const { t } = useTranslation();
+export function URLComparison({ analysisData, language = 'en' }: URLComparisonProps) {
   const [showComparison, setShowComparison] = useState(false);
+  const t = getTranslations(language);
 
   const { data: comparisonHistory } = useQuery({
     queryKey: ['/api/comparison/history', analysisData?.url],

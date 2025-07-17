@@ -1228,7 +1228,7 @@ export default function Home() {
             />
 
             {/* URL Comparison Component */}
-            <URLComparison analysisData={seoData} />
+            <URLComparison analysisData={seoData} language={language} />
 
             {/* Core Web Vitals */}
             <CoreWebVitalsComponent data={seoData.coreWebVitals} language={language} />
