@@ -468,12 +468,12 @@ export default function Home() {
       <header className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Logo and Title - Improved Mobile */}
+            {/* Logo and Title - Mobile Optimized */}
             <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onClick={() => window.location.reload()}>
-              <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
+              <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-1.5 sm:p-2 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
                 <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <div className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate max-w-[120px] sm:max-w-none">
+              <div className="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 {t.title}
               </div>
             </div>
@@ -862,38 +862,38 @@ export default function Home() {
                 <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
-              {/* Feature Icons Section - Restored */}
+              {/* Feature Icons Section - Mobile Optimized */}
               <section className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-3 justify-center items-center text-slate-600 dark:text-slate-400 text-xs">
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Monitor className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center items-center text-slate-600 dark:text-slate-400 text-xs max-w-md mx-auto">
+                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <Monitor className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
                     <span className="font-medium">Desktop</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Smartphone className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <Smartphone className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
                     <span className="font-medium">Mobile</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <BarChart3 className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <BarChart3 className="w-3.5 h-3.5 text-purple-500 flex-shrink-0" />
                     <span className="font-medium">Performance</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Globe className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <Globe className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
                     <span className="font-medium">SEO</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <Search className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <Search className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
                     <span className="font-medium">AI Search</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <FileText className="w-4 h-4 text-pink-500 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <FileText className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
                     <span className="font-medium">Keywords</span>
                   </div>
                 </div>
               </section>
               
-              {/* Features Section - Compact */}
-              <section className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              {/* Features Section - Hidden on Mobile */}
+              <section className="mt-6 text-center animate-fade-in hidden sm:block" style={{ animationDelay: '0.4s' }}>
                 <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3">
                   {language === 'en' ? 'Comprehensive Website Analysis Features' : 'Características de Análisis Web Integral'}
                 </h2>
@@ -934,15 +934,16 @@ export default function Home() {
                 </div>
               </section>
               
-              {/* Footer for centered layout - Compact */}
+              {/* Footer for centered layout - Mobile Optimized */}
               <footer className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+                <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1 px-4">
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <span>© 2025 DLMETRIX. All rights reserved.</span>
-                    <span className="hidden sm:inline">•</span>
-                    <span>Made with ❤️ for web developers</span>
-                    <span className="hidden sm:inline">•</span>
-                    <span>Free SEO analysis tool</span>
+                    <div className="flex items-center gap-2">
+                      <span>Made with ❤️ for web developers</span>
+                      <span>•</span>
+                      <span>Free SEO analysis tool</span>
+                    </div>
                   </div>
                   <div>
                     <Dialog open={isLegalOpen} onOpenChange={setIsLegalOpen}>
