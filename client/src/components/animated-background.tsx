@@ -15,6 +15,9 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
       {/* Progressive Growth Lines Animation */}
       <div className="absolute inset-0 opacity-8 dark:opacity-6">
         
+        {/* Gray overlay for attenuation */}
+        <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 opacity-30 pointer-events-none"></div>
+        
         {/* Line 1 - Thick, left side - reaches 100% */}
         <div className="absolute animate-progress-line-full" style={{ 
           left: '15%', 
