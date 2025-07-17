@@ -87,12 +87,13 @@ export function WaterfallAnalysis({ analysis }: WaterfallAnalysisProps) {
 
   const getResourceBarWidth = (resource: any) => {
     const maxEndTime = Math.max(...currentData.resources.map(r => r.endTime));
-    return (resource.duration / maxEndTime) * 100;
+    // Usar el tiempo de duración real, no el tiempo total
+    return Math.max((resource.duration / maxEndTime) * 80, 2); // Máximo 80% del ancho, mínimo 2%
   };
 
   const getResourceBarOffset = (resource: any) => {
     const maxEndTime = Math.max(...currentData.resources.map(r => r.endTime));
-    return (resource.startTime / maxEndTime) * 100;
+    return (resource.startTime / maxEndTime) * 80; // Máximo 80% para dejar espacio
   };
 
   // Nueva función para obtener el color basado en el tiempo de carga
@@ -389,10 +390,34 @@ function WaterfallView({
             </div>
           </div>
 
+          {/* Timeline Scale */}
+          {data && data.resources && data.resources.length > 0 && (
+            <div className="mb-4">
+              <div className="flex items-center gap-2 w-1/3 min-w-0">
+                <div className="text-xs text-muted-foreground font-medium">Escala de Tiempo:</div>
+              </div>
+              <div className="flex-1 ml-2">
+                <div className="relative h-6 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded border">
+                  <div className="absolute inset-0 flex items-center justify-between px-2 text-xs text-muted-foreground">
+                    <span>0ms</span>
+                    <span>{formatTime(Math.max(...data.resources.map(r => r.endTime)) * 0.25)}</span>
+                    <span>{formatTime(Math.max(...data.resources.map(r => r.endTime)) * 0.5)}</span>
+                    <span>{formatTime(Math.max(...data.resources.map(r => r.endTime)) * 0.75)}</span>
+                    <span>{formatTime(Math.max(...data.resources.map(r => r.endTime)))}</span>
+                  </div>
+                  {/* Marcas de tiempo */}
+                  <div className="absolute top-0 left-1/4 w-px h-full bg-slate-400 opacity-50"></div>
+                  <div className="absolute top-0 left-1/2 w-px h-full bg-slate-400 opacity-50"></div>
+                  <div className="absolute top-0 left-3/4 w-px h-full bg-slate-400 opacity-50"></div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-1">
             {filteredResources.map((resource, index) => (
-              <div key={index} className="flex items-center gap-2 py-1.5 hover:bg-muted/50 rounded px-2 transition-colors">
-                <div className="flex items-center gap-2 w-1/3 min-w-0">
+              <div key={index} className="flex items-center gap-3 py-2 hover:bg-muted/50 rounded-lg px-3 transition-colors border-l-2 border-transparent hover:border-l-blue-300">
+                <div className="flex items-center gap-2 w-80 min-w-0">
                   {getResourceIcon(resource.type)}
                   {getStatusIcon(resource.status)}
                   <span className="text-sm truncate font-medium" title={resource.url}>
@@ -401,42 +426,63 @@ function WaterfallView({
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="relative h-5 bg-gray-100 dark:bg-gray-800 rounded-md shadow-sm">
+                  <div className="relative h-6 bg-gray-100 dark:bg-gray-800 rounded-md shadow-sm border">
+                    {/* Líneas de referencia de tiempo */}
+                    <div className="absolute top-0 left-1/4 w-px h-full bg-gray-300 dark:bg-gray-600 opacity-40"></div>
+                    <div className="absolute top-0 left-1/2 w-px h-full bg-gray-300 dark:bg-gray-600 opacity-40"></div>
+                    <div className="absolute top-0 left-3/4 w-px h-full bg-gray-300 dark:bg-gray-600 opacity-40"></div>
+                    
                     {/* Barra de progreso con gradiente basado en rendimiento */}
                     <div
-                      className={`absolute h-full rounded-md shadow-sm ${getPerformanceColor(resource.duration)}`}
+                      className={`absolute h-full rounded-md shadow-sm transition-all duration-300 ${getPerformanceColor(resource.duration)}`}
                       style={{
                         left: `${getResourceBarOffset(resource)}%`,
-                        width: `${getResourceBarWidth(resource)}%`
+                        width: `${Math.max(getResourceBarWidth(resource), 4)}%`, // Ancho mínimo más visible
+                        top: '2px',
+                        height: 'calc(100% - 4px)' // Pequeño margen interno
                       }}
                     />
                     
                     {/* Indicadores adicionales para recursos críticos */}
                     {resource.isRenderBlocking && (
-                      <div className="absolute top-0 left-0 w-full h-full border-2 border-red-500 rounded-md opacity-50"></div>
+                      <div 
+                        className="absolute border-2 border-red-500 rounded-md opacity-60"
+                        style={{
+                          left: `${getResourceBarOffset(resource)}%`,
+                          width: `${Math.max(getResourceBarWidth(resource), 4)}%`,
+                          top: '1px',
+                          height: 'calc(100% - 2px)'
+                        }}
+                      ></div>
                     )}
                     
-                    {/* Pequeño indicador de tiempo en la barra */}
-                    <div 
-                      className="absolute top-0 text-xs text-white bg-black bg-opacity-70 px-1 rounded-sm"
-                      style={{
-                        left: `${getResourceBarOffset(resource) + (getResourceBarWidth(resource) / 2)}%`,
-                        transform: 'translateX(-50%)'
-                      }}
-                    >
-                      {formatTime(resource.duration)}
-                    </div>
+                    {/* Indicador de tiempo optimizado */}
+                    {getResourceBarWidth(resource) > 8 && (
+                      <div 
+                        className="absolute top-1/2 transform -translate-y-1/2 text-xs text-white bg-black bg-opacity-80 px-1 rounded-sm pointer-events-none"
+                        style={{
+                          left: `${getResourceBarOffset(resource) + (getResourceBarWidth(resource) / 2)}%`,
+                          transform: 'translateX(-50%) translateY(-50%)'
+                        }}
+                      >
+                        {formatTime(resource.duration)}
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-2 text-xs min-w-0">
-                  <span className="text-muted-foreground">{formatBytes(resource.size)}</span>
-                  <span className={`font-medium ${getPerformanceTextColor(resource.duration)}`}>
-                    {formatTime(resource.duration)}
-                  </span>
-                  {resource.cached && <Badge variant="outline" className="text-xs">Cached</Badge>}
-                  {resource.isRenderBlocking && <Badge variant="destructive" className="text-xs">Blocking</Badge>}
-                  {resource.isCritical && <Badge variant="default" className="text-xs">Critical</Badge>}
+                  <div className="flex flex-col items-end">
+                    <span className="text-muted-foreground">{formatBytes(resource.size)}</span>
+                    <span className={`font-medium ${getPerformanceTextColor(resource.duration)}`}>
+                      {formatTime(resource.duration)}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    {resource.cached && <Badge variant="outline" className="text-xs">Cached</Badge>}
+                    {resource.isRenderBlocking && <Badge variant="destructive" className="text-xs">Blocking</Badge>}
+                    {resource.isCritical && <Badge variant="default" className="text-xs">Critical</Badge>}
+                  </div>
                 </div>
               </div>
             ))}
