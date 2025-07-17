@@ -105,21 +105,39 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
   const maxEndTime = Math.max(...currentData.resources.map(r => r.endTime || 0));
   const minStartTime = Math.min(...currentData.resources.map(r => r.startTime || 0));
   const totalDuration = maxEndTime - minStartTime;
+  
+  // Calcular Total Blocking Time
+  const totalBlockingTime = currentData.resources
+    .filter(r => r.isBlocking)
+    .reduce((sum, r) => sum + (r.duration || 0), 0);
+  
+  // Calcular métricas adicionales
+  const firstContentfulPaint = currentData.resources
+    .filter(r => r.type === 'document')
+    .reduce((min, r) => Math.min(min, r.endTime || Infinity), Infinity);
+  
+  const largestContentfulPaint = Math.max(...currentData.resources
+    .filter(r => r.type === 'image' || r.type === 'document')
+    .map(r => r.endTime || 0));
 
   const getResourceBarWidth = (resource: any) => {
     const duration = resource.duration || 0;
-    const minWidth = 4; // Ancho mínimo en porcentaje
-    const maxWidth = 80; // Ancho máximo en porcentaje
+    const minWidth = 2; // Ancho mínimo en porcentaje
     
     if (totalDuration === 0) return minWidth;
     
-    const width = (duration / totalDuration) * maxWidth;
+    // Calcular ancho proporcional al tiempo real
+    const width = (duration / totalDuration) * 85;
     return Math.max(width, minWidth);
   };
 
   const getResourceBarOffset = (resource: any) => {
     const startTime = resource.startTime || 0;
-    const offset = ((startTime - minStartTime) / totalDuration) * 80;
+    
+    if (totalDuration === 0) return 0;
+    
+    // Calcular offset proporcional al tiempo real de inicio
+    const offset = ((startTime - minStartTime) / totalDuration) * 85;
     return Math.max(offset, 0);
   };
 
@@ -169,7 +187,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
       <CardContent>
         <div className="space-y-6">
           {/* Resumen de métricas */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Globe className="h-4 w-4 text-blue-600" />
@@ -192,6 +210,13 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
               <div className="text-2xl font-bold text-purple-600">
                 {formatBytes(currentData.resources.reduce((sum, r) => sum + r.size, 0))}
               </div>
+            </div>
+            <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="h-4 w-4 text-red-600" />
+                <span className="text-sm font-medium">{language === 'es' ? 'Tiempo de Bloqueo' : 'Total Blocking Time'}</span>
+              </div>
+              <div className="text-2xl font-bold text-red-600">{formatTime(totalBlockingTime)}</div>
             </div>
           </div>
 
@@ -250,60 +275,174 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             </div>
           </div>
 
-          {/* Snapshots de progreso de carga */}
+          {/* Métricas de rendimiento de página */}
           <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
             <h4 className="font-medium mb-3 flex items-center gap-2">
-              <Image className="h-4 w-4" />
-              {language === 'es' ? 'Instantáneas de Carga' : 'Loading Snapshots'}
+              <Zap className="h-4 w-4" />
+              {language === 'es' ? 'Métricas de Rendimiento de Página' : 'Page Performance Metrics'}
             </h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {(() => {
-                const snapshots = [];
-                const intervals = [0.25, 0.5, 0.75, 1];
-                
-                intervals.forEach((interval, index) => {
-                  const time = minStartTime + (totalDuration * interval);
-                  const resourcesLoaded = currentData.resources.filter(r => r.endTime <= time).length;
-                  const percentage = Math.round((resourcesLoaded / currentData.resources.length) * 100);
-                  
-                  snapshots.push(
-                    <div key={index} className="text-center">
-                      <div className="bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-lg p-3 mb-2">
-                        <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
-                          {formatTime(time)}
-                        </div>
-                        <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                          {percentage}%
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-500">
-                          {resourcesLoaded}/{currentData.resources.length} {language === 'es' ? 'recursos' : 'resources'}
-                        </div>
-                      </div>
-                      <Progress value={percentage} className="h-2" />
-                    </div>
-                  );
-                });
-                
-                return snapshots;
-              })()}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 text-center">
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+                  {language === 'es' ? 'Primer Byte' : 'First Byte'}
+                </div>
+                <div className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                  {formatTime(minStartTime)}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+                  {language === 'es' ? 'Primer Paint' : 'First Paint'}
+                </div>
+                <div className="text-sm font-bold text-green-600">
+                  {formatTime(firstContentfulPaint === Infinity ? 0 : firstContentfulPaint)}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+                  {language === 'es' ? 'Paint Más Grande' : 'Largest Paint'}
+                </div>
+                <div className="text-sm font-bold text-orange-600">
+                  {formatTime(largestContentfulPaint)}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+                  {language === 'es' ? 'T. Bloqueo' : 'Blocking Time'}
+                </div>
+                <div className="text-sm font-bold text-red-600">
+                  {formatTime(totalBlockingTime)}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+                  {language === 'es' ? 'Recursos' : 'Resources'}
+                </div>
+                <div className="text-sm font-bold text-blue-600">
+                  {currentData.resources.length}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+                  {language === 'es' ? 'Peso Total' : 'Total Weight'}
+                </div>
+                <div className="text-sm font-bold text-purple-600">
+                  {formatBytes(currentData.resources.reduce((sum, r) => sum + r.size, 0))}
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Escala de tiempo */}
+          {/* Timeline visual de carga */}
+          <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              {language === 'es' ? 'Proceso Visual de Carga de Página' : 'Visual Page Loading Process'}
+            </h4>
+            
+            {/* Timeline con snapshots */}
+            <div className="relative mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs text-slate-600 dark:text-slate-400">0.0s</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400">{formatTime(maxEndTime)}</span>
+              </div>
+              
+              <div className="relative h-12 bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden">
+                {/* Snapshots en el timeline */}
+                {(() => {
+                  const snapshots = [];
+                  const numSnapshots = 10;
+                  
+                  for (let i = 0; i <= numSnapshots; i++) {
+                    const time = minStartTime + (totalDuration * (i / numSnapshots));
+                    const resourcesLoaded = currentData.resources.filter(r => r.endTime <= time).length;
+                    const percentage = (resourcesLoaded / currentData.resources.length) * 100;
+                    const position = (i / numSnapshots) * 100;
+                    
+                    // Determinar color basado en el progreso
+                    let bgColor = 'bg-slate-300 dark:bg-slate-600';
+                    if (percentage >= 90) bgColor = 'bg-green-500';
+                    else if (percentage >= 70) bgColor = 'bg-yellow-500';
+                    else if (percentage >= 50) bgColor = 'bg-orange-500';
+                    else if (percentage >= 25) bgColor = 'bg-red-400';
+                    
+                    snapshots.push(
+                      <div
+                        key={i}
+                        className={`absolute top-0 w-2 h-full ${bgColor} transition-all duration-300`}
+                        style={{ left: `${position}%` }}
+                        title={`${formatTime(time)}: ${Math.round(percentage)}% cargado`}
+                      />
+                    );
+                  }
+                  
+                  return snapshots;
+                })()}
+              </div>
+              
+              {/* Marcadores de tiempo */}
+              <div className="flex justify-between mt-1">
+                {Array.from({ length: 6 }, (_, i) => {
+                  const time = minStartTime + (totalDuration * (i / 5));
+                  const resourcesLoaded = currentData.resources.filter(r => r.endTime <= time).length;
+                  const percentage = Math.round((resourcesLoaded / currentData.resources.length) * 100);
+                  
+                  return (
+                    <div key={i} className="text-center">
+                      <div className="text-xs text-slate-600 dark:text-slate-400">
+                        {formatTime(time)}
+                      </div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                        {percentage}%
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Escala de tiempo mejorada */}
           <div className="relative">
             <h4 className="font-medium mb-3">{t.timeScale}:</h4>
-            <div className="relative h-6 bg-slate-100 dark:bg-slate-700 rounded-md">
+            <div className="relative h-8 bg-slate-100 dark:bg-slate-700 rounded-md">
+              {/* Líneas de referencia */}
               {getTimeMarkers().map((marker, index) => (
                 <div
                   key={index}
                   className="absolute top-0 h-full border-l border-slate-300 dark:border-slate-600"
                   style={{ left: `${marker.position}%` }}
                 >
-                  <span className="absolute top-7 text-xs text-slate-600 dark:text-slate-400 transform -translate-x-1/2">
+                  <span className="absolute top-9 text-xs text-slate-600 dark:text-slate-400 transform -translate-x-1/2">
                     {marker.time}
                   </span>
                 </div>
               ))}
+              
+              {/* Indicadores de métricas importantes */}
+              {firstContentfulPaint !== Infinity && (
+                <div
+                  className="absolute top-0 h-full border-l-2 border-green-500"
+                  style={{ left: `${((firstContentfulPaint - minStartTime) / totalDuration) * 85}%` }}
+                  title={`First Contentful Paint: ${formatTime(firstContentfulPaint)}`}
+                >
+                  <div className="absolute -top-6 transform -translate-x-1/2 text-xs text-green-600 font-bold">
+                    FCP
+                  </div>
+                </div>
+              )}
+              
+              {largestContentfulPaint > 0 && (
+                <div
+                  className="absolute top-0 h-full border-l-2 border-orange-500"
+                  style={{ left: `${((largestContentfulPaint - minStartTime) / totalDuration) * 85}%` }}
+                  title={`Largest Contentful Paint: ${formatTime(largestContentfulPaint)}`}
+                >
+                  <div className="absolute -top-6 transform -translate-x-1/2 text-xs text-orange-600 font-bold">
+                    LCP
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -341,8 +480,13 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                       </div>
                     </div>
 
-                    {/* Barra de tiempo visual */}
+                    {/* Barra de tiempo visual proporcional */}
                     <div className="relative h-6 bg-slate-100 dark:bg-slate-700 rounded-md overflow-hidden">
+                      {/* Líneas de referencia sutiles */}
+                      <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '25%' }}></div>
+                      <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '50%' }}></div>
+                      <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '75%' }}></div>
+                      
                       <div
                         className={`absolute top-0 h-full rounded-md shadow-sm transition-all duration-300 ${getPerformanceColor(resource.duration)}`}
                         style={{
@@ -351,12 +495,18 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                         }}
                       >
                         {/* Mostrar tiempo solo si la barra es lo suficientemente ancha */}
-                        {getResourceBarWidth(resource) > 15 && (
+                        {getResourceBarWidth(resource) > 8 && (
                           <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white mix-blend-overlay">
                             {formatTime(resource.duration)}
                           </span>
                         )}
                       </div>
+                      
+                      {/* Indicador de inicio */}
+                      <div
+                        className="absolute top-0 h-full w-px bg-slate-800 dark:bg-slate-200"
+                        style={{ left: `${getResourceBarOffset(resource)}%` }}
+                      ></div>
                     </div>
 
                     {/* Badges de estado */}
