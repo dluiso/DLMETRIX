@@ -33,6 +33,7 @@ export const webAnalyses = mysqlTable("web_analyses", {
   diagnostics: json("diagnostics"), // Performance, accessibility, best practices diagnostics
   insights: json("insights"), // Key findings and opportunities
   technicalChecks: json("technical_checks"),
+  waterfallAnalysis: json("waterfall_analysis"), // Waterfall resource loading analysis
   
   // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
@@ -164,6 +165,74 @@ export const aiSearchAnalysisSchema = z.object({
   }))
 });
 
+// Waterfall Analysis schemas
+export const waterfallResourceSchema = z.object({
+  url: z.string(),
+  type: z.enum(['document', 'stylesheet', 'script', 'image', 'font', 'fetch', 'xhr', 'other']),
+  mimeType: z.string(),
+  size: z.number(), // bytes
+  transferSize: z.number(), // bytes transferred over network
+  duration: z.number(), // milliseconds
+  startTime: z.number(), // milliseconds from navigation start
+  endTime: z.number(), // milliseconds from navigation start
+  isRenderBlocking: z.boolean(),
+  isCritical: z.boolean(),
+  status: z.number(), // HTTP status code
+  initiator: z.string().optional(), // what triggered this request
+  priority: z.enum(['VeryHigh', 'High', 'Medium', 'Low', 'VeryLow']),
+  cached: z.boolean(),
+  protocol: z.string(), // HTTP/1.1, HTTP/2, etc.
+  timing: z.object({
+    dnsLookup: z.number(),
+    connecting: z.number(),
+    tlsHandshake: z.number(),
+    waiting: z.number(), // TTFB
+    receiving: z.number(),
+  }),
+});
+
+export const waterfallAnalysisSchema = z.object({
+  mobile: z.object({
+    resources: z.array(waterfallResourceSchema),
+    totalResources: z.number(),
+    totalSize: z.number(),
+    totalTransferSize: z.number(),
+    totalDuration: z.number(),
+    renderBlockingResources: z.number(),
+    criticalResources: z.number(),
+    parallelRequests: z.number(),
+    cacheHitRate: z.number(), // percentage
+    compressionSavings: z.number(), // percentage
+  }),
+  desktop: z.object({
+    resources: z.array(waterfallResourceSchema),
+    totalResources: z.number(),
+    totalSize: z.number(),
+    totalTransferSize: z.number(),
+    totalDuration: z.number(),
+    renderBlockingResources: z.number(),
+    criticalResources: z.number(),
+    parallelRequests: z.number(),
+    cacheHitRate: z.number(), // percentage
+    compressionSavings: z.number(), // percentage
+  }),
+  recommendations: z.array(z.object({
+    type: z.enum(['critical', 'warning', 'suggestion']),
+    title: z.string(),
+    description: z.string(),
+    impact: z.enum(['high', 'medium', 'low']),
+    resourcesAffected: z.array(z.string()),
+    howToFix: z.string(),
+    potentialSavings: z.string(),
+  })),
+  insights: z.array(z.object({
+    metric: z.string(),
+    value: z.string(),
+    description: z.string(),
+    impact: z.enum(['positive', 'negative', 'neutral']),
+  })),
+});
+
 // Web analysis result type
 export const webAnalysisResultSchema = z.object({
   url: z.string().url(),
@@ -217,6 +286,9 @@ export const webAnalysisResultSchema = z.object({
   
   // SEO Keyword Analysis
   keywordAnalysis: seoKeywordAnalysisSchema.nullable(),
+  
+  // Waterfall Analysis
+  waterfallAnalysis: waterfallAnalysisSchema.nullable(),
 });
 
 export type WebAnalysisResult = z.infer<typeof webAnalysisResultSchema>;
@@ -228,3 +300,5 @@ export type AiContentInsight = z.infer<typeof aiContentInsightSchema>;
 export type AiContentRecommendation = z.infer<typeof aiContentRecommendationSchema>;
 export type KeywordTrendData = z.infer<typeof keywordTrendDataSchema>;
 export type SeoKeywordAnalysis = z.infer<typeof seoKeywordAnalysisSchema>;
+export type WaterfallResource = z.infer<typeof waterfallResourceSchema>;
+export type WaterfallAnalysis = z.infer<typeof waterfallAnalysisSchema>;

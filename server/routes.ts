@@ -280,10 +280,11 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
       runLighthouseAnalysis(url, 'desktop', browser, basicSeoData)
     ]);
 
-    // Generate screenshots
-    const [mobileScreenshot, desktopScreenshot] = await Promise.all([
+    // Generate screenshots and waterfall analysis
+    const [mobileScreenshot, desktopScreenshot, waterfallAnalysis] = await Promise.all([
       captureScreenshot(url, 'mobile', browser),
-      captureScreenshot(url, 'desktop', browser)
+      captureScreenshot(url, 'desktop', browser),
+      generateWaterfallAnalysis(url, browser)
     ]);
 
     // Combine results
@@ -323,7 +324,8 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
       },
       technicalChecks: mobileAnalysis.technicalChecks,
       aiSearchAnalysis: await generateAiSearchAnalysis(url, basicSeoData),
-      keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null)
+      keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null),
+      waterfallAnalysis
     };
 
     return result;
@@ -386,7 +388,8 @@ async function performEnhancedSeoAnalysis(url: string): Promise<WebAnalysisResul
     },
     technicalChecks: generateBasicTechnicalChecks(basicSeoData, url),
     aiSearchAnalysis: await generateAiSearchAnalysis(url, basicSeoData),
-    keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null)
+    keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null),
+    waterfallAnalysis: null // No waterfall analysis available in fallback mode
   };
 }
 
@@ -3310,4 +3313,359 @@ function combineRecommendations(mobileRecs: any[], desktopRecs: any[]) {
   });
 
   return Array.from(combinedMap.values());
+}
+
+// Generate comprehensive waterfall analysis for both mobile and desktop
+async function generateWaterfallAnalysis(url: string, browser: any): Promise<any> {
+  console.log('Starting waterfall analysis for:', url);
+  
+  try {
+    // Analyze mobile and desktop waterfall data
+    const [mobileWaterfall, desktopWaterfall] = await Promise.all([
+      captureWaterfallData(url, browser, 'mobile'),
+      captureWaterfallData(url, browser, 'desktop')
+    ]);
+
+    // Generate recommendations based on findings
+    const recommendations = generateWaterfallRecommendations(mobileWaterfall, desktopWaterfall);
+    
+    // Generate performance insights
+    const insights = generateWaterfallInsights(mobileWaterfall, desktopWaterfall);
+
+    return {
+      mobile: mobileWaterfall,
+      desktop: desktopWaterfall,
+      recommendations,
+      insights
+    };
+  } catch (error) {
+    console.error('Waterfall analysis failed:', error);
+    return null;
+  }
+}
+
+// Capture waterfall data for specific device
+async function captureWaterfallData(url: string, browser: any, device: 'mobile' | 'desktop'): Promise<any> {
+  const page = await browser.newPage();
+  const resources: any[] = [];
+  
+  try {
+    // Configure viewport
+    if (device === 'mobile') {
+      await page.setViewport({ width: 375, height: 667, deviceScaleFactor: 2 });
+    } else {
+      await page.setViewport({ width: 1350, height: 940, deviceScaleFactor: 1 });
+    }
+
+    // Enable request interception to capture network data
+    await page.setRequestInterception(true);
+    
+    // Track requests
+    page.on('request', (request) => {
+      request.continue();
+    });
+
+    // Track responses and timing
+    page.on('response', async (response) => {
+      try {
+        const request = response.request();
+        const timing = response.timing();
+        
+        const resourceData = {
+          url: request.url(),
+          type: getResourceType(request.resourceType()),
+          mimeType: response.headers()['content-type'] || 'unknown',
+          size: parseInt(response.headers()['content-length'] || '0'),
+          transferSize: parseInt(response.headers()['content-length'] || '0'),
+          duration: timing ? timing.receiveHeadersEnd - timing.requestTime : 0,
+          startTime: timing ? timing.requestTime : 0,
+          endTime: timing ? timing.receiveHeadersEnd : 0,
+          isRenderBlocking: isRenderBlocking(request.resourceType(), request.url()),
+          isCritical: isCriticalResource(request.url(), request.resourceType()),
+          status: response.status(),
+          initiator: 'unknown',
+          priority: getResourcePriority(request.resourceType()),
+          cached: response.fromCache(),
+          protocol: response.headers()['http-version'] || 'HTTP/1.1',
+          timing: timing ? {
+            dnsLookup: timing.dnsEnd - timing.dnsStart,
+            connecting: timing.connectEnd - timing.connectStart,
+            tlsHandshake: timing.sslEnd - timing.sslStart,
+            waiting: timing.receiveHeadersEnd - timing.sendEnd,
+            receiving: timing.receiveHeadersEnd - timing.receiveHeadersStart,
+          } : {
+            dnsLookup: 0,
+            connecting: 0,
+            tlsHandshake: 0,
+            waiting: 0,
+            receiving: 0,
+          }
+        };
+
+        resources.push(resourceData);
+      } catch (error) {
+        console.warn('Failed to capture resource data:', error);
+      }
+    });
+
+    // Navigate to URL
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+
+    // Calculate aggregate metrics
+    const totalResources = resources.length;
+    const totalSize = resources.reduce((sum, r) => sum + r.size, 0);
+    const totalTransferSize = resources.reduce((sum, r) => sum + r.transferSize, 0);
+    const totalDuration = Math.max(...resources.map(r => r.endTime)) - Math.min(...resources.map(r => r.startTime));
+    const renderBlockingResources = resources.filter(r => r.isRenderBlocking).length;
+    const criticalResources = resources.filter(r => r.isCritical).length;
+    const cachedResources = resources.filter(r => r.cached).length;
+    const cacheHitRate = totalResources > 0 ? (cachedResources / totalResources) * 100 : 0;
+    const compressionSavings = calculateCompressionSavings(resources);
+
+    // Calculate parallel requests (resources loading simultaneously)
+    const parallelRequests = calculateParallelRequests(resources);
+
+    return {
+      resources: resources.slice(0, 50), // Limit to first 50 resources for sharing
+      totalResources,
+      totalSize,
+      totalTransferSize,
+      totalDuration,
+      renderBlockingResources,
+      criticalResources,
+      parallelRequests,
+      cacheHitRate,
+      compressionSavings
+    };
+
+  } finally {
+    await page.close();
+  }
+}
+
+// Helper functions for waterfall analysis
+function getResourceType(puppeteerType: string): string {
+  const typeMap: Record<string, string> = {
+    'document': 'document',
+    'stylesheet': 'stylesheet',
+    'script': 'script',
+    'image': 'image',
+    'font': 'font',
+    'fetch': 'fetch',
+    'xhr': 'xhr',
+    'websocket': 'other',
+    'manifest': 'other',
+    'media': 'other',
+    'texttrack': 'other',
+    'eventsource': 'other',
+    'other': 'other'
+  };
+  return typeMap[puppeteerType] || 'other';
+}
+
+function isRenderBlocking(resourceType: string, url: string): boolean {
+  // CSS and synchronous JavaScript are render-blocking
+  if (resourceType === 'stylesheet') return true;
+  if (resourceType === 'script' && !url.includes('async') && !url.includes('defer')) return true;
+  return false;
+}
+
+function isCriticalResource(url: string, resourceType: string): boolean {
+  // Main document, critical CSS, and above-the-fold resources are critical
+  if (resourceType === 'document') return true;
+  if (resourceType === 'stylesheet') return true;
+  if (resourceType === 'script' && url.includes('critical')) return true;
+  return false;
+}
+
+function getResourcePriority(resourceType: string): string {
+  const priorityMap: Record<string, string> = {
+    'document': 'VeryHigh',
+    'stylesheet': 'High',
+    'script': 'High',
+    'font': 'Medium',
+    'image': 'Low',
+    'fetch': 'Medium',
+    'xhr': 'Medium',
+    'other': 'Low'
+  };
+  return priorityMap[resourceType] || 'Low';
+}
+
+function calculateCompressionSavings(resources: any[]): number {
+  // Estimate compression savings by comparing resource types
+  let totalUncompressed = 0;
+  let totalCompressed = 0;
+  
+  resources.forEach(resource => {
+    const compressionRatio = getCompressionRatio(resource.type, resource.mimeType);
+    totalUncompressed += resource.size;
+    totalCompressed += resource.size * compressionRatio;
+  });
+  
+  return totalUncompressed > 0 ? ((totalUncompressed - totalCompressed) / totalUncompressed) * 100 : 0;
+}
+
+function getCompressionRatio(type: string, mimeType: string): number {
+  // Typical compression ratios for different resource types
+  if (type === 'script' || mimeType.includes('javascript')) return 0.3; // ~70% compression
+  if (type === 'stylesheet' || mimeType.includes('css')) return 0.25; // ~75% compression
+  if (type === 'document' || mimeType.includes('html')) return 0.2; // ~80% compression
+  if (type === 'image' && mimeType.includes('jpeg')) return 0.9; // Already compressed
+  if (type === 'image' && mimeType.includes('png')) return 0.7; // Some compression
+  return 0.5; // Default 50% compression
+}
+
+function calculateParallelRequests(resources: any[]): number {
+  // Calculate peak concurrent requests
+  const events: { time: number, type: 'start' | 'end' }[] = [];
+  
+  resources.forEach(resource => {
+    events.push({ time: resource.startTime, type: 'start' });
+    events.push({ time: resource.endTime, type: 'end' });
+  });
+  
+  events.sort((a, b) => a.time - b.time);
+  
+  let currentParallel = 0;
+  let maxParallel = 0;
+  
+  events.forEach(event => {
+    if (event.type === 'start') {
+      currentParallel++;
+      maxParallel = Math.max(maxParallel, currentParallel);
+    } else {
+      currentParallel--;
+    }
+  });
+  
+  return maxParallel;
+}
+
+// Generate recommendations based on waterfall analysis
+function generateWaterfallRecommendations(mobile: any, desktop: any): any[] {
+  const recommendations: any[] = [];
+  
+  // Check for render-blocking resources
+  if (mobile.renderBlockingResources > 3 || desktop.renderBlockingResources > 3) {
+    recommendations.push({
+      type: 'critical',
+      title: 'Reduce Render-Blocking Resources',
+      description: `Found ${Math.max(mobile.renderBlockingResources, desktop.renderBlockingResources)} render-blocking resources that delay page rendering`,
+      impact: 'high',
+      resourcesAffected: ['CSS files', 'Synchronous JavaScript'],
+      howToFix: 'Optimize CSS delivery by inlining critical styles and loading non-critical CSS asynchronously. Add async/defer attributes to non-critical JavaScript.',
+      potentialSavings: 'Up to 2-3 seconds faster page load'
+    });
+  }
+  
+  // Check cache hit rate
+  const avgCacheRate = (mobile.cacheHitRate + desktop.cacheHitRate) / 2;
+  if (avgCacheRate < 50) {
+    recommendations.push({
+      type: 'warning',
+      title: 'Improve Resource Caching',
+      description: `Only ${avgCacheRate.toFixed(1)}% of resources are cached. Better caching reduces load times for returning visitors.`,
+      impact: 'medium',
+      resourcesAffected: ['Images', 'CSS files', 'JavaScript files'],
+      howToFix: 'Set appropriate cache headers (Cache-Control, Expires) for static resources. Use CDN for better global caching.',
+      potentialSavings: 'Up to 50% faster load times for returning visitors'
+    });
+  }
+  
+  // Check compression
+  const avgCompressionSavings = (mobile.compressionSavings + desktop.compressionSavings) / 2;
+  if (avgCompressionSavings < 60) {
+    recommendations.push({
+      type: 'suggestion',
+      title: 'Enable Better Compression',
+      description: `Current compression saves ${avgCompressionSavings.toFixed(1)}%. Enable gzip/brotli compression for better performance.`,
+      impact: 'medium',
+      resourcesAffected: ['Text-based resources', 'JavaScript', 'CSS'],
+      howToFix: 'Enable gzip or brotli compression on your server. Configure compression for HTML, CSS, JS, and other text-based resources.',
+      potentialSavings: 'Up to 70% reduction in transfer size'
+    });
+  }
+  
+  // Check total resources
+  if (mobile.totalResources > 100 || desktop.totalResources > 100) {
+    recommendations.push({
+      type: 'warning',
+      title: 'Too Many HTTP Requests',
+      description: `Page loads ${Math.max(mobile.totalResources, desktop.totalResources)} resources. Reduce requests for better performance.`,
+      impact: 'medium',
+      resourcesAffected: ['Images', 'Scripts', 'Stylesheets'],
+      howToFix: 'Combine CSS/JS files, use image sprites, implement lazy loading, and remove unnecessary resources.',
+      potentialSavings: 'Faster initial page load and reduced server load'
+    });
+  }
+  
+  // Check parallel requests
+  const maxParallel = Math.max(mobile.parallelRequests, desktop.parallelRequests);
+  if (maxParallel > 20) {
+    recommendations.push({
+      type: 'suggestion',
+      title: 'Optimize Resource Loading',
+      description: `Peak concurrent requests: ${maxParallel}. High parallelism can overwhelm slower connections.`,
+      impact: 'low',
+      resourcesAffected: ['All resources'],
+      howToFix: 'Implement resource prioritization, use HTTP/2 push for critical resources, and consider request batching.',
+      potentialSavings: 'Better performance on slower connections'
+    });
+  }
+  
+  return recommendations;
+}
+
+// Generate insights from waterfall analysis
+function generateWaterfallInsights(mobile: any, desktop: any): any[] {
+  const insights: any[] = [];
+  
+  // Resource count comparison
+  insights.push({
+    metric: 'Total Resources',
+    value: `${mobile.totalResources} (mobile) vs ${desktop.totalResources} (desktop)`,
+    description: 'Number of HTTP requests made during page load',
+    impact: mobile.totalResources > desktop.totalResources ? 'negative' : 'neutral'
+  });
+  
+  // Transfer size comparison
+  const mobileMB = (mobile.totalTransferSize / 1024 / 1024).toFixed(1);
+  const desktopMB = (desktop.totalTransferSize / 1024 / 1024).toFixed(1);
+  insights.push({
+    metric: 'Transfer Size',
+    value: `${mobileMB}MB (mobile) vs ${desktopMB}MB (desktop)`,
+    description: 'Total bytes transferred over the network',
+    impact: mobile.totalTransferSize > 5000000 ? 'negative' : 'positive' // 5MB threshold
+  });
+  
+  // Load time comparison
+  const mobileTime = (mobile.totalDuration / 1000).toFixed(1);
+  const desktopTime = (desktop.totalDuration / 1000).toFixed(1);
+  insights.push({
+    metric: 'Load Duration',
+    value: `${mobileTime}s (mobile) vs ${desktopTime}s (desktop)`,
+    description: 'Time from first request to last resource loaded',
+    impact: Math.max(mobile.totalDuration, desktop.totalDuration) > 10000 ? 'negative' : 'positive'
+  });
+  
+  // Cache efficiency
+  const avgCacheRate = ((mobile.cacheHitRate + desktop.cacheHitRate) / 2).toFixed(1);
+  insights.push({
+    metric: 'Cache Hit Rate',
+    value: `${avgCacheRate}%`,
+    description: 'Percentage of resources served from cache',
+    impact: parseFloat(avgCacheRate) > 50 ? 'positive' : 'negative'
+  });
+  
+  // Compression efficiency
+  const avgCompression = ((mobile.compressionSavings + desktop.compressionSavings) / 2).toFixed(1);
+  insights.push({
+    metric: 'Compression Savings',
+    value: `${avgCompression}%`,
+    description: 'Data saved through compression techniques',
+    impact: parseFloat(avgCompression) > 60 ? 'positive' : 'negative'
+  });
+  
+  return insights;
 }

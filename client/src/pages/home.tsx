@@ -20,6 +20,7 @@ import PerformanceOverview from "@/components/performance-overview";
 import ScreenshotsView from "@/components/screenshots-view";
 import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
 import KeywordAnalysis from "@/components/keyword-analysis";
+import { WaterfallAnalysis } from "@/components/waterfall-analysis";
 import Footer from "@/components/footer";
 import { trackEvent } from "@/lib/analytics";
 import HelpDialog from "@/components/help-dialog";
@@ -889,6 +890,10 @@ export default function Home() {
                     <FileText className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
                     <span className="font-medium">Keywords</span>
                   </div>
+                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <BarChart3 className="w-3.5 h-3.5 text-cyan-500 flex-shrink-0" />
+                    <span className="font-medium">Waterfall</span>
+                  </div>
                 </div>
               </section>
               
@@ -897,7 +902,7 @@ export default function Home() {
                 <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3">
                   {language === 'en' ? 'Comprehensive Website Analysis Features' : 'Características de Análisis Web Integral'}
                 </h2>
-                <div className="grid grid-cols-3 gap-3 max-w-2xl mx-auto px-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto px-4">
                   <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
                     <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Core Web Vitals' : 'Core Web Vitals'}
@@ -928,6 +933,17 @@ export default function Home() {
                       {language === 'en' 
                         ? 'Check website accessibility compliance and get recommendations.'
                         : 'Verifica el cumplimiento de accesibilidad del sitio web.'
+                      }
+                    </p>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                      {language === 'en' ? 'Waterfall Analysis' : 'Análisis Waterfall'}
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
+                      {language === 'en' 
+                        ? 'Resource loading timeline and performance optimization.'
+                        : 'Línea de tiempo de carga y optimización de rendimiento.'
                       }
                     </p>
                   </div>
@@ -1141,6 +1157,11 @@ export default function Home() {
               url={seoData.url}
               language={language}
             />
+
+            {/* Waterfall Analysis */}
+            {seoData.waterfallAnalysis && (
+              <WaterfallAnalysis analysis={seoData.waterfallAnalysis} />
+            )}
 
             {/* Legacy SEO Analysis */}
             <div className="grid gap-4 sm:gap-6">
