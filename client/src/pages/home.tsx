@@ -34,6 +34,11 @@ import { getTranslations } from "@/lib/translations";
 import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner, AIContentSpinner } from "@/components/loading-spinners";
 import { DynamicLoadingIcon, GeneratingReportIcon } from "@/components/dynamic-loading-icons";
 import AnimatedBackground from "@/components/animated-background";
+// Nuevas funcionalidades mejoradas
+import HealthIndicator from "@/components/health-indicator";
+import GamifiedChallenges from "@/components/gamified-challenges";
+import SeoJourneyVisualization from "@/components/seo-journey-visualization";
+import EnhancedPdfExport from "@/components/enhanced-pdf-export";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -1184,6 +1189,48 @@ export default function Home() {
             {seoData.waterfallAnalysis && (
               <WaterfallAnalysis analysis={seoData.waterfallAnalysis} language={language} />
             )}
+
+            {/* Nueva sección de funcionalidades UX mejoradas */}
+            <div className="grid gap-4 sm:gap-6">
+              {/* Health Indicator & Enhanced PDF Export */}
+              <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                <HealthIndicator 
+                  performanceScore={seoData.performanceScore}
+                  accessibilityScore={seoData.accessibilityScore}
+                  bestPracticesScore={seoData.bestPracticesScore}
+                  seoScore={seoData.seoScore}
+                  language={language}
+                />
+                <EnhancedPdfExport 
+                  analysisData={seoData}
+                  language={language}
+                  onExportComplete={() => {
+                    toast({
+                      title: language === 'es' ? 'PDF Exportado' : 'PDF Exported',
+                      description: language === 'es' ? 'El reporte se ha generado exitosamente' : 'Report generated successfully',
+                    });
+                  }}
+                />
+              </div>
+
+              {/* Gamified Challenges & SEO Journey */}
+              <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                <GamifiedChallenges 
+                  performanceScore={seoData.performanceScore}
+                  accessibilityScore={seoData.accessibilityScore}
+                  bestPracticesScore={seoData.bestPracticesScore}
+                  seoScore={seoData.seoScore}
+                  language={language}
+                />
+                <SeoJourneyVisualization 
+                  performanceScore={seoData.performanceScore}
+                  accessibilityScore={seoData.accessibilityScore}
+                  bestPracticesScore={seoData.bestPracticesScore}
+                  seoScore={seoData.seoScore}
+                  language={language}
+                />
+              </div>
+            </div>
 
             {/* Legacy SEO Analysis */}
             <div className="grid gap-4 sm:gap-6">

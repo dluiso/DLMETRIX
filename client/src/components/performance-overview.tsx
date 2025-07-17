@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Shield, CheckCircle, Search, Monitor, Smartphone, Share2 } from "lucide-react";
 import { getTranslations } from "@/lib/translations";
+import TooltipHelp, { seoTooltips } from "./tooltip-help";
 
 interface PerformanceOverviewProps {
   performanceScore: number;
