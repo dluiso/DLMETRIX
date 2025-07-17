@@ -68,7 +68,7 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
   return (
     <div 
       ref={counterRef}
-      className={`font-bold text-gray-500 dark:text-gray-500 opacity-60 ${className}`}
+      className={`font-bold text-gray-600 dark:text-gray-400 opacity-75 ${className}`}
       style={{ 
         transform: 'none',
         position: 'relative',
