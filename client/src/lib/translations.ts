@@ -177,6 +177,32 @@ export interface Translations {
   fetch: string;
   xhr: string;
   other: string;
+  
+  // Rate Limiting and Queue
+  rateLimitTitle: string;
+  queueStatus: string;
+  activeAnalyses: string;
+  queueLength: string;
+  yourPosition: string;
+  processingCapacity: string;
+  
+  // URL Comparison
+  urlComparison: string;
+  noComparisonData: string;
+  comparisonDescription: string;
+  analysisHistory: string;
+  analyses: string;
+  lastAnalyzed: string;
+  hideComparison: string;
+  showComparison: string;
+  improvements: string;
+  regressions: string;
+  coreWebVitalsChanges: string;
+  
+  // Trend indicators
+  'trend.improved': string;
+  'trend.declined': string;
+  'trend.unchanged': string;
 }
 
 export const translations: Record<'en' | 'es', Translations> = {
@@ -371,7 +397,32 @@ export const translations: Record<'en' | 'es', Translations> = {
     other: "Other",
     totalResources: "Total Resources",
     totalLoadTime: "Total Load Time",
-    totalSize: "Total Size"
+    totalSize: "Total Size",
+    
+    // Rate Limiting and Queue
+    rateLimitTitle: "Rate Limit Protection",
+    queueStatus: "Queue Status",
+    activeAnalyses: "Active Analyses",
+    queueLength: "Queue Length",
+    yourPosition: "Your Position",
+    processingCapacity: "Processing Capacity",
+    
+    // URL Comparison
+    urlComparison: "URL Comparison",
+    noComparisonData: "No comparison data available. This is the first analysis for this URL.",
+    comparisonDescription: "Compare current analysis with previous results to track improvements over time.",
+    analyses: "analyses",
+    lastAnalyzed: "Last Analyzed",
+    hideComparison: "Hide Comparison",
+    showComparison: "Show Comparison",
+    improvements: "improvements",
+    regressions: "regressions",
+    coreWebVitalsChanges: "Core Web Vitals Changes",
+    
+    // Trend indicators
+    'trend.improved': "Improved",
+    'trend.declined': "Declined",
+    'trend.unchanged': "Unchanged"
   },
   es: {
     // Header and Navigation
@@ -564,7 +615,32 @@ export const translations: Record<'en' | 'es', Translations> = {
     other: "Otro",
     totalResources: "Total de Recursos",
     totalLoadTime: "Tiempo Total de Carga",
-    totalSize: "Tamaño Total"
+    totalSize: "Tamaño Total",
+    
+    // Rate Limiting and Queue
+    rateLimitTitle: "Protección de Límite de Tasa",
+    queueStatus: "Estado de la Cola",
+    activeAnalyses: "Análisis Activos",
+    queueLength: "Longitud de Cola",
+    yourPosition: "Tu Posición",
+    processingCapacity: "Capacidad de Procesamiento",
+    
+    // URL Comparison
+    urlComparison: "Comparación de URL",
+    noComparisonData: "No hay datos de comparación disponibles. Este es el primer análisis para esta URL.",
+    comparisonDescription: "Compara el análisis actual con resultados anteriores para seguir las mejoras a lo largo del tiempo.",
+    analyses: "análisis",
+    lastAnalyzed: "Último Analizado",
+    hideComparison: "Ocultar Comparación",
+    showComparison: "Mostrar Comparación",
+    improvements: "mejoras",
+    regressions: "regresiones",
+    coreWebVitalsChanges: "Cambios en Core Web Vitals",
+    
+    // Trend indicators
+    'trend.improved': "Mejoró",
+    'trend.declined': "Empeoró",
+    'trend.unchanged': "Sin Cambios"
   }
 };
 

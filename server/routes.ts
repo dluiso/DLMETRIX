@@ -7,6 +7,8 @@ import * as cheerio from "cheerio";
 import lighthouse from "lighthouse";
 import puppeteer from "puppeteer";
 import { nanoid } from "nanoid";
+import { rateLimiter } from "./rate-limiter";
+import { urlComparison } from "./url-comparison";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Comprehensive web performance analysis
@@ -27,14 +29,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`Analyzing URL: ${url}`);
 
-      // Run comprehensive analysis
-      const analysisResult = await performComprehensiveAnalysis(url);
+      // Use rate limiter and queue system
+      const analysisResult = await rateLimiter.queueAnalysis(url, async () => {
+        return await performComprehensiveAnalysis(url);
+      });
 
-      // Store analysis in memory
+      // Store analysis in memory and comparison system
       await storage.createWebAnalysis(analysisResult);
+      urlComparison.storeAnalysis(analysisResult);
+
+      // Add comparison data if available
+      const comparison = urlComparison.compareWithPrevious(analysisResult);
+      if (comparison) {
+        (analysisResult as any).comparison = comparison;
+      }
 
       res.json(analysisResult);
     } catch (error: any) {
+      // Handle rate limiting errors
+      if (error.message.includes('RATE_LIMIT_ERROR')) {
+        try {
+          const errorData = JSON.parse(error.message);
+          return res.status(429).json({
+            error: 'RATE_LIMIT_ERROR',
+            message: errorData.message,
+            timeRemaining: errorData.timeRemaining,
+            type: 'rate_limit'
+          });
+        } catch (parseError) {
+          return res.status(429).json({
+            error: 'RATE_LIMIT_ERROR',
+            message: 'Debe esperar antes de analizar esta URL nuevamente',
+            type: 'rate_limit'
+          });
+        }
+      }
+
       // Handle site protection errors specifically
       if (error.message.includes('SITE_PROTECTION_ACTIVE')) {
         try {
@@ -173,6 +203,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Share retrieval error:', error);
       res.status(500).json({ message: "Failed to retrieve shared report" });
     }
+  });
+
+  // Rate limiting and queue management endpoints
+  app.get("/api/queue/status", (req, res) => {
+    const status = rateLimiter.getQueueStatus();
+    res.json(status);
+  });
+
+  app.get("/api/queue/position/:url", (req, res) => {
+    const { url } = req.params;
+    const position = rateLimiter.getQueuePosition(decodeURIComponent(url));
+    res.json({ position });
+  });
+
+  // URL comparison endpoints
+  app.get("/api/comparison/history/:url", (req, res) => {
+    const { url } = req.params;
+    const history = urlComparison.getAnalysisHistory(decodeURIComponent(url));
+    res.json(history);
+  });
+
+  app.get("/api/comparison/summary/:url", (req, res) => {
+    const { url } = req.params;
+    const summary = urlComparison.getComparisonSummary(decodeURIComponent(url));
+    res.json(summary);
+  });
+
+  app.delete("/api/comparison/history/:url", (req, res) => {
+    const { url } = req.params;
+    urlComparison.clearHistory(decodeURIComponent(url));
+    res.json({ success: true, message: "History cleared successfully" });
+  });
+
+  app.get("/api/comparison/urls", (req, res) => {
+    const urls = urlComparison.getAllStoredUrls();
+    res.json(urls);
   });
 
   const httpServer = createServer(app);
