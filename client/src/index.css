@@ -253,25 +253,7 @@
     }
   }
   
-  .animate-number {
-    animation: numberPop 0.5s ease-out forwards;
-    transform: scale(0);
-  }
-  
-  @keyframes numberPop {
-    0% {
-      transform: scale(0);
-      opacity: 0;
-    }
-    50% {
-      transform: scale(1.2);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
+
   
   .animate-fireworks {
     animation: fireworks 1s ease-out forwards;

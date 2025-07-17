@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { cn } from '@/lib/utils';
+import { AnimatedCounter } from './animated-counter';
 
 interface AnimatedBackgroundProps {
   className?: string;
@@ -12,7 +13,7 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-slate-100 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 opacity-50" />
       
       {/* Progressive Growth Lines Animation */}
-      <div className="absolute inset-0 opacity-15 dark:opacity-10">
+      <div className="absolute inset-0 opacity-8 dark:opacity-5">
         
         {/* Line 1 - Thick, left side - reaches 100% */}
         <div className="absolute animate-progress-line-full" style={{ 
@@ -20,17 +21,15 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '4px', 
           height: '75%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6, #10B981)',
+          background: 'linear-gradient(to top, #dc2626, #ea580c, #ca8a04, #2563eb, #16a34a)',
           transformOrigin: 'bottom',
           animationDelay: '0s',
           animationDuration: '10s'
         }}>
-          {/* Incremental progress numbers */}
-          <div className="absolute left-6 bottom-1/10 w-8 h-8 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '1s' }}>10%</div>
-          <div className="absolute left-6 bottom-1/5 w-8 h-8 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2s' }}>25%</div>
-          <div className="absolute left-6 bottom-2/5 w-8 h-8 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4s' }}>50%</div>
-          <div className="absolute left-6 bottom-3/5 w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6s' }}>75%</div>
-          <div className="absolute left-6 bottom-4/5 w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '8s' }}>100%</div>
+          {/* Incremental counter */}
+          <div className="absolute left-6 top-0">
+            <AnimatedCounter targetValue={100} duration={10} delay={0.5} className="text-xl" />
+          </div>
         </div>
         
         {/* Line 2 - Medium, center-left - reaches 30% */}
@@ -39,15 +38,15 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '2.5px', 
           height: '30%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308)',
+          background: 'linear-gradient(to top, #dc2626, #ea580c, #ca8a04)',
           transformOrigin: 'bottom',
           animationDelay: '0.8s',
           animationDuration: '6s'
         }}>
-          {/* Progress numbers for 30% */}
-          <div className="absolute left-5 bottom-1/3 w-7 h-7 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.5s' }}>10%</div>
-          <div className="absolute left-5 bottom-2/3 w-7 h-7 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4s' }}>20%</div>
-          <div className="absolute left-5 top-0 w-7 h-7 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5.5s' }}>30%</div>
+          {/* Counter for 30% */}
+          <div className="absolute left-5 top-0">
+            <AnimatedCounter targetValue={30} duration={6} delay={1.3} className="text-lg" />
+          </div>
         </div>
         
         {/* Line 3 - Thin, center - reaches 45% */}
@@ -56,15 +55,15 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '1.5px', 
           height: '45%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6)',
+          background: 'linear-gradient(to top, #dc2626, #ea580c, #ca8a04, #2563eb)',
           transformOrigin: 'bottom',
           animationDelay: '1.5s',
           animationDuration: '7s'
         }}>
-          {/* Progress numbers for 45% */}
-          <div className="absolute left-4 bottom-1/4 w-6 h-6 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.8s' }}>15%</div>
-          <div className="absolute left-4 bottom-2/4 w-6 h-6 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4.5s' }}>30%</div>
-          <div className="absolute left-4 top-0 w-6 h-6 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.5s' }}>45%</div>
+          {/* Counter for 45% */}
+          <div className="absolute left-4 top-0">
+            <AnimatedCounter targetValue={45} duration={7} delay={2} className="text-base" />
+          </div>
         </div>
         
         {/* Line 4 - Medium-thick, center-right - reaches 55% */}
@@ -73,15 +72,15 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '3px', 
           height: '55%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6)',
+          background: 'linear-gradient(to top, #dc2626, #ea580c, #ca8a04, #2563eb)',
           transformOrigin: 'bottom',
           animationDelay: '0.3s',
           animationDuration: '8s'
         }}>
-          {/* Progress numbers for 55% */}
-          <div className="absolute left-5 bottom-1/5 w-7 h-7 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2s' }}>15%</div>
-          <div className="absolute left-5 bottom-2/5 w-7 h-7 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '4s' }}>35%</div>
-          <div className="absolute left-5 top-0 w-7 h-7 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '6.5s' }}>55%</div>
+          {/* Counter for 55% */}
+          <div className="absolute left-5 top-0">
+            <AnimatedCounter targetValue={55} duration={8} delay={0.8} className="text-lg" />
+          </div>
         </div>
         
         {/* Line 5 - Thick, right side - reaches 100% */}
@@ -90,17 +89,15 @@ export const AnimatedBackground: FC<AnimatedBackgroundProps> = ({ className }) =
           bottom: '0%', 
           width: '3.5px', 
           height: '75%', 
-          background: 'linear-gradient(to top, #EF4444, #F97316, #EAB308, #3B82F6, #10B981)',
+          background: 'linear-gradient(to top, #dc2626, #ea580c, #ca8a04, #2563eb, #16a34a)',
           transformOrigin: 'bottom',
           animationDelay: '1.2s',
           animationDuration: '10s'
         }}>
-          {/* Incremental progress numbers */}
-          <div className="absolute left-5 bottom-1/10 w-8 h-8 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '2.2s' }}>10%</div>
-          <div className="absolute left-5 bottom-1/5 w-8 h-8 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '3.2s' }}>25%</div>
-          <div className="absolute left-5 bottom-2/5 w-8 h-8 bg-yellow-500 dark:bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '5.2s' }}>50%</div>
-          <div className="absolute left-5 bottom-3/5 w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '7.2s' }}>75%</div>
-          <div className="absolute left-5 bottom-4/5 w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white animate-number" style={{ animationDelay: '9.2s' }}>100%</div>
+          {/* Incremental counter */}
+          <div className="absolute left-5 top-0">
+            <AnimatedCounter targetValue={100} duration={10} delay={1.7} className="text-xl" />
+          </div>
         </div>
         
         {/* Discrete Fireworks Effect at 100% completion */}

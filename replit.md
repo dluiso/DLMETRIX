@@ -163,12 +163,12 @@ Preferred communication style: Simple, everyday language.
   - Full lines: red → orange → yellow → blue → green (complete spectrum)
   - Partial lines: red → orange → yellow → blue (appropriate to their completion)
   - Represents website improvement from problematic (red) to optimized (green)
-- **INCREMENTAL PERCENTAGE DISPLAY**:
-  - Numbers show as percentages (10%, 25%, 50%, 75%, 100%)
-  - Each number has pop animation with scale effect
-  - Numbers positioned at corresponding gradient color sections
-  - Staggered timing across all lines for organic flow
-  - No initial "0%" marker - starts with incremental progress
+- **REAL-TIME INCREMENTAL COUNTERS**:
+  - Custom AnimatedCounter component with JavaScript-based animation
+  - Counters start at 0% and increment smoothly to target value
+  - Each counter matches its line's completion percentage (30%, 45%, 55%, 100%)
+  - Easing animation with smooth transitions and proper timing
+  - No static elements - all numbers animated dynamically
 - **VARIED COMPLETION HEIGHTS**:
   - Only extreme lines (left and right) reach 100% completion
   - Center lines reach moderate completion (30%, 45%, 55%)
@@ -181,14 +181,14 @@ Preferred communication style: Simple, everyday language.
 - **TECHNICAL FEATURES**:
   - Multiple animation classes for different completion levels
   - progressLineFull (10s), progressLine30 (6s), progressLine45 (7s), progressLine55 (8s)
-  - numberPop animation with scale and opacity effects
+  - AnimatedCounter component with requestAnimationFrame for smooth counting
   - fireworks animation with scale and fade effects
   - Staggered delays across lines for natural progression
 - **SUBTLE INTEGRATION**:
-  - Opacity 15% (light) / 10% (dark) for non-intrusive background
+  - Reduced opacity to 8% (light) / 5% (dark) for more subtle appearance
   - Lines positioned from 15% to 80% horizontally
-  - Enhanced with floating improvement particles
-- **USER IMPACT**: Background now clearly visualizes varied website improvement levels with incremental percentage display, showing DLMETRIX can optimize sites to different completion levels
+  - More tenue colors with softer gradient transitions
+- **USER IMPACT**: Background now shows realistic incremental progress with live counters that match line growth, representing varied website improvement levels with smooth, non-intrusive animations
 
 ### Shared Reports System Fix - COMPLETED (January 16, 2025)
 - **ISSUE RESOLVED**: Fixed shared reports appearing blank when accessed via share links
