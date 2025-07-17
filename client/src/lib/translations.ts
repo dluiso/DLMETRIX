@@ -366,7 +366,10 @@ export const translations: Record<'en' | 'es', Translations> = {
     font: "Font",
     fetch: "Fetch",
     xhr: "XHR",
-    other: "Other"
+    other: "Other",
+    totalResources: "Total Resources",
+    totalLoadTime: "Total Load Time",
+    totalSize: "Total Size"
   },
   es: {
     // Header and Navigation
@@ -554,7 +557,10 @@ export const translations: Record<'en' | 'es', Translations> = {
     font: "Fuente",
     fetch: "Fetch",
     xhr: "XHR",
-    other: "Otro"
+    other: "Otro",
+    totalResources: "Total de Recursos",
+    totalLoadTime: "Tiempo Total de Carga",
+    totalSize: "Tamaño Total"
   }
 };
 

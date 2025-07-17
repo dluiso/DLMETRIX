@@ -168,9 +168,36 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+          {/* Resumen de métricas */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Globe className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium">{t.totalResources}</span>
+              </div>
+              <div className="text-2xl font-bold text-blue-600">{currentData.resources.length}</div>
+            </div>
+            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium">{t.totalLoadTime}</span>
+              </div>
+              <div className="text-2xl font-bold text-green-600">{formatTime(maxEndTime - minStartTime)}</div>
+            </div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Download className="h-4 w-4 text-purple-600" />
+                <span className="text-sm font-medium">{t.totalSize}</span>
+              </div>
+              <div className="text-2xl font-bold text-purple-600">
+                {formatBytes(currentData.resources.reduce((sum, r) => sum + r.size, 0))}
+              </div>
+            </div>
+          </div>
+
           {/* Controles de filtros */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+          <div className="flex flex-col gap-4">
+            <div>
               <label className="block text-sm font-medium mb-2">{language === 'es' ? 'Dispositivo' : 'Device'}:</label>
               <Tabs value={selectedDevice} onValueChange={(value) => setSelectedDevice(value as 'mobile' | 'desktop')}>
                 <TabsList className="grid w-full grid-cols-2">
@@ -179,17 +206,17 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 </TabsList>
               </Tabs>
             </div>
-            <div className="flex-1">
+            <div>
               <label className="block text-sm font-medium mb-2">{language === 'es' ? 'Tipo de Recurso' : 'Resource Type'}:</label>
-              <select 
-                value={selectedResourceType} 
-                onChange={(e) => setSelectedResourceType(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
-              >
-                {resourceTypes.map(type => (
-                  <option key={type.key} value={type.key}>{type.label}</option>
-                ))}
-              </select>
+              <Tabs value={selectedResourceType} onValueChange={setSelectedResourceType}>
+                <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
+                  {resourceTypes.map(type => (
+                    <TabsTrigger key={type.key} value={type.key} className="text-xs">
+                      {type.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
             </div>
           </div>
 
@@ -223,6 +250,45 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             </div>
           </div>
 
+          {/* Snapshots de progreso de carga */}
+          <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              {language === 'es' ? 'Instantáneas de Carga' : 'Loading Snapshots'}
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {(() => {
+                const snapshots = [];
+                const intervals = [0.25, 0.5, 0.75, 1];
+                
+                intervals.forEach((interval, index) => {
+                  const time = minStartTime + (totalDuration * interval);
+                  const resourcesLoaded = currentData.resources.filter(r => r.endTime <= time).length;
+                  const percentage = Math.round((resourcesLoaded / currentData.resources.length) * 100);
+                  
+                  snapshots.push(
+                    <div key={index} className="text-center">
+                      <div className="bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-lg p-3 mb-2">
+                        <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+                          {formatTime(time)}
+                        </div>
+                        <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                          {percentage}%
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-500">
+                          {resourcesLoaded}/{currentData.resources.length} {language === 'es' ? 'recursos' : 'resources'}
+                        </div>
+                      </div>
+                      <Progress value={percentage} className="h-2" />
+                    </div>
+                  );
+                });
+                
+                return snapshots;
+              })()}
+            </div>
+          </div>
+
           {/* Escala de tiempo */}
           <div className="relative">
             <h4 className="font-medium mb-3">{t.timeScale}:</h4>
@@ -250,7 +316,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 {t.noResourcesFound}
               </div>
             ) : (
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="space-y-2">
                 {filteredResources.slice(0, 50).map((resource, index) => (
                   <div
                     key={index}
