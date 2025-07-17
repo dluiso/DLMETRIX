@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
-import { getTranslations } from '@/lib/translations';
 
 interface ComparisonData {
   url: string;
@@ -31,7 +30,46 @@ interface URLComparisonProps {
 
 export function URLComparison({ analysisData, language = 'en' }: URLComparisonProps) {
   const [showComparison, setShowComparison] = useState(false);
-  const t = getTranslations(language);
+  
+  // Simple translation object to avoid function call errors
+  const translations = {
+    en: {
+      urlComparison: "URL Comparison",
+      noComparisonData: "No comparison data available. This is the first analysis for this URL.",
+      comparisonDescription: "Compare current analysis with previous results to track improvements over time.",
+      analysisHistory: "Analysis History",
+      analyses: "analyses",
+      lastAnalyzed: "Last Analyzed",
+      hideComparison: "Hide Comparison",
+      showComparison: "Show Comparison",
+      improvements: "improvements",
+      regressions: "regressions",
+      coreWebVitalsChanges: "Core Web Vitals Changes",
+      performance: "Performance",
+      accessibility: "Accessibility",
+      bestPractices: "Best Practices",
+      seo: "SEO"
+    },
+    es: {
+      urlComparison: "Comparación de URL",
+      noComparisonData: "No hay datos de comparación disponibles. Este es el primer análisis para esta URL.",
+      comparisonDescription: "Compara el análisis actual con resultados anteriores para seguir las mejoras a lo largo del tiempo.",
+      analysisHistory: "Historial de Análisis",
+      analyses: "análisis",
+      lastAnalyzed: "Último Analizado",
+      hideComparison: "Ocultar Comparación",
+      showComparison: "Mostrar Comparación",
+      improvements: "mejoras",
+      regressions: "regresiones",
+      coreWebVitalsChanges: "Cambios en Core Web Vitals",
+      performance: "Rendimiento",
+      accessibility: "Accesibilidad",
+      bestPractices: "Mejores Prácticas",
+      seo: "SEO"
+    }
+  };
+  
+  const t = translations[language];
 
   const { data: comparisonHistory } = useQuery({
     queryKey: ['/api/comparison/history', analysisData?.url],
@@ -52,9 +90,9 @@ export function URLComparison({ analysisData, language = 'en' }: URLComparisonPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            {t('urlComparison')}
+            {t.urlComparison}
           </CardTitle>
-          <CardDescription>{t('noComparisonData')}</CardDescription>
+          <CardDescription>{t.noComparisonData}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -67,25 +105,25 @@ export function URLComparison({ analysisData, language = 'en' }: URLComparisonPr
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5" />
-          {t('urlComparison')}
+          {t.urlComparison}
         </CardTitle>
-        <CardDescription>{t('comparisonDescription')}</CardDescription>
+        <CardDescription>{t.comparisonDescription}</CardDescription>
       </CardHeader>
       
       <CardContent>
         {comparisonSummary && (
           <div className="mb-4 p-4 bg-muted rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">{t('analysisHistory')}</span>
+              <span className="text-sm font-medium">{t.analysisHistory}</span>
               <Badge variant="outline">
-                {comparisonSummary.totalAnalyses} {t('analyses')}
+                {comparisonSummary.totalAnalyses} {t.analyses}
               </Badge>
             </div>
             
             {comparisonSummary.lastAnalyzed && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                {t('lastAnalyzed')}: {new Date(comparisonSummary.lastAnalyzed).toLocaleDateString()}
+                {t.lastAnalyzed}: {new Date(comparisonSummary.lastAnalyzed).toLocaleDateString()}
               </div>
             )}
           </div>
@@ -96,7 +134,7 @@ export function URLComparison({ analysisData, language = 'en' }: URLComparisonPr
           onClick={() => setShowComparison(!showComparison)}
           className="mb-4"
         >
-          {showComparison ? t('hideComparison') : t('showComparison')}
+          {showComparison ? t.hideComparison : t.showComparison}
         </Button>
 
         {showComparison && comparison && (
@@ -114,18 +152,18 @@ export function URLComparison({ analysisData, language = 'en' }: URLComparisonPr
                   <Minus className="h-5 w-5 text-gray-500" />
                 )}
                 <span className="font-medium">
-                  {t(`trend.${comparison.summary.overallTrend}`)}
+                  {comparison.summary.overallTrend}
                 </span>
               </div>
               
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <TrendingUp className="h-4 w-4 text-green-500" />
-                  {comparison.summary.totalImprovements} {t('improvements')}
+                  {comparison.summary.totalImprovements} {t.improvements}
                 </span>
                 <span className="flex items-center gap-1">
                   <TrendingDown className="h-4 w-4 text-red-500" />
-                  {comparison.summary.totalRegressions} {t('regressions')}
+                  {comparison.summary.totalRegressions} {t.regressions}
                 </span>
               </div>
             </div>
@@ -135,7 +173,7 @@ export function URLComparison({ analysisData, language = 'en' }: URLComparisonPr
               {Object.entries(comparison.improvements).map(([metric, change]) => (
                 <div key={metric} className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">{t(metric)}</span>
+                    <span className="text-sm font-medium">{t[metric] || metric}</span>
                     <div className="flex items-center gap-1">
                       {change > 0 && <TrendingUp className="h-4 w-4 text-green-500" />}
                       {change < 0 && <TrendingDown className="h-4 w-4 text-red-500" />}
@@ -158,7 +196,7 @@ export function URLComparison({ analysisData, language = 'en' }: URLComparisonPr
             <div className="space-y-4">
               <h4 className="font-medium flex items-center gap-2">
                 <Target className="h-4 w-4" />
-                {t('coreWebVitalsChanges')}
+                {t.coreWebVitalsChanges}
               </h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
