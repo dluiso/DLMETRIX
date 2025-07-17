@@ -33,7 +33,7 @@ fi
 
 # 1. Hacer backup de la base de datos
 log_info "Creando backup de la base de datos..."
-mysqldump -u dlmetrix -p dlmetrix > backup_antes_waterfall_$(date +%Y%m%d_%H%M%S).sql
+mysqldump -u plusmitseometrix -p dlmetrix > backup_antes_waterfall_$(date +%Y%m%d_%H%M%S).sql
 
 # 2. Actualizar código desde git
 log_info "Actualizando código desde git..."
@@ -45,11 +45,11 @@ npm install
 
 # 4. Actualizar base de datos
 log_info "Actualizando estructura de base de datos..."
-if [ -f "add-waterfall-column.js" ]; then
-    node add-waterfall-column.js
+if [ -f "add-waterfall-column.cjs" ]; then
+    node add-waterfall-column.cjs
 else
-    log_warning "add-waterfall-column.js no encontrado. Ejecutando SQL manual..."
-    mysql -u dlmetrix -p -e "
+    log_warning "add-waterfall-column.cjs no encontrado. Ejecutando SQL manual..."
+    mysql -u plusmitseometrix -p -e "
     USE dlmetrix;
     ALTER TABLE web_analyses 
     ADD COLUMN IF NOT EXISTS waterfall_analysis JSON NULL 
@@ -59,7 +59,7 @@ fi
 
 # 5. Verificar estructura de base de datos
 log_info "Verificando estructura de base de datos..."
-mysql -u dlmetrix -p -e "USE dlmetrix; DESCRIBE web_analyses;" | grep waterfall_analysis
+mysql -u plusmitseometrix -p -e "USE dlmetrix; DESCRIBE web_analyses;" | grep waterfall_analysis
 
 if [ $? -eq 0 ]; then
     log_info "Columna waterfall_analysis agregada correctamente"

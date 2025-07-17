@@ -15,7 +15,7 @@ cd /home/dlmetrix/dlplusmetrix/
 
 ### 2. Ejecuta este comando SQL
 ```bash
-mysql -u dlmetrix -p -e "
+mysql -u plusmitseometrix -p -e "
 USE dlmetrix;
 ALTER TABLE web_analyses 
 ADD COLUMN waterfall_analysis JSON NULL 
@@ -30,7 +30,7 @@ pm2 restart dlmetrix
 
 ## Verificación
 ```bash
-mysql -u dlmetrix -p -e "USE dlmetrix; DESCRIBE web_analyses;" | grep waterfall
+mysql -u plusmitseometrix -p -e "USE dlmetrix; DESCRIBE web_analyses;" | grep waterfall
 ```
 
 Deberías ver:
@@ -45,7 +45,14 @@ waterfall_analysis  json  YES  NULL
 
 ---
 
+## Opción Más Simple
+Ejecuta directamente:
+```bash
+./fix-waterfall-now.sh
+```
+
 **Nota**: Si prefieres usar los archivos que creé, puedes usar:
-- `add-waterfall-column.js` (automático)
+- `add-waterfall-column.cjs` (automático, corregido para CommonJS)
 - `deploy-waterfall-update.sh` (despliegue completo)
 - `update-waterfall-column.sql` (SQL manual)
+- `fix-waterfall-now.sh` (solución rápida)
