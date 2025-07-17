@@ -14,25 +14,26 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
   className = "" 
 }) => {
   const counterRef = useRef<HTMLDivElement>(null);
-  const currentValueRef = useRef(0);
   const animationRef = useRef<number>();
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    const startAnimation = () => {
+    const runAnimation = () => {
       if (!counterRef.current) return;
       
+      // Reset to 0
+      counterRef.current.textContent = "0%";
+      
       const startTime = Date.now();
-      const startValue = currentValueRef.current;
       
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / (duration * 1000), 1);
         
-        // Easing function for smooth animation
+        // Smooth easing function
         const easeOut = 1 - Math.pow(1 - progress, 3);
         
-        const currentValue = Math.round(startValue + (targetValue - startValue) * easeOut);
-        currentValueRef.current = currentValue;
+        const currentValue = Math.round(targetValue * easeOut);
         
         if (counterRef.current) {
           counterRef.current.textContent = `${currentValue}%`;
@@ -40,16 +41,24 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
         
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
+        } else {
+          // Schedule next animation cycle
+          timeoutRef.current = setTimeout(() => {
+            runAnimation();
+          }, 1000); // 1 second pause between cycles
         }
       };
       
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    const timeoutId = setTimeout(startAnimation, delay * 1000);
+    // Start first animation after delay
+    timeoutRef.current = setTimeout(runAnimation, delay * 1000);
 
     return () => {
-      clearTimeout(timeoutId);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -59,7 +68,14 @@ export const AnimatedCounter: FC<AnimatedCounterProps> = ({
   return (
     <div 
       ref={counterRef}
-      className={`font-bold text-gray-600 dark:text-gray-400 ${className}`}
+      className={`font-bold text-gray-500 dark:text-gray-500 opacity-60 ${className}`}
+      style={{ 
+        transform: 'none',
+        position: 'relative',
+        display: 'inline-block',
+        minWidth: '3rem',
+        textAlign: 'center'
+      }}
     >
       0%
     </div>
