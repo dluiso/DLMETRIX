@@ -328,4 +328,45 @@
       transform: scale(1);
     }
   }
+  
+  /* Social Media Tabs Mobile Optimization */
+  @media (max-width: 640px) {
+    /* Tabs container */
+    [data-radix-tabs-list] {
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    [data-radix-tabs-list]::-webkit-scrollbar {
+      display: none;
+    }
+    
+    [data-radix-tabs-trigger] {
+      white-space: nowrap;
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+    
+    /* Social media preview images */
+    .social-preview-image {
+      min-height: 120px;
+      max-height: 160px;
+    }
+    
+    /* Social media preview content */
+    .social-preview-content {
+      padding: 0.75rem;
+    }
+    
+    .social-preview-content h4 {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+    
+    .social-preview-content p {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+  }
 }
