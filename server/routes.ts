@@ -8,6 +8,7 @@ import lighthouse from "lighthouse";
 import puppeteer from "puppeteer";
 import { nanoid } from "nanoid";
 import { realOffPageAnalyzer } from "./real-offpage-analyzer";
+import { tempShareService } from "./temp-share-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Comprehensive web performance analysis
@@ -102,7 +103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Share report API
+  // Share report API - New HTML file system
   app.post("/api/share/create", async (req, res) => {
     try {
       const { analysisData } = req.body;
@@ -111,45 +112,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Analysis data is required" });
       }
 
-      console.log(`Creating shareable report for: ${analysisData.url}`);
+      console.log(`Creating temporary HTML report for: ${analysisData.url}`);
       
-      // Optimize data for sharing (reduce payload size)
-      const optimizedData = optimizeAnalysisDataForSharing(analysisData);
+      // Create temporary HTML report
+      const shareToken = await tempShareService.createSharedReport(analysisData);
       
-      // Generate unique token
-      const shareToken = nanoid(20);
+      // Set expiration to 24 hours from now
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
       
-      // Set expiration to 12 hours from now
-      const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
-      
-      console.log(`Optimized data size: ${JSON.stringify(optimizedData).length} characters`);
-      
-      // Store shared report
-      const sharedReport = await storage.createSharedReport({
-        shareToken,
-        url: analysisData.url,
-        analysisData: optimizedData,
-        expiresAt
-      });
-      
-      // Clean expired reports periodically
-      await storage.cleanExpiredSharedReports();
-      
-      console.log(`✅ Shared report created with token: ${shareToken}`);
+      console.log(`✅ HTML report created with token: ${shareToken}`);
       
       res.json({
         shareToken,
-        shareUrl: `${req.protocol}://${req.get('host')}/share/${shareToken}`,
+        shareUrl: `${req.protocol}://${req.get('host')}/report/${shareToken}`,
         expiresAt: expiresAt.toISOString(),
         url: analysisData.url
       });
     } catch (error: any) {
-      console.error('Share creation error:', error);
+      console.error('HTML share creation error:', error);
       res.status(500).json({ message: "Failed to create shareable link" });
     }
   });
 
-  // Get shared report API
+  // Get shared report API - Direct HTML serving
+  app.get("/report/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      if (!token) {
+        return res.status(400).send(`
+          <html>
+            <head><title>Error - DLMETRIX</title></head>
+            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+              <h1>Invalid Share Token</h1>
+              <p>The share token is missing or invalid.</p>
+              <a href="/">Return to DLMETRIX</a>
+            </body>
+          </html>
+        `);
+      }
+
+      console.log(`🔍 Retrieving HTML report: ${token}`);
+      
+      const htmlContent = tempShareService.getSharedReport(token);
+      
+      if (!htmlContent) {
+        return res.status(404).send(`
+          <html>
+            <head><title>Report Not Found - DLMETRIX</title></head>
+            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+              <h1>Report Not Found</h1>
+              <p>This shared report has expired or does not exist.</p>
+              <p>Shared reports are automatically deleted after 24 hours.</p>
+              <a href="/">Return to DLMETRIX</a>
+            </body>
+          </html>
+        `);
+      }
+
+      console.log(`✅ Serving HTML report: ${token}`);
+      
+      res.setHeader('Content-Type', 'text/html');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.send(htmlContent);
+    } catch (error: any) {
+      console.error('HTML share retrieval error:', error);
+      res.status(500).send(`
+        <html>
+          <head><title>Error - DLMETRIX</title></head>
+          <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+            <h1>Server Error</h1>
+            <p>An error occurred while retrieving the shared report.</p>
+            <a href="/">Return to DLMETRIX</a>
+          </body>
+        </html>
+      `);
+    }
+  });
+
+  // Keep old API endpoint for backward compatibility
   app.get("/api/share/:token", async (req, res) => {
     try {
       const { token } = req.params;
@@ -158,43 +201,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Share token is required" });
       }
 
-      const sharedReport = await storage.getSharedReport(token);
+      // Check if HTML report exists
+      const htmlContent = tempShareService.getSharedReport(token);
       
-      if (!sharedReport) {
+      if (!htmlContent) {
         return res.status(404).json({ 
           message: "Shared report not found or has expired",
           expired: true
         });
       }
-      
-      // Parse analysisData if it's stored as string in database
-      let analysisData = sharedReport.analysisData;
-      if (typeof analysisData === 'string') {
-        try {
-          analysisData = JSON.parse(analysisData);
-          console.log('📝 Parsed analysisData from JSON string');
-        } catch (parseError) {
-          console.error('❌ Failed to parse analysisData:', parseError);
-          return res.status(500).json({ message: "Corrupted report data" });
-        }
-      }
-      
-      console.log('🔍 Returning shared report data:', {
-        url: sharedReport.url,
-        hasAnalysisData: !!analysisData,
-        analysisDataKeys: analysisData ? Object.keys(analysisData) : [],
-        createdAt: sharedReport.createdAt,
-        expiresAt: sharedReport.expiresAt
-      });
-      
+
+      // For API compatibility, return basic info
       res.json({
-        url: sharedReport.url,
-        analysisData: analysisData,
-        createdAt: sharedReport.createdAt,
-        expiresAt: sharedReport.expiresAt
+        url: "HTML Report Available",
+        message: "This report is now served as HTML. Visit /share/" + token,
+        redirectUrl: `/share/${token}`,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       });
     } catch (error: any) {
-      console.error('Share retrieval error:', error);
+      console.error('API share retrieval error:', error);
       res.status(500).json({ message: "Failed to retrieve shared report" });
     }
   });
