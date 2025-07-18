@@ -11,17 +11,25 @@ cd ~/DLMETRIX
 echo "🛑 Stopping DLMETRIX..."
 pm2 stop dlmetrix
 
-# Install all dependencies
+# Clean previous installs
+echo "🧹 Cleaning previous installations..."
+rm -rf node_modules package-lock.json dist
+
+# Install all dependencies with clean slate
 echo "📦 Installing dependencies..."
 npm install
 
-# Build for production
-echo "🏗️ Building for production..."
-npm run build
+# Build using npx to ensure local packages
+echo "🏗️ Building frontend with Vite..."
+npx vite build
+
+echo "🏗️ Building backend with ESBuild..."
+npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
 # Verify build
 if [ -f "dist/index.js" ]; then
     echo "✅ Build successful"
+    ls -la dist/
 else
     echo "❌ Build failed"
     exit 1
