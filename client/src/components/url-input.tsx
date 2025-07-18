@@ -92,7 +92,7 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
           <div className="flex-1 relative min-w-0">
             <Input
               type="text"
-              placeholder={language === 'en' ? 'Enter domain (e.g., example) - Press Ctrl+Enter to add .com' : 'Ingresa dominio (ej., ejemplo) - Ctrl+Enter agrega .com'}
+              placeholder={language === 'en' ? 'example.com or just "example" + Ctrl+Enter' : 'ejemplo.com o solo "ejemplo" + Ctrl+Enter'}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={handleKeyDown}
