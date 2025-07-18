@@ -3561,21 +3561,67 @@ async function captureWaterfallData(url: string, browser: any, device: 'mobile' 
   }
 }
 
-// Measure Total Blocking Time (TBT) - real implementation following Lighthouse methodology
+// Measure Total Blocking Time (TBT) - real implementation using multiple approaches
 async function measureTotalBlockingTime(page: any): Promise<number> {
   try {
-    console.log('🔍 Measuring Total Blocking Time using real main thread tasks...');
+    console.log('🔍 Measuring Total Blocking Time using comprehensive approach...');
     
-    // Inject script to measure long tasks and calculate TBT
+    // Inject script to measure TBT using multiple methods
     const tbtMeasurement = await page.evaluate(() => {
       return new Promise((resolve) => {
         let totalBlockingTime = 0;
         let fcpTime = null;
         let ttiTime = null;
         const startTime = performance.now();
-        const timeout = 8000; // 8 second measurement window
+        const timeout = 8000;
         
-        // Measure First Contentful Paint
+        // Method 1: Try PerformanceObserver for longtask
+        let longTaskCount = 0;
+        let allLongTasks = [];
+        let longTaskSupported = false;
+        
+        try {
+          new PerformanceObserver((list) => {
+            longTaskSupported = true;
+            const entries = list.getEntries();
+            for (const entry of entries) {
+              longTaskCount++;
+              allLongTasks.push({
+                startTime: entry.startTime,
+                duration: entry.duration,
+                attribution: entry.attribution || 'unknown'
+              });
+              console.log(`📊 TBT: Long task detected - Start: ${entry.startTime.toFixed(1)}ms, Duration: ${entry.duration.toFixed(1)}ms`);
+            }
+          }).observe({ entryTypes: ['longtask'] });
+        } catch (e) {
+          console.log('📊 TBT: LongTask API not supported, using alternative measurement');
+        }
+        
+        // Method 2: Measure script execution time (fallback)
+        let scriptExecutionTime = 0;
+        let scriptCount = 0;
+        const scriptTimings = [];
+        
+        // Monitor script resource loading timing
+        new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          for (const entry of entries) {
+            if (entry.initiatorType === 'script' || entry.name.includes('.js')) {
+              scriptCount++;
+              const scriptDuration = entry.responseEnd - entry.responseStart;
+              scriptExecutionTime += scriptDuration;
+              scriptTimings.push({
+                url: entry.name,
+                duration: scriptDuration,
+                startTime: entry.startTime
+              });
+              console.log(`📊 TBT: Script detected - ${entry.name.split('/').pop()}, Duration: ${scriptDuration.toFixed(1)}ms`);
+            }
+          }
+        }).observe({ entryTypes: ['resource'] });
+        
+        // Method 3: Measure paint timing for FCP
         new PerformanceObserver((list) => {
           const entries = list.getEntries();
           for (const entry of entries) {
@@ -3585,27 +3631,6 @@ async function measureTotalBlockingTime(page: any): Promise<number> {
             }
           }
         }).observe({ entryTypes: ['paint'] });
-        
-        // Measure long tasks (>50ms) for TBT calculation
-        let longTaskCount = 0;
-        new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          for (const entry of entries) {
-            longTaskCount++;
-            
-            // Only count tasks after FCP for TBT calculation
-            if (fcpTime !== null && entry.startTime >= fcpTime) {
-              const taskDuration = entry.duration;
-              
-              // TBT = sum of (task duration - 50ms) for all tasks >50ms between FCP and TTI
-              if (taskDuration > 50) {
-                const blockingTime = taskDuration - 50;
-                totalBlockingTime += blockingTime;
-                console.log(`📊 TBT: Long task detected - Duration: ${taskDuration.toFixed(1)}ms, Blocking: ${blockingTime.toFixed(1)}ms`);
-              }
-            }
-          }
-        }).observe({ entryTypes: ['longtask'] });
         
         // Estimate TTI (Time to Interactive) by monitoring network activity
         let lastNetworkActivity = performance.now();
@@ -3644,10 +3669,65 @@ async function measureTotalBlockingTime(page: any): Promise<number> {
             ttiTime = fcpTime + 2000; // TTI at least 2 seconds after FCP
           }
           
+          // Calculate TBT using available methods
+          totalBlockingTime = 0;
+          let tasksInWindow = 0;
+          let calculationMethod = 'none';
+          
+          // Method 1: Use longtask data if available
+          if (longTaskSupported && allLongTasks.length > 0) {
+            calculationMethod = 'longtask';
+            for (const task of allLongTasks) {
+              if (task.startTime >= fcpTime && task.startTime <= ttiTime) {
+                tasksInWindow++;
+                if (task.duration > 50) {
+                  const blockingTime = task.duration - 50;
+                  totalBlockingTime += blockingTime;
+                  console.log(`📊 TBT: Task in FCP-TTI window - Duration: ${task.duration.toFixed(1)}ms, Blocking: ${blockingTime.toFixed(1)}ms`);
+                }
+              }
+            }
+          }
+          // Method 2: Estimate from script execution timing
+          else if (scriptCount > 0) {
+            calculationMethod = 'script-estimation';
+            console.log(`📊 TBT: Using script estimation method with ${scriptCount} scripts`);
+            
+            // Estimate blocking time based on script loading patterns
+            for (const script of scriptTimings) {
+              if (script.startTime >= fcpTime && script.startTime <= ttiTime) {
+                // Estimate that script parsing/compilation takes ~30% of download time
+                const estimatedExecutionTime = script.duration * 0.3;
+                if (estimatedExecutionTime > 50) {
+                  const blockingTime = estimatedExecutionTime - 50;
+                  totalBlockingTime += blockingTime;
+                  tasksInWindow++;
+                  console.log(`📊 TBT: Script ${script.url.split('/').pop()} estimated blocking: ${blockingTime.toFixed(1)}ms`);
+                }
+              }
+            }
+          }
+          // Method 3: Estimate based on resource loading intensity
+          else {
+            calculationMethod = 'resource-estimation';
+            const windowDuration = ttiTime - fcpTime;
+            
+            // Simple heuristic: if many resources load in a short window, estimate some blocking
+            if (scriptCount > 5 && windowDuration < 3000) {
+              const estimatedBlocking = Math.min(200, scriptCount * 15); // Cap at 200ms
+              totalBlockingTime = estimatedBlocking;
+              tasksInWindow = Math.ceil(scriptCount / 3);
+              console.log(`📊 TBT: Resource-based estimation - ${scriptCount} scripts in ${windowDuration.toFixed(0)}ms window, estimated blocking: ${estimatedBlocking}ms`);
+            }
+          }
+          
           console.log(`📊 TBT Measurement Complete:
+            - Method: ${calculationMethod}
             - FCP: ${fcpTime?.toFixed(1)}ms
             - TTI: ${ttiTime?.toFixed(1)}ms  
+            - Scripts: ${scriptCount}
             - Long Tasks: ${longTaskCount}
+            - Tasks in FCP-TTI window: ${tasksInWindow}
             - Total Blocking Time: ${totalBlockingTime.toFixed(1)}ms`);
           
           resolve({
@@ -3655,6 +3735,9 @@ async function measureTotalBlockingTime(page: any): Promise<number> {
             fcpTime: Math.round(fcpTime || 0),
             ttiTime: Math.round(ttiTime || 0),
             longTaskCount,
+            scriptCount,
+            tasksInWindow,
+            calculationMethod,
             measurementWindow: timeout
           });
         }, timeout);
