@@ -1,196 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { nanoid } from 'nanoid';
-
-export interface WebAnalysisData {
-  id?: number;
-  url: string;
-  title: string;
-  description: string;
-  keywords: string[];
-  canonicalUrl: string;
-  robotsMeta: string;
-  viewportMeta: string;
-  charset: string;
-  langAttribute: string;
-  imageAnalysis: any;
-  linkAnalysis: any;
-  contentAnalysis: any;
-  technicalAnalysis: any;
-  openGraphTags: any;
-  twitterCardTags: any;
-  schemaMarkup: any;
-  robotsTxtExists: boolean;
-  sitemapExists: boolean;
-  finalUrl: string;
-  hasSSL: boolean;
-  performanceScore: number;
-  accessibilityScore: number;
-  bestPracticesScore: number;
-  seoScore: number;
-  mobileLCP: number;
-  mobileFID: number;
-  mobileCLS: number;
-  mobileFCP: number;
-  mobileTTFB: number;
-  desktopLCP: number;
-  desktopFID: number;
-  desktopCLS: number;
-  desktopFCP: number;
-  desktopTTFB: number;
-  mobileScreenshot: string;
-  desktopScreenshot: string;
-  diagnostics: any;
-  insights: any;
-  recommendations: any;
-  waterfallAnalysis: any;
-  offPageData: any;
-  createdAt: string;
-}
-
-export class HtmlReportGenerator {
-  private tempDir: string;
-
-  constructor() {
-    this.tempDir = path.join(process.cwd(), 'temp-reports');
-    this.ensureTempDir();
-    this.setupCleanupTask();
-  }
-
-  private ensureTempDir(): void {
-    if (!fs.existsSync(this.tempDir)) {
-      fs.mkdirSync(this.tempDir, { recursive: true });
-      console.log(`📁 Created temp reports directory: ${this.tempDir}`);
-    }
-  }
-
-  private setupCleanupTask(): void {
-    // Run cleanup every hour
-    setInterval(() => {
-      this.cleanupExpiredReports();
-    }, 60 * 60 * 1000); // 1 hour
-
-    // Run cleanup on startup
-    this.cleanupExpiredReports();
-  }
-
-  private cleanupExpiredReports(): void {
-    try {
-      const files = fs.readdirSync(this.tempDir);
-      const now = Date.now();
-      let cleanedCount = 0;
-
-      for (const file of files) {
-        if (file.endsWith('.html')) {
-          const filePath = path.join(this.tempDir, file);
-          const stats = fs.statSync(filePath);
-          const ageInHours = (now - stats.mtime.getTime()) / (1000 * 60 * 60);
-
-          if (ageInHours > 24) {
-            fs.unlinkSync(filePath);
-            cleanedCount++;
-          }
-        }
-      }
-
-      if (cleanedCount > 0) {
-        console.log(`🧹 Cleaned up ${cleanedCount} expired HTML reports`);
-      }
-    } catch (error) {
-      console.error('❌ Error cleaning up expired reports:', error);
-    }
-  }
-
-  public async generateSharedReport(analysisData: WebAnalysisData): Promise<string> {
-    const token = nanoid(12);
-    const fileName = `${token}.html`;
-    const filePath = path.join(this.tempDir, fileName);
-
-    try {
-      const htmlContent = this.generateHtmlContent(analysisData);
-      fs.writeFileSync(filePath, htmlContent, 'utf8');
-      
-      console.log(`📄 Generated HTML report: ${fileName}`);
-      return token;
-    } catch (error) {
-      console.error('❌ Error generating HTML report:', error);
-      throw new Error('Failed to generate HTML report');
-    }
-  }
-
-  public getSharedReport(token: string): string | null {
-    const fileName = `${token}.html`;
-    const filePath = path.join(this.tempDir, fileName);
-
-    try {
-      if (!fs.existsSync(filePath)) {
-        return null;
-      }
-
-      const stats = fs.statSync(filePath);
-      const ageInHours = (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60);
-
-      if (ageInHours > 24) {
-        fs.unlinkSync(filePath);
-        return null;
-      }
-
-      return fs.readFileSync(filePath, 'utf8');
-    } catch (error) {
-      console.error('❌ Error reading shared report:', error);
-      return null;
-    }
-  }
-
-  private generateHtmlContent(data: WebAnalysisData): string {
-    const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    
-    // Helper functions
-    const getScoreColor = (score: number) => {
-      if (score >= 90) return 'text-green-600';
-      if (score >= 50) return 'text-orange-500';
-      return 'text-red-500';
-    };
-
-    const getScoreStroke = (score: number) => {
-      if (score >= 90) return '#10b981';
-      if (score >= 50) return '#f59e0b';
-      return '#ef4444';
-    };
-
-    const formatMetric = (value: any, unit: string = 'ms') => {
-      if (value === null || value === undefined) return 'N/A';
-      if (typeof value === 'number') return `${value.toFixed(0)}${unit}`;
-      return value;
-    };
-
-    const formatCLS = (value: any) => {
-      if (value === null || value === undefined) return 'N/A';
-      if (typeof value === 'number') return value.toFixed(3);
-      return value;
-    };
-
-    const createProgressRing = (score: number, size: number = 64) => {
-      const radius = 28;
-      const circumference = 2 * Math.PI * radius;
-      const strokeDasharray = `${(score / 100) * circumference}, ${circumference}`;
-      
-      return `
-        <svg class="w-${size/4} h-${size/4}" viewBox="0 0 64 64">
-          <circle cx="32" cy="32" r="${radius}" fill="none" stroke="#e5e7eb" stroke-width="4"/>
-          <circle cx="32" cy="32" r="${radius}" fill="none" stroke="${getScoreStroke(score)}" stroke-width="4" 
-                  stroke-dasharray="${strokeDasharray}" stroke-linecap="round" transform="rotate(-90 32 32)"/>
-          <text x="32" y="36" text-anchor="middle" font-size="14" font-weight="bold" fill="${getScoreColor(score)}">${score}</text>
-        </svg>
-      `;
-    };
-    
-    return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DLMETRIX Analysis Report - ${data.title}</title>
+    <title>DLMETRIX Analysis Report - Example Domain</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
@@ -318,10 +131,10 @@ export class HtmlReportGenerator {
             <div class="section-card">
                 <h2 class="text-xl font-bold mb-4 text-gray-900">Website Overview</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div><strong>URL:</strong> ${data.url}</div>
-                    <div><strong>Title:</strong> ${data.title || 'N/A'}</div>
-                    <div><strong>Description:</strong> ${data.description || 'N/A'}</div>
-                    <div><strong>SSL Status:</strong> ${data.hasSSL ? '✅ Secure' : '❌ Not Secure'}</div>
+                    <div><strong>URL:</strong> https://example.com</div>
+                    <div><strong>Title:</strong> Example Domain</div>
+                    <div><strong>Description:</strong> This domain is for use in illustrative examples in documents</div>
+                    <div><strong>SSL Status:</strong> ✅ Secure</div>
                 </div>
             </div>
 
@@ -331,25 +144,53 @@ export class HtmlReportGenerator {
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div class="text-center">
                         <div class="mb-3">
-                            ${createProgressRing(data.performanceScore || 0)}
+                            
+        <svg class="w-16 h-16" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="4"/>
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#f59e0b" stroke-width="4" 
+                  stroke-dasharray="131.94689145077132, 175.92918860102841" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <text x="32" y="36" text-anchor="middle" font-size="14" font-weight="bold" fill="text-orange-500">75</text>
+        </svg>
+      
                         </div>
                         <p class="text-sm font-medium text-gray-600">Performance</p>
                     </div>
                     <div class="text-center">
                         <div class="mb-3">
-                            ${createProgressRing(data.accessibilityScore || 0)}
+                            
+        <svg class="w-16 h-16" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="4"/>
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#f59e0b" stroke-width="4" 
+                  stroke-dasharray="154.817685968905, 175.92918860102841" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <text x="32" y="36" text-anchor="middle" font-size="14" font-weight="bold" fill="text-orange-500">88</text>
+        </svg>
+      
                         </div>
                         <p class="text-sm font-medium text-gray-600">Accessibility</p>
                     </div>
                     <div class="text-center">
                         <div class="mb-3">
-                            ${createProgressRing(data.bestPracticesScore || 0)}
+                            
+        <svg class="w-16 h-16" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="4"/>
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#10b981" stroke-width="4" 
+                  stroke-dasharray="161.85485351294614, 175.92918860102841" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <text x="32" y="36" text-anchor="middle" font-size="14" font-weight="bold" fill="text-green-600">92</text>
+        </svg>
+      
                         </div>
                         <p class="text-sm font-medium text-gray-600">Best Practices</p>
                     </div>
                     <div class="text-center">
                         <div class="mb-3">
-                            ${createProgressRing(data.seoScore || 0)}
+                            
+        <svg class="w-16 h-16" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="4"/>
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#f59e0b" stroke-width="4" 
+                  stroke-dasharray="149.53981031087415, 175.92918860102841" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <text x="32" y="36" text-anchor="middle" font-size="14" font-weight="bold" fill="text-orange-500">85</text>
+        </svg>
+      
                         </div>
                         <p class="text-sm font-medium text-gray-600">SEO</p>
                     </div>
@@ -365,23 +206,23 @@ export class HtmlReportGenerator {
                         <h3 class="font-semibold text-gray-700 mb-4">📱 Mobile</h3>
                         <div class="space-y-3">
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.mobileLCP)}</div>
+                                <div class="metric-value">1800ms</div>
                                 <div class="metric-label">LCP</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.mobileFID)}</div>
+                                <div class="metric-value">50ms</div>
                                 <div class="metric-label">FID</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatCLS(data.mobileCLS)}</div>
+                                <div class="metric-value">0.080</div>
                                 <div class="metric-label">CLS</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.mobileFCP)}</div>
+                                <div class="metric-value">1200ms</div>
                                 <div class="metric-label">FCP</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.mobileTTFB)}</div>
+                                <div class="metric-value">400ms</div>
                                 <div class="metric-label">TTFB</div>
                             </div>
                         </div>
@@ -392,23 +233,23 @@ export class HtmlReportGenerator {
                         <h3 class="font-semibold text-gray-700 mb-4">🖥️ Desktop</h3>
                         <div class="space-y-3">
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.desktopLCP)}</div>
+                                <div class="metric-value">1500ms</div>
                                 <div class="metric-label">LCP</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.desktopFID)}</div>
+                                <div class="metric-value">30ms</div>
                                 <div class="metric-label">FID</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatCLS(data.desktopCLS)}</div>
+                                <div class="metric-value">0.040</div>
                                 <div class="metric-label">CLS</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.desktopFCP)}</div>
+                                <div class="metric-value">1000ms</div>
                                 <div class="metric-label">FCP</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${formatMetric(data.desktopTTFB)}</div>
+                                <div class="metric-value">300ms</div>
                                 <div class="metric-label">TTFB</div>
                             </div>
                         </div>
@@ -417,29 +258,29 @@ export class HtmlReportGenerator {
             </div>
 
             <!-- Screenshots -->
-            ${data.mobileScreenshot || data.desktopScreenshot ? `
+            
             <div class="section-card">
                 <h2 class="text-xl font-bold mb-6 text-gray-900">Screenshots</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    ${data.mobileScreenshot ? `
+                    
                     <div>
                         <h3 class="font-semibold text-gray-700 mb-3">📱 Mobile (375×667)</h3>
                         <div class="screenshot-container">
-                            <img src="${data.mobileScreenshot}" alt="Mobile screenshot" class="w-full h-auto" />
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="Mobile screenshot" class="w-full h-auto" />
                         </div>
                     </div>
-                    ` : ''}
-                    ${data.desktopScreenshot ? `
+                    
+                    
                     <div>
                         <h3 class="font-semibold text-gray-700 mb-3">🖥️ Desktop (1350×940)</h3>
                         <div class="screenshot-container">
-                            <img src="${data.desktopScreenshot}" alt="Desktop screenshot" class="w-full h-auto" />
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="Desktop screenshot" class="w-full h-auto" />
                         </div>
                     </div>
-                    ` : ''}
+                    
                 </div>
             </div>
-            ` : ''}
+            
 
             <!-- SEO Analysis -->
             <div class="section-card">
@@ -448,27 +289,27 @@ export class HtmlReportGenerator {
                     <div>
                         <h3 class="font-semibold text-gray-700 mb-2">Meta Information</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div><strong>Keywords:</strong> ${data.keywords?.join(', ') || 'None'}</div>
-                            <div><strong>Canonical:</strong> ${data.canonicalUrl || 'N/A'}</div>
-                            <div><strong>Robots:</strong> ${data.robotsMeta || 'N/A'}</div>
-                            <div><strong>Language:</strong> ${data.langAttribute || 'N/A'}</div>
+                            <div><strong>Keywords:</strong> example, domain, test</div>
+                            <div><strong>Canonical:</strong> https://example.com</div>
+                            <div><strong>Robots:</strong> index, follow</div>
+                            <div><strong>Language:</strong> en-US</div>
                         </div>
                     </div>
                     
                     <div>
                         <h3 class="font-semibold text-gray-700 mb-2">Technical Checks</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                            <div class="${data.robotsTxtExists ? 'check-pass' : 'check-fail'}">
-                                ${data.robotsTxtExists ? '✅' : '❌'} Robots.txt
+                            <div class="check-pass">
+                                ✅ Robots.txt
                             </div>
-                            <div class="${data.sitemapExists ? 'check-pass' : 'check-fail'}">
-                                ${data.sitemapExists ? '✅' : '❌'} Sitemap.xml
+                            <div class="check-pass">
+                                ✅ Sitemap.xml
                             </div>
-                            <div class="${data.hasSSL ? 'check-pass' : 'check-fail'}">
-                                ${data.hasSSL ? '✅' : '❌'} SSL Certificate
+                            <div class="check-pass">
+                                ✅ SSL Certificate
                             </div>
-                            <div class="${data.viewportMeta ? 'check-pass' : 'check-fail'}">
-                                ${data.viewportMeta ? '✅' : '❌'} Viewport Meta
+                            <div class="check-pass">
+                                ✅ Viewport Meta
                             </div>
                         </div>
                     </div>
@@ -476,67 +317,94 @@ export class HtmlReportGenerator {
             </div>
 
             <!-- OffPage Analysis -->
-            ${data.offPageData ? `
+            
             <div class="section-card">
                 <h2 class="text-xl font-bold mb-6 text-gray-900">OffPage Analysis</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-600">${data.offPageData.domainAuthority || 0}</div>
+                        <div class="text-3xl font-bold text-blue-600">25</div>
                         <div class="text-sm text-gray-600">Domain Authority</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-3xl font-bold text-green-600">${data.offPageData.backlinks?.totalBacklinks || 0}</div>
+                        <div class="text-3xl font-bold text-green-600">150</div>
                         <div class="text-sm text-gray-600">Backlinks</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-3xl font-bold text-purple-600">${data.offPageData.backlinks?.referringDomains || 0}</div>
+                        <div class="text-3xl font-bold text-purple-600">25</div>
                         <div class="text-sm text-gray-600">Referring Domains</div>
                     </div>
                 </div>
                 
-                ${data.offPageData.socialPresence ? `
+                
                 <div class="mt-6">
                     <h3 class="font-semibold text-gray-700 mb-3">Social Presence</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        ${data.offPageData.socialPresence.platforms?.map((platform: any) => `
+                        
                             <div class="text-center">
-                                <div class="text-xl font-bold text-blue-600">${platform.mentions}</div>
-                                <div class="text-sm text-gray-600">${platform.platform}</div>
+                                <div class="text-xl font-bold text-blue-600">300</div>
+                                <div class="text-sm text-gray-600">Twitter</div>
                             </div>
-                        `).join('') || ''}
+                        
+                            <div class="text-center">
+                                <div class="text-xl font-bold text-blue-600">150</div>
+                                <div class="text-sm text-gray-600">Facebook</div>
+                            </div>
+                        
+                            <div class="text-center">
+                                <div class="text-xl font-bold text-blue-600">50</div>
+                                <div class="text-sm text-gray-600">LinkedIn</div>
+                            </div>
+                        
                     </div>
                 </div>
-                ` : ''}
+                
             </div>
-            ` : ''}
+            
 
             <!-- Recommendations -->
-            ${data.recommendations ? `
+            
             <div class="section-card">
                 <h2 class="text-xl font-bold mb-6 text-gray-900">Recommendations</h2>
                 <div class="space-y-4">
-                    ${Object.entries(data.recommendations).map(([category, recs]: [string, any]) => {
-                        if (!recs || !Array.isArray(recs) || recs.length === 0) return '';
-                        return `
+                    
                             <div>
-                                <h3 class="font-semibold text-gray-700 mb-3 capitalize">${category}</h3>
+                                <h3 class="font-semibold text-gray-700 mb-3 capitalize">performance</h3>
                                 <div class="space-y-2">
-                                    ${recs.slice(0, 5).map((rec: any) => `
+                                    
                                         <div class="bg-gray-50 p-3 rounded-lg">
-                                            <div class="font-medium text-sm">${rec.title || 'Recommendation'}</div>
-                                            <div class="text-xs text-gray-600 mt-1">${rec.description || ''}</div>
+                                            <div class="font-medium text-sm">Optimize images</div>
+                                            <div class="text-xs text-gray-600 mt-1">Compress images to reduce load times</div>
                                         </div>
-                                    `).join('')}
+                                    
+                                        <div class="bg-gray-50 p-3 rounded-lg">
+                                            <div class="font-medium text-sm">Minify CSS</div>
+                                            <div class="text-xs text-gray-600 mt-1">Reduce CSS file sizes</div>
+                                        </div>
+                                    
                                 </div>
                             </div>
-                        `;
-                    }).join('')}
+                        
+                            <div>
+                                <h3 class="font-semibold text-gray-700 mb-3 capitalize">seo</h3>
+                                <div class="space-y-2">
+                                    
+                                        <div class="bg-gray-50 p-3 rounded-lg">
+                                            <div class="font-medium text-sm">Add alt text</div>
+                                            <div class="text-xs text-gray-600 mt-1">Improve accessibility with image descriptions</div>
+                                        </div>
+                                    
+                                        <div class="bg-gray-50 p-3 rounded-lg">
+                                            <div class="font-medium text-sm">Optimize title tags</div>
+                                            <div class="text-xs text-gray-600 mt-1">Create more descriptive page titles</div>
+                                        </div>
+                                    
+                                </div>
+                            </div>
+                        
                 </div>
             </div>
-            ` : ''}
+            
         </div>
     </div>
 </body>
-</html>`;
-  }
-}
+</html>
