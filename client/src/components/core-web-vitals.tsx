@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Clock, Zap, TrendingUp, AlertTriangle, CheckCircle, Info } from "lucide-react";
 import { CoreWebVitals } from "@/types/seo";
 import { getTranslations } from "@/lib/translations";
+import { formatTime, isSlowTime } from "@/lib/time-utils";
 
 interface CoreWebVitalsProps {
   data: CoreWebVitals;
@@ -16,10 +17,18 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
   const hasRealData = data.mobile.lcp !== null || data.mobile.fid !== null || 
                      data.desktop.lcp !== null || data.desktop.fid !== null;
 
-  const formatTime = (value: number | null) => {
-    if (value === null) return 'N/A';
-    if (value < 1000) return `${Math.round(value)}ms`;
-    return `${(value / 1000).toFixed(2)}s`;
+  const formatTimeValue = (value: number | null) => {
+    if (value === null) return { formatted: 'N/A', cssClass: '' };
+    
+    // Apply DLMETRIX time formatting logic
+    if (value < 1000) {
+      return { formatted: `${Math.round(value)}ms`, cssClass: '' };
+    }
+    
+    const seconds = (value / 1000).toFixed(1);
+    const cssClass = value >= 10000 ? 'slow-load' : '';
+    
+    return { formatted: `${seconds}s`, cssClass };
   };
 
   const formatCLS = (value: number | null) => {
@@ -71,7 +80,7 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
       title: 'Largest Contentful Paint',
       description: 'Time until the largest content element is rendered',
       icon: <TrendingUp className="w-5 h-5" />,
-      format: formatTime,
+      format: formatTimeValue,
       suggestions: {
         poor: 'Optimize images, reduce render-blocking resources, improve server response times, use CDN',
         needsImprovement: 'Compress images, preload critical resources, minimize unused CSS/JS'
@@ -82,7 +91,7 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
       title: 'First Input Delay',
       description: 'Time from first user interaction to browser response',
       icon: <Zap className="w-5 h-5" />,
-      format: formatTime,
+      format: formatTimeValue,
       suggestions: {
         poor: 'Reduce JavaScript execution time, split long tasks, use web workers, defer non-critical scripts',
         needsImprovement: 'Optimize JavaScript, remove unused code, use code splitting'
@@ -104,7 +113,7 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
       title: 'First Contentful Paint',
       description: 'Time until first content appears',
       icon: <Clock className="w-5 h-5" />,
-      format: formatTime,
+      format: formatTimeValue,
       suggestions: {
         poor: 'Eliminate render-blocking resources, minify CSS, optimize server response, use HTTP/2',
         needsImprovement: 'Inline critical CSS, defer non-critical resources, optimize fonts'
@@ -115,7 +124,7 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
       title: 'Time to First Byte',
       description: 'Server response time',
       icon: <Clock className="w-5 h-5" />,
-      format: formatTime,
+      format: formatTimeValue,
       suggestions: {
         poor: 'Upgrade hosting, use CDN, optimize database queries, enable server-side caching',
         needsImprovement: 'Optimize server configuration, use compression, reduce server load'
@@ -356,6 +365,10 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
             <div className="grid gap-3 sm:gap-4">
               {vitalsConfig.map((vital) => {
                 const value = data.mobile[vital.key as keyof typeof data.mobile];
+                const formattedValue = vital.format(value);
+                const displayValue = typeof formattedValue === 'object' ? formattedValue.formatted : formattedValue;
+                const slowLoadClass = typeof formattedValue === 'object' ? formattedValue.cssClass || '' : '';
+                
                 return (
                   <div key={vital.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 gap-2 hover:shadow-md transition-all duration-200">
                     <div className="flex items-center space-x-3">
@@ -368,8 +381,8 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className={`text-lg font-semibold ${getScoreColor(vital.key, value)}`}>
-                        {vital.format(value)}
+                      <div className={`text-lg font-semibold ${getScoreColor(vital.key, value)} ${slowLoadClass}`}>
+                        {displayValue}
                       </div>
                       <Badge variant={getBadgeVariant(vital.key, value)} className="text-xs">
                         {value === null ? 'N/A' : 
@@ -467,6 +480,10 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
             <div className="grid gap-4">
               {vitalsConfig.map((vital) => {
                 const value = data.desktop[vital.key as keyof typeof data.desktop];
+                const formattedValue = vital.format(value);
+                const displayValue = typeof formattedValue === 'object' ? formattedValue.formatted : formattedValue;
+                const slowLoadClass = typeof formattedValue === 'object' ? formattedValue.cssClass || '' : '';
+                
                 return (
                   <div key={vital.key} className="flex items-center justify-between p-4 border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700">
                     <div className="flex items-center space-x-3">
@@ -479,8 +496,8 @@ export default function CoreWebVitalsComponent({ data, language = 'en' }: CoreWe
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className={`text-lg font-semibold ${getScoreColor(vital.key, value)}`}>
-                        {vital.format(value)}
+                      <div className={`text-lg font-semibold ${getScoreColor(vital.key, value)} ${slowLoadClass}`}>
+                        {displayValue}
                       </div>
                       <Badge variant={getBadgeVariant(vital.key, value)} className="text-xs">
                         {value === null ? 'N/A' : 

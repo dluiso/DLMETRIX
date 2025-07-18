@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Clock, Download, FileText, Image, Zap, AlertTriangle, CheckCircle, XCircle, Globe, Layers, Code, FileImage, Type, Database, Wifi } from 'lucide-react';
 import type { WaterfallAnalysis } from '@shared/schema';
 import { getTranslations } from '@/lib/translations';
+import { formatTime as utilFormatTime, formatTimeScale, isSlowTime } from '@/lib/time-utils';
 
 interface WaterfallAnalysisProps {
   analysis: WaterfallAnalysis;
@@ -97,53 +98,11 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
-  const formatTime = (ms: number) => {
-    // Manejar valores negativos o inválidos
-    if (!Number.isFinite(ms) || ms < 0) {
-      return '0ms';
-    }
-    
-    // Valores muy pequeños
-    if (ms < 1) return '0ms';
-    
-    // Menos de 1 segundo: mostrar en ms (máximo 2 decimales)
-    if (ms < 1000) {
-      const roundedMs = Math.round(ms * 100) / 100; // Redondear a 2 decimales
-      return `${Math.round(roundedMs)}ms`;
-    }
-    
-    // 1 segundo o más: mostrar en segundos con 1 decimal máximo
-    const seconds = ms / 1000;
-    if (seconds < 10) {
-      return `${seconds.toFixed(1)}s`;
-    }
-    
-    // 10 segundos o más: sin decimales
-    return `${Math.round(seconds)}s`;
-  };
-
-  const formatTimeScale = (ms: number) => {
-    // Manejar valores negativos o inválidos
-    if (!Number.isFinite(ms) || ms < 0) {
-      return '0ms';
-    }
-    
-    // Valores muy pequeños
-    if (ms < 1) return '0ms';
-    
-    // Menos de 1 segundo: milisegundos sin decimales
-    if (ms < 1000) {
-      return `${Math.round(ms)}ms`;
-    }
-    
-    // 1 segundo o más: mostrar en segundos
-    const seconds = ms / 1000;
-    if (seconds < 10) {
-      return `${seconds.toFixed(1)}s`;
-    }
-    
-    // 10 segundos o más: sin decimales
-    return `${Math.round(seconds)}s`;
+  // Use unified time formatting from time-utils.ts
+  const formatTime = (ms: number) => utilFormatTime(ms).formatted;
+  const formatTimeDisplay = (ms: number) => {
+    const result = utilFormatTime(ms);
+    return result.formatted;
   };
 
   // Calcular el tiempo máximo para el timeline con validación
@@ -269,7 +228,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 <Clock className="h-4 w-4 text-green-600" />
                 <span className="text-sm font-medium">{t.totalLoadTime}</span>
               </div>
-              <div className="text-2xl font-bold text-green-600">{formatTime(totalDuration)}</div>
+              <div className={`text-2xl font-bold text-green-600 ${isSlowTime(totalDuration) ? 'slow-load' : ''}`}>{formatTime(totalDuration)}</div>
             </div>
             <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
@@ -285,7 +244,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 <AlertTriangle className="h-4 w-4 text-red-600" />
                 <span className="text-sm font-medium">{language === 'es' ? 'Tiempo de Bloqueo' : 'Total Blocking Time'}</span>
               </div>
-              <div className="text-2xl font-bold text-red-600">{formatTime(totalBlockingTime)}</div>
+              <div className={`text-2xl font-bold text-red-600 ${isSlowTime(totalBlockingTime) ? 'slow-load' : ''}`}>{formatTime(totalBlockingTime)}</div>
             </div>
           </div>
 

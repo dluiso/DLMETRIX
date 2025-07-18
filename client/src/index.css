@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Time formatting utilities */
+.slow-load {
+  @apply text-red-600 dark:text-red-400 font-semibold;
+  position: relative;
+}
+
+.slow-load::after {
+  content: " ⚠️";
+  font-size: 0.75em;
+  opacity: 0.8;
+}
+
 /* Mobile Optimization */
 @media (max-width: 768px) {
   /* Ensure all interactive elements meet 44px minimum touch target */
