@@ -297,11 +297,7 @@ export default function OffPageAnalysis({ data, language = 'en' }: OffPageAnalys
           </CardContent>
         </Card>
 
-        {/* Analysis Info */}
-        <div className="text-xs text-gray-500 text-center">
-          {t.offPageAnalysis.analysisDate}: {new Date(data.analysisDate).toLocaleDateString()} • 
-          {t.offPageAnalysis.dataSource}: {data.dataSource}
-        </div>
+
       </CardContent>
     </Card>
   );

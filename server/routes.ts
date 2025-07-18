@@ -7,7 +7,7 @@ import * as cheerio from "cheerio";
 import lighthouse from "lighthouse";
 import puppeteer from "puppeteer";
 import { nanoid } from "nanoid";
-import { offPageAnalyzer } from "./offpage-analyzer";
+import { realOffPageAnalyzer } from "./real-offpage-analyzer";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Comprehensive web performance analysis
@@ -363,7 +363,7 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
       captureScreenshot(url, 'mobile', browser),
       captureScreenshot(url, 'desktop', browser),
       generateWaterfallAnalysis(url, browser),
-offPageAnalyzer.analyzeOffPageData(new URL(url).hostname)
+      realOffPageAnalyzer.analyzeOffPageData(new URL(url).hostname)
     ]);
 
     // Combine results
@@ -470,7 +470,7 @@ async function performEnhancedSeoAnalysis(url: string): Promise<WebAnalysisResul
     aiSearchAnalysis: await generateAiSearchAnalysis(url, basicSeoData),
     keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null),
     waterfallAnalysis: null, // No waterfall analysis available in fallback mode
-    offPageData: await offPageAnalyzer.analyzeOffPageData(new URL(url).hostname)
+    offPageData: await realOffPageAnalyzer.analyzeOffPageData(new URL(url).hostname)
   };
 }
 
