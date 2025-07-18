@@ -120,7 +120,7 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
             
             {data.description ? (
               <>
-                <div className="bg-slate-50 p-2 sm:p-3 rounded font-mono text-xs sm:text-sm text-slate-700 mb-2 overflow-x-auto break-all">
+                <div className="bg-slate-50 dark:bg-slate-800 p-2 sm:p-3 rounded font-mono text-xs sm:text-sm text-slate-700 dark:text-slate-300 mb-2 overflow-x-auto break-all">
                   &lt;meta name="description" content="{data.description}"&gt;
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
@@ -178,20 +178,20 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
           </div>
 
           {/* Twitter Cards */}
-          <div className="border border-slate-200 rounded-lg p-4">
-            <div className="flex items-start justify-between mb-2">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
               <div className="flex items-center space-x-2">
                 {getStatusIcon(getTwitterStatus())}
-                <span className="font-medium text-slate-900">Twitter Cards</span>
+                <span className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">Twitter Cards</span>
               </div>
               {getStatusBadge(getTwitterStatus())}
             </div>
             
             {data.twitterCardTags ? (
-              <div className="bg-slate-50 p-3 rounded text-sm">
-                <div className="font-mono text-slate-600 space-y-1">
+              <div className="bg-slate-50 dark:bg-slate-800 p-2 sm:p-3 rounded text-xs sm:text-sm overflow-x-auto">
+                <div className="font-mono text-slate-600 dark:text-slate-300 space-y-1 break-all">
                   {Object.entries(data.twitterCardTags).map(([name, content]) => (
-                    <div key={name}>
+                    <div key={name} className="whitespace-nowrap">
                       &lt;meta name="{name}" content="{content.substring(0, 50)}{content.length > 50 ? '...' : ''}"&gt;
                     </div>
                   ))}
@@ -199,12 +199,12 @@ export default function MetaTagAnalysis({ data }: MetaTagAnalysisProps) {
               </div>
             ) : (
               <>
-                <div className="text-sm text-slate-600 mb-2">
+                <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-2">
                   Twitter Card tags are missing. These optimize how your content appears on Twitter.
                 </div>
-                <div className="bg-slate-50 p-3 rounded text-sm">
-                  <div className="text-slate-700 mb-1">Recommended tags:</div>
-                  <div className="font-mono text-slate-600 space-y-1">
+                <div className="bg-slate-50 dark:bg-slate-800 p-2 sm:p-3 rounded text-xs sm:text-sm overflow-x-auto">
+                  <div className="text-slate-700 dark:text-slate-300 mb-1">Recommended tags:</div>
+                  <div className="font-mono text-slate-600 dark:text-slate-300 space-y-1">
                     <div>&lt;meta name="twitter:card" content="summary_large_image"&gt;</div>
                     <div>&lt;meta name="twitter:title" content="..."&gt;</div>
                     <div>&lt;meta name="twitter:description" content="..."&gt;</div>

@@ -51,8 +51,8 @@ export default function PreviewTabs({ data }: PreviewTabsProps) {
     <Card>
       <CardContent className="p-4 sm:p-6">
         <Tabs defaultValue="google" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1">
-            <TabsTrigger value="google" className="text-xs sm:text-sm p-2 sm:p-3 min-h-[44px] data-[state=active]:bg-white data-[state=active]:shadow-sm">
+          <TabsList className="grid w-full grid-cols-3 h-auto p-1 overflow-x-auto">
+            <TabsTrigger value="google" className="text-xs sm:text-sm p-2 sm:p-3 min-h-[44px] data-[state=active]:bg-white data-[state=active]:shadow-sm whitespace-nowrap">
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <div className="w-4 h-4 text-current flex-shrink-0">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -65,7 +65,7 @@ export default function PreviewTabs({ data }: PreviewTabsProps) {
                 <span className="hidden sm:inline">Google</span>
               </div>
             </TabsTrigger>
-            <TabsTrigger value="facebook" className="text-xs sm:text-sm p-2 sm:p-3 min-h-[44px] data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            <TabsTrigger value="facebook" className="text-xs sm:text-sm p-2 sm:p-3 min-h-[44px] data-[state=active]:bg-white data-[state=active]:shadow-sm whitespace-nowrap">
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <div className="w-4 h-4 text-current flex-shrink-0">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -75,7 +75,7 @@ export default function PreviewTabs({ data }: PreviewTabsProps) {
                 <span className="hidden sm:inline">Facebook</span>
               </div>
             </TabsTrigger>
-            <TabsTrigger value="twitter" className="text-xs sm:text-sm p-2 sm:p-3 min-h-[44px] data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            <TabsTrigger value="twitter" className="text-xs sm:text-sm p-2 sm:p-3 min-h-[44px] data-[state=active]:bg-white data-[state=active]:shadow-sm whitespace-nowrap">
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <div className="w-4 h-4 text-current flex-shrink-0">
                   <svg viewBox="0 0 24 24" fill="currentColor">

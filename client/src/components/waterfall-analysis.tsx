@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Alert, AlertDescription } from './ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Clock, Download, FileText, Image, Zap, AlertTriangle, CheckCircle, XCircle, Globe, Layers, Code, FileImage, Type, Database, Wifi } from 'lucide-react';
 import type { WaterfallAnalysis } from '@shared/schema';
 import { getTranslations } from '@/lib/translations';
@@ -314,15 +315,33 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">{language === 'es' ? 'Tipo de Recurso' : 'Resource Type'}:</label>
-              <Tabs value={selectedResourceType} onValueChange={setSelectedResourceType}>
-                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-1">
-                  {resourceTypes.map(type => (
-                    <TabsTrigger key={type.key} value={type.key} className="text-xs px-1 py-1">
-                      {type.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
+              {/* Dropdown para móvil */}
+              <div className="block sm:hidden">
+                <Select value={selectedResourceType} onValueChange={setSelectedResourceType}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={language === 'es' ? 'Seleccionar tipo' : 'Select type'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {resourceTypes.map(type => (
+                      <SelectItem key={type.key} value={type.key}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Tabs para desktop */}
+              <div className="hidden sm:block">
+                <Tabs value={selectedResourceType} onValueChange={setSelectedResourceType}>
+                  <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-1">
+                    {resourceTypes.map(type => (
+                      <TabsTrigger key={type.key} value={type.key} className="text-xs px-1 py-1">
+                        {type.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </Tabs>
+              </div>
             </div>
           </div>
 
