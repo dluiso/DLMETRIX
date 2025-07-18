@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-// Quick browser detection script for production server debugging
-import { execSync } from 'child_process';
-import fs from 'fs';
+// Quick browser detection script for production server debugging (CommonJS version)
+const { execSync } = require('child_process');
+const fs = require('fs');
 
 console.log('🔍 DLMETRIX Browser Detection Script');
 console.log('=====================================\n');
