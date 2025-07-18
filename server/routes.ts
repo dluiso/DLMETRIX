@@ -28,7 +28,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Analyzing URL: ${url}`);
 
       // Run comprehensive analysis
+      console.log('🔍 About to call performComprehensiveAnalysis...');
       const analysisResult = await performComprehensiveAnalysis(url);
+      console.log('✅ Analysis completed successfully');
 
       // Store analysis in memory
       await storage.createWebAnalysis(analysisResult);
@@ -75,6 +77,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.error('Web analysis error:', error);
       res.status(500).json({ message: "Internal server error during analysis" });
+    }
+  });
+
+  // Clear analysis cache endpoint (for development and troubleshooting)
+  app.post("/api/web/clear-cache", async (req, res) => {
+    try {
+      // Clear memory storage cache
+      if (storage instanceof (await import("./storage")).MemStorage) {
+        // Reset analysis storage
+        (storage as any).webAnalyses.clear();
+        (storage as any).currentAnalysisId = 1;
+        console.log("✅ Analysis cache cleared successfully");
+      }
+      
+      res.json({ 
+        message: "Cache cleared successfully",
+        clearedAt: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Cache clear error:', error);
+      res.status(500).json({ message: "Failed to clear cache" });
     }
   });
 
@@ -182,15 +205,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 // Comprehensive Web Performance Analysis with Fallback
 async function performComprehensiveAnalysis(url: string): Promise<WebAnalysisResult> {
   try {
+    console.log('🚀 Starting comprehensive analysis with Lighthouse...');
     // Try Lighthouse analysis first
     return await performLighthouseAnalysis(url);
   } catch (lighthouseError: any) {
+    console.log('⚠️ Lighthouse analysis failed:', lighthouseError.message);
     // Check if it's a site protection error
     if (lighthouseError.message.includes('SITE_PROTECTION_ACTIVE')) {
       throw lighthouseError; // Re-throw to be handled by the API route
     }
-    // Lighthouse unavailable on ARM64, using enhanced SEO analysis
-    // Fallback to enhanced SEO analysis
+    console.log('🔄 Falling back to enhanced SEO analysis...');
+    // Lighthouse unavailable, using enhanced SEO analysis
     return await performEnhancedSeoAnalysis(url);
   }
 }
@@ -199,8 +224,10 @@ async function performComprehensiveAnalysis(url: string): Promise<WebAnalysisRes
 async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult> {
   let browser;
   try {
-    // Detect Chromium executable path for ARM64
+    console.log('🔧 Starting performLighthouseAnalysis...');
+    // Detect Chromium executable path for Replit and ARM64
     const chromiumPaths = [
+      '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
       '/usr/bin/chromium-browser',
       '/usr/bin/google-chrome-stable',
       '/usr/bin/google-chrome',
@@ -211,24 +238,37 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
     
     if (!executablePath) {
       // Try to find Chromium automatically
-      const fs = require('fs');
-      for (const path of chromiumPaths) {
-        try {
-          if (fs.existsSync(path)) {
-            executablePath = path;
-            break;
+      console.log('🔍 Searching for Chromium executable...');
+      try {
+        const fs = await import('fs');
+        console.log('✅ fs module imported successfully');
+        for (const path of chromiumPaths) {
+          console.log(`Checking path: ${path}`);
+          try {
+            if (fs.existsSync(path)) {
+              console.log(`✅ Found executable at: ${path}`);
+              executablePath = path;
+              break;
+            } else {
+              console.log(`❌ Not found at: ${path}`);
+            }
+          } catch (e: any) {
+            console.log(`⚠️ Error checking ${path}:`, e.message);
           }
-        } catch (e) {
-          // Continue to next path
         }
+      } catch (importError: any) {
+        console.log('❌ Failed to import fs module:', importError.message);
+        throw importError;
       }
     }
     
     if (!executablePath) {
+      console.log('❌ No Chrome/Chromium executable found in standard paths');
+      console.log('Available paths checked:', chromiumPaths);
       throw new Error('No Chrome/Chromium executable found. Please install chromium-browser.');
     }
     
-    console.log(`Using browser executable: ${executablePath}`);
+    console.log(`✅ Using browser executable: ${executablePath}`);
     
     // Launch browser with anti-detection for Cloudflare and ARM64 optimizations
     browser = await puppeteer.launch({
@@ -733,7 +773,7 @@ async function fetchSeoDataWithPuppeteer(url: string) {
   let executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
   
   if (!executablePath) {
-    const fs = require('fs');
+    const fs = await import('fs');
     for (const path of chromiumPaths) {
       try {
         if (fs.existsSync(path)) {
@@ -750,7 +790,6 @@ async function fetchSeoDataWithPuppeteer(url: string) {
     throw new Error('No browser available for Puppeteer fallback');
   }
   
-  const puppeteer = require('puppeteer');
   const browser = await puppeteer.launch({
     executablePath,
     headless: true,
