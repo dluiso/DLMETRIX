@@ -30,17 +30,10 @@ import ContactDialog from "@/components/contact-dialog";
 import { WebAnalysisResult } from "@/shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { exportToPDF } from "@/lib/pdf-export-complete";
-// Removed problematic translations import for production
+import { getTranslations } from "@/lib/translations";
 import { DLMETRIXSpinner, SEOAnalysisSpinner, PerformanceSpinner, AIContentSpinner } from "@/components/loading-spinners";
 import { DynamicLoadingIcon, GeneratingReportIcon } from "@/components/dynamic-loading-icons";
 import AnimatedBackground from "@/components/animated-background";
-// Nuevas funcionalidades mejoradas
-import HealthIndicator from "@/components/health-indicator";
-import GamifiedChallenges from "@/components/gamified-challenges";
-import SeoJourneyVisualization from "@/components/seo-journey-visualization";
-import EnhancedPdfExport from "@/components/enhanced-pdf-export";
-import { RateLimitNotification, QueueStatus } from "@/components/rate-limit-notification";
-import { URLComparison } from "@/components/url-comparison-simple";
 
 export default function Home() {
   const [seoData, setSeoData] = useState<WebAnalysisResult | null>(null);
@@ -63,8 +56,6 @@ export default function Home() {
   const [isSharing, setIsSharing] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [rateLimitError, setRateLimitError] = useState<any>(null);
-  const [queueStatus, setQueueStatus] = useState<any>(null);
 
   const { toast } = useToast();
 
@@ -76,12 +67,6 @@ export default function Home() {
       if (response.status === 423) {
         const protectionData = await response.json();
         throw new Error(JSON.stringify({ isProtectionError: true, ...protectionData }));
-      }
-      
-      // Check for rate limiting errors (status 429)
-      if (response.status === 429) {
-        const rateLimitData = await response.json();
-        throw new Error(JSON.stringify({ isRateLimitError: true, ...rateLimitData }));
       }
       
       return response.json();
@@ -114,14 +99,6 @@ export default function Home() {
           setProtectionError(errorData);
           setError(null);
           setSeoData(null);
-          setRateLimitError(null);
-          return;
-        }
-        if (errorData.isRateLimitError) {
-          setRateLimitError(errorData);
-          setError(null);
-          setSeoData(null);
-          setProtectionError(null);
           return;
         }
       } catch (e) {
@@ -131,36 +108,10 @@ export default function Home() {
       setError(error instanceof Error ? error.message : "Failed to analyze website");
       setProtectionError(null);
       setSeoData(null);
-      setRateLimitError(null);
     },
   });
 
-  // Simple translation function for production
-  const t = (key: string) => {
-    const translations = {
-      en: {
-        a: "Analysis",
-        analyzing: "Analyzing",
-        complete: "Complete",
-        seoAnalysis: "SEO Analysis",
-        performance: "Performance",
-        accessibility: "Accessibility",
-        bestPractices: "Best Practices",
-        seo: "SEO"
-      },
-      es: {
-        a: "Análisis",
-        analyzing: "Analizando",
-        complete: "Completo",
-        seoAnalysis: "Análisis SEO",
-        performance: "Rendimiento",
-        accessibility: "Accesibilidad",
-        bestPractices: "Mejores Prácticas",
-        seo: "SEO"
-      }
-    };
-    return translations[language]?.[key] || translations.en[key] || key;
-  };
+  const t = getTranslations(language);
 
   // Apply dark mode to document
   useEffect(() => {
@@ -171,32 +122,9 @@ export default function Home() {
     }
   }, [darkMode]);
 
-  // Fetch queue status periodically
-  useEffect(() => {
-    const fetchQueueStatus = async () => {
-      try {
-        const response = await fetch('/api/queue/status');
-        if (response.ok) {
-          const data = await response.json();
-          setQueueStatus(data);
-        }
-      } catch (error) {
-        console.error('Error fetching queue status:', error);
-      }
-    };
-
-    fetchQueueStatus();
-    const interval = setInterval(fetchQueueStatus, 5000); // Update every 5 seconds
-    
-    return () => clearInterval(interval);
-  }, []);
-
-
-
   const handleAnalyze = async (url: string) => {
     setError(null);
     setProtectionError(null);
-    setRateLimitError(null);
     setCurrentStep(0);
     setIsGeneratingReport(false);
     setAnalysisProgress('Initializing analysis...');
@@ -957,17 +885,6 @@ export default function Home() {
                 <UrlInput onAnalyze={handleAnalyze} isLoading={analyzeMutation.isPending} language={language} currentUrl={seoData?.url} />
               </div>
               
-              {/* Rate Limiting Notifications */}
-              <div className="mt-4">
-                <RateLimitNotification 
-                  error={rateLimitError}
-                  onClose={() => setRateLimitError(null)}
-                />
-                <QueueStatus 
-                  queueStatus={queueStatus}
-                />
-              </div>
-              
               {/* Feature Icons Section - Mobile Optimized */}
               <section className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
                 <div className="flex flex-wrap gap-2 sm:gap-3 justify-center items-center text-slate-600 dark:text-slate-400 text-xs max-w-md mx-auto">
@@ -1252,9 +1169,6 @@ export default function Home() {
               isSharing={isSharing}
             />
 
-            {/* URL Comparison Component */}
-            <URLComparison analysisData={seoData} language={language} />
-
             {/* Core Web Vitals */}
             <CoreWebVitalsComponent data={seoData.coreWebVitals} language={language} />
 
@@ -1271,8 +1185,8 @@ export default function Home() {
               <WaterfallAnalysis analysis={seoData.waterfallAnalysis} language={language} />
             )}
 
-            {/* Sección de análisis principal */}
-            <div className="space-y-4 sm:space-y-6">
+            {/* Legacy SEO Analysis */}
+            <div className="grid gap-4 sm:gap-6">
               {/* Preview Tabs */}
               <PreviewTabs data={seoData} />
 
@@ -1303,24 +1217,6 @@ export default function Home() {
 
               {/* Technical Checks */}
               <TechnicalSeo checks={seoData.technicalChecks} />
-            </div>
-
-            {/* Mover SEO Challenges y SEO Journey al final del reporte */}
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2 mt-8">
-              <GamifiedChallenges 
-                performanceScore={seoData.performanceScore}
-                accessibilityScore={seoData.accessibilityScore}
-                bestPracticesScore={seoData.bestPracticesScore}
-                seoScore={seoData.seoScore}
-                language={language}
-              />
-              <SeoJourneyVisualization 
-                performanceScore={seoData.performanceScore}
-                accessibilityScore={seoData.accessibilityScore}
-                bestPracticesScore={seoData.bestPracticesScore}
-                seoScore={seoData.seoScore}
-                language={language}
-              />
             </div>
           </main>
         )}
