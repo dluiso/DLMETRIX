@@ -26,7 +26,7 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
     }
   }, [currentUrl]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent, autoComplete: boolean = false) => {
     e.preventDefault();
     
     if (!url.trim()) {
@@ -39,6 +39,12 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
     }
 
     let finalUrl = url.trim();
+
+    // Auto-complete with .com if Ctrl+Enter was pressed and no TLD exists
+    if (autoComplete && !finalUrl.includes('.') && !finalUrl.startsWith('http')) {
+      finalUrl = finalUrl + '.com';
+      setUrl(finalUrl); // Update the input field to show the completed URL
+    }
 
     // Auto-add https:// if no protocol is provided
     if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
@@ -63,6 +69,13 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
     onAnalyze(finalUrl);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      e.preventDefault();
+      handleSubmit(e as any, true); // Pass autoComplete = true
+    }
+  };
+
   return (
     <div className="relative mb-6 sm:mb-8">
       <Card className="shadow-elegant bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in">
@@ -79,9 +92,10 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
           <div className="flex-1 relative min-w-0">
             <Input
               type="text"
-              placeholder={t.enterUrl}
+              placeholder={language === 'en' ? 'Enter domain (e.g., example) - Press Ctrl+Enter to add .com' : 'Ingresa dominio (ej., ejemplo) - Ctrl+Enter agrega .com'}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="pl-4 pr-10 text-sm sm:text-base h-11 sm:h-12 w-full"
               disabled={isLoading}
             />
