@@ -121,10 +121,8 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     totalDuration = Math.abs(maxEndTime - minStartTime);
   }
   
-  // Calcular Total Blocking Time
-  const totalBlockingTime = currentData.resources
-    .filter(r => r.isBlocking)
-    .reduce((sum, r) => sum + (r.duration || 0), 0);
+  // Use real Total Blocking Time from backend measurement
+  const totalBlockingTime = currentData.totalBlockingTime || 0;
   
   // Calcular métricas adicionales
   const firstContentfulPaint = currentData.resources

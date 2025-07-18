@@ -203,6 +203,8 @@ export const waterfallAnalysisSchema = z.object({
     parallelRequests: z.number(),
     cacheHitRate: z.number(), // percentage
     compressionSavings: z.number(), // percentage
+    totalBlockingTime: z.number().nullable(), // Real TBT measurement in milliseconds
+    firstContentfulPaint: z.number().nullable(), // FCP timing in milliseconds
   }),
   desktop: z.object({
     resources: z.array(waterfallResourceSchema),
@@ -215,6 +217,8 @@ export const waterfallAnalysisSchema = z.object({
     parallelRequests: z.number(),
     cacheHitRate: z.number(), // percentage
     compressionSavings: z.number(), // percentage
+    totalBlockingTime: z.number().nullable(), // Real TBT measurement in milliseconds
+    firstContentfulPaint: z.number().nullable(), // FCP timing in milliseconds
   }),
   recommendations: z.array(z.object({
     type: z.enum(['critical', 'warning', 'suggestion']),

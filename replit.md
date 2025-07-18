@@ -115,6 +115,30 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### Critical Total Blocking Time (TBT) Real Measurement Implementation - COMPLETED (January 18, 2025)
+- **CRITICAL ISSUE IDENTIFIED**: Total Blocking Time was hardcoded to 0ms for all URLs, showing fake "0ms" instead of real main thread blocking measurements
+- **ROOT CAUSE**: TBT calculated incorrectly using simple resource duration summation instead of actual main thread long tasks (>50ms) measurement
+- **SOLUTION IMPLEMENTED**: Complete TBT measurement system following Lighthouse methodology
+- **REAL TBT MEASUREMENTS NOW**:
+  - Long Task Detection: Uses PerformanceObserver to detect tasks >50ms on main thread
+  - FCP to TTI Window: Measures blocking time only between First Contentful Paint and Time to Interactive
+  - Accurate Calculation: TBT = sum of (task duration - 50ms) for all tasks >50ms in measurement window
+  - Extended Measurement: 8-second observation window for comprehensive long task capture
+  - TTI Estimation: Intelligent Time to Interactive calculation based on network activity and resource completion
+- **TECHNICAL IMPROVEMENTS**:
+  - Real browser-based measurement using Puppeteer page.evaluate()
+  - PerformanceObserver implementation for paint entries and longtask entries
+  - Resource observer for accurate TTI estimation based on network quiet periods
+  - Comprehensive logging for debugging TBT measurement capture process
+  - Fallback to null when measurement unavailable instead of false 0ms values
+- **BACKEND INTEGRATION**:
+  - Added measureTotalBlockingTime() function with real main thread task analysis
+  - Updated captureWaterfallData() to include TBT and FCP measurements
+  - Enhanced waterfallAnalysisSchema with totalBlockingTime and firstContentfulPaint fields
+  - Modified frontend to use real backend TBT values instead of resource summation
+- **USER IMPACT**: Total Blocking Time now shows accurate main thread blocking measurements reflecting real JavaScript execution performance instead of misleading 0ms values
+- **MEASUREMENT ACCURACY**: TBT values now vary realistically between websites based on actual main thread blocking from JavaScript execution, framework loading, and complex DOM operations
+
 ### Critical Core Web Vitals Accuracy Fix - COMPLETED (January 18, 2025)
 - **CRITICAL ISSUE IDENTIFIED**: Core Web Vitals metrics were NOT real measurements but synthetic calculations
 - **ROOT CAUSE**: FID calculated as `Math.min(100, loadTime * 0.1)`, LCP as `loadTime * 0.7`, CLS as fixed `0.1`

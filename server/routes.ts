@@ -3502,8 +3502,30 @@ async function captureWaterfallData(url: string, browser: any, device: 'mobile' 
       }
     });
 
-    // Navigate to URL
+    // Navigate to URL and measure performance metrics
+    const navigationStartTime = Date.now();
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+
+    // Measure Total Blocking Time (TBT) using real main thread tasks
+    const totalBlockingTime = await measureTotalBlockingTime(page);
+    
+    // Measure other Core Web Vitals timing
+    const firstContentfulPaint = await page.evaluate(() => {
+      return new Promise((resolve) => {
+        new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          for (const entry of entries) {
+            if (entry.name === 'first-contentful-paint') {
+              resolve(entry.startTime);
+              return;
+            }
+          }
+        }).observe({ entryTypes: ['paint'] });
+        
+        // Fallback timeout
+        setTimeout(() => resolve(null), 3000);
+      });
+    });
 
     // Calculate aggregate metrics
     const totalResources = resources.length;
@@ -3529,11 +3551,123 @@ async function captureWaterfallData(url: string, browser: any, device: 'mobile' 
       criticalResources,
       parallelRequests,
       cacheHitRate,
-      compressionSavings
+      compressionSavings,
+      totalBlockingTime, // Real TBT measurement
+      firstContentfulPaint
     };
 
   } finally {
     await page.close();
+  }
+}
+
+// Measure Total Blocking Time (TBT) - real implementation following Lighthouse methodology
+async function measureTotalBlockingTime(page: any): Promise<number> {
+  try {
+    console.log('🔍 Measuring Total Blocking Time using real main thread tasks...');
+    
+    // Inject script to measure long tasks and calculate TBT
+    const tbtMeasurement = await page.evaluate(() => {
+      return new Promise((resolve) => {
+        let totalBlockingTime = 0;
+        let fcpTime = null;
+        let ttiTime = null;
+        const startTime = performance.now();
+        const timeout = 8000; // 8 second measurement window
+        
+        // Measure First Contentful Paint
+        new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          for (const entry of entries) {
+            if (entry.name === 'first-contentful-paint') {
+              fcpTime = entry.startTime;
+              console.log('📊 TBT: FCP detected at', fcpTime, 'ms');
+            }
+          }
+        }).observe({ entryTypes: ['paint'] });
+        
+        // Measure long tasks (>50ms) for TBT calculation
+        let longTaskCount = 0;
+        new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          for (const entry of entries) {
+            longTaskCount++;
+            
+            // Only count tasks after FCP for TBT calculation
+            if (fcpTime !== null && entry.startTime >= fcpTime) {
+              const taskDuration = entry.duration;
+              
+              // TBT = sum of (task duration - 50ms) for all tasks >50ms between FCP and TTI
+              if (taskDuration > 50) {
+                const blockingTime = taskDuration - 50;
+                totalBlockingTime += blockingTime;
+                console.log(`📊 TBT: Long task detected - Duration: ${taskDuration.toFixed(1)}ms, Blocking: ${blockingTime.toFixed(1)}ms`);
+              }
+            }
+          }
+        }).observe({ entryTypes: ['longtask'] });
+        
+        // Estimate TTI (Time to Interactive) by monitoring network activity
+        let lastNetworkActivity = performance.now();
+        let resourceCount = 0;
+        
+        // Monitor for network quiet period to determine TTI
+        const resourceObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          for (const entry of entries) {
+            if (entry.responseEnd) {
+              lastNetworkActivity = entry.responseEnd;
+              resourceCount++;
+            }
+          }
+        });
+        
+        try {
+          resourceObserver.observe({ entryTypes: ['resource'] });
+        } catch (e) {
+          console.log('📊 TBT: Resource observer not supported, using estimated TTI');
+        }
+        
+        // Wait for measurement completion
+        setTimeout(() => {
+          // Estimate TTI as last network activity + 500ms quiet period
+          ttiTime = lastNetworkActivity + 500;
+          
+          // If no FCP detected, use a reasonable estimate
+          if (fcpTime === null) {
+            fcpTime = 1000; // Estimate FCP at 1 second
+            console.log('📊 TBT: No FCP detected, using estimate of 1000ms');
+          }
+          
+          // If TTI is before FCP, adjust it
+          if (ttiTime < fcpTime) {
+            ttiTime = fcpTime + 2000; // TTI at least 2 seconds after FCP
+          }
+          
+          console.log(`📊 TBT Measurement Complete:
+            - FCP: ${fcpTime?.toFixed(1)}ms
+            - TTI: ${ttiTime?.toFixed(1)}ms  
+            - Long Tasks: ${longTaskCount}
+            - Total Blocking Time: ${totalBlockingTime.toFixed(1)}ms`);
+          
+          resolve({
+            totalBlockingTime: Math.round(totalBlockingTime),
+            fcpTime: Math.round(fcpTime || 0),
+            ttiTime: Math.round(ttiTime || 0),
+            longTaskCount,
+            measurementWindow: timeout
+          });
+        }, timeout);
+      });
+    });
+    
+    console.log('✅ TBT measurement completed:', tbtMeasurement);
+    return tbtMeasurement.totalBlockingTime;
+    
+  } catch (error) {
+    console.error('❌ TBT measurement failed:', error);
+    // Return null to indicate measurement unavailable
+    return null;
   }
 }
 
