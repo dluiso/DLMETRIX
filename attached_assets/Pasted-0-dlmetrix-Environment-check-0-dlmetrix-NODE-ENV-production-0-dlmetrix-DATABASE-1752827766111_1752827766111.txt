@@ -1,0 +1,83 @@
+0|dlmetrix | 📋 Environment check:
+0|dlmetrix |   - NODE_ENV: production
+0|dlmetrix |   - DATABASE_URL exists: false
+0|dlmetrix | 📡 Using individual MySQL parameters
+0|dlmetrix | 🔗 Connection config: {
+0|dlmetrix |   host: 'localhost',
+0|dlmetrix |   port: 3306,
+0|dlmetrix |   user: 'plusmitseometrix',
+0|dlmetrix |   database: 'dbmpltrixseo'
+0|dlmetrix | }
+0|dlmetrix | 3:34:24 AM [express] serving on port 5000
+0|dlmetrix | 🧪 Testing connection...
+0|dlmetrix | ✅ Database connection established successfully
+0|dlmetrix | 📊 Available tables: 2
+0|dlmetrix | ✅ Drizzle ORM initialized
+
+0|dlmetrix  | Analyzing URL: https://plusmit.com
+0|dlmetrix  | 🔍 About to call performComprehensiveAnalysis...
+0|dlmetrix  | 🚀 Starting comprehensive analysis with Lighthouse...
+0|dlmetrix  | 🔧 Starting performLighthouseAnalysis...
+0|dlmetrix  | ✅ Using browser executable: /usr/bin/chromium-browser
+0|dlmetrix  | ⚠️ Lighthouse analysis failed: Browser was not found at the configured executablePath (/usr/bin/chromium-browser)
+0|dlmetrix  | 🔄 Falling back to enhanced SEO analysis...
+0|dlmetrix  | DEBUG fetchBasicSeoData - Starting analysis for URL: https://plusmit.com
+0|dlmetrix  | 3:34:44 AM [express] GET /api/queue/status 200 in 2ms
+0|dlmetrix  | DEBUG fetchBasicSeoData - Response status: 200
+0|dlmetrix  | DEBUG fetchBasicSeoData - Content length: 148328
+0|dlmetrix  | DEBUG fetchBasicSeoData - Basic meta extracted: {
+0|dlmetrix  |   title: 'PlusMIT – Digital Marketing & Business Process Automatization',
+0|dlmetrix  |   description: false,
+0|dlmetrix  |   viewportMeta: true
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG fetchBasicSeoData - Headings extracted: {
+0|dlmetrix  |   h1Count: 1,
+0|dlmetrix  |   h2Count: 4,
+0|dlmetrix  |   h3Count: 6,
+0|dlmetrix  |   h1Text: 'Transform Your Business Today'
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG generateBasicTechnicalChecks - seoData keys: [
+0|dlmetrix  |   'title',           'description',
+0|dlmetrix  |   'keywords',        'canonicalUrl',
+0|dlmetrix  |   'robotsMeta',      'viewportMeta',
+0|dlmetrix  |   'charset',         'langAttribute',
+0|dlmetrix  |   'headings',        'headingStructure',
+0|dlmetrix  |   'imageAnalysis',   'linkAnalysis',
+0|dlmetrix  |   'contentAnalysis', 'technicalAnalysis',
+0|dlmetrix  |   'openGraphTags',   'twitterCardTags',
+0|dlmetrix  |   'schemaMarkup',    'robotsTxtExists',
+0|dlmetrix  |   'sitemapExists',   'finalUrl',
+0|dlmetrix  |   'hasSSL'
+0|dlmetrix  | ]
+0|dlmetrix  | DEBUG headings data: {
+0|dlmetrix  |   h1: [ 'Transform Your Business Today' ],
+0|dlmetrix  |   h2: [
+0|dlmetrix  |     'Our Diverse Services',
+0|dlmetrix  |     'PlusMIT: Your Trusted Digital Partner',
+0|dlmetrix  |     'Real Results: Our Success Stories',
+0|dlmetrix  |     'Join Us for Success'
+0|dlmetrix  |   ],
+0|dlmetrix  |   h3: [
+0|dlmetrix  |     'Web Design',
+0|dlmetrix  |     'E-Commerce Solutions',
+0|dlmetrix  |     'SEO Services',
+0|dlmetrix  |     'Ready to Elevate Your Business?',
+0|dlmetrix  |     'ABC Retail Solutions',
+0|dlmetrix  |     'XYZ Services Group'
+0|dlmetrix  |   ],
+0|dlmetrix  |   h4: [
+0|dlmetrix  |     'Exceptional Service!',
+0|dlmetrix  |     'Professional and Dedicated!',
+0|dlmetrix  |     'A Partner for Success!'
+0|dlmetrix  |   ],
+0|dlmetrix  |   h5: [ 'James Smith', 'Michael Johnson', 'Robert Brown' ],
+0|dlmetrix  |   h6: []
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG heading analysis: { hasH1: true, hasMultipleHeadingTypes: true, h1Count: 1 }
+0|dlmetrix  | ✅ Analysis completed successfully
+0|dlmetrix  | 💾 Attempting to save web analysis to database...
+0|dlmetrix  | 🔧 Database available, inserting web analysis...
+0|dlmetrix  | ✅ Web analysis saved to database with ID: 105
+0|dlmetrix  | 3:34:45 AM [express] POST /api/web/analyze 200 in 1208ms :: {"url":"https://plusmit.com","title":"Pl…
+0|dlmetrix  | 3:35:44 AM [express] GET /api/queue/status 200 in 2ms
+

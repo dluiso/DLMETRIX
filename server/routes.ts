@@ -225,13 +225,23 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
   let browser;
   try {
     console.log('🔧 Starting performLighthouseAnalysis...');
-    // Detect Chromium executable path for Replit and ARM64
+    // Detect Chromium executable path for Replit, ARM64, and production servers
     const chromiumPaths = [
+      // Replit environment (development)
       '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
-      '/usr/bin/chromium-browser',
+      // Common production server paths
       '/usr/bin/google-chrome-stable',
       '/usr/bin/google-chrome',
-      '/usr/bin/chromium'
+      '/usr/bin/chromium',
+      '/usr/bin/chromium-browser',
+      '/opt/google/chrome/chrome',
+      '/snap/bin/chromium',
+      '/snap/bin/google-chrome-stable',
+      // Additional ARM64 and Ubuntu paths
+      '/usr/lib/chromium-browser/chromium-browser',
+      '/usr/lib/chromium/chromium',
+      // Flatpak installations
+      '/var/lib/flatpak/app/org.chromium.Chromium/current/active/export/bin/org.chromium.Chromium'
     ];
     
     let executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
@@ -264,8 +274,33 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
     
     if (!executablePath) {
       console.log('❌ No Chrome/Chromium executable found in standard paths');
-      console.log('Available paths checked:', chromiumPaths);
-      throw new Error('No Chrome/Chromium executable found. Please install chromium-browser.');
+      console.log('🔍 Paths checked:', chromiumPaths);
+      
+      // Try using 'which' command to find browser
+      console.log('🔍 Attempting to locate browser using system commands...');
+      try {
+        const { execSync } = await import('child_process');
+        const whichCommands = ['google-chrome-stable', 'google-chrome', 'chromium', 'chromium-browser'];
+        
+        for (const cmd of whichCommands) {
+          try {
+            const result = execSync(`which ${cmd}`, { encoding: 'utf8' }).trim();
+            if (result && result.startsWith('/')) {
+              console.log(`✅ Found ${cmd} via 'which': ${result}`);
+              executablePath = result;
+              break;
+            }
+          } catch (e) {
+            console.log(`❌ Command '${cmd}' not found via 'which'`);
+          }
+        }
+      } catch (importError: any) {
+        console.log('⚠️ Could not import child_process for system search');
+      }
+      
+      if (!executablePath) {
+        throw new Error('No Chrome/Chromium executable found. Please install google-chrome-stable or chromium-browser.');
+      }
     }
     
     console.log(`✅ Using browser executable: ${executablePath}`);
@@ -761,13 +796,20 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
   }
 }
 
-// Puppeteer-based SEO data extraction for Cloudflare-protected sites
+// Puppeteer-based SEO data extraction for Cloudflare-protected sites  
 async function fetchSeoDataWithPuppeteer(url: string) {
   const chromiumPaths = [
-    '/usr/bin/chromium-browser',
-    '/usr/bin/chromium',
+    // Common production server paths
+    '/usr/bin/google-chrome-stable',
     '/usr/bin/google-chrome',
-    '/usr/bin/google-chrome-stable'
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+    '/opt/google/chrome/chrome',
+    '/snap/bin/chromium',
+    '/snap/bin/google-chrome-stable',
+    // Additional paths
+    '/usr/lib/chromium-browser/chromium-browser',
+    '/usr/lib/chromium/chromium'
   ];
   
   let executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;

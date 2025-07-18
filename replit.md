@@ -388,6 +388,20 @@ Preferred communication style: Simple, everyday language.
 - **LOGO REPOSITIONING**: Moved DLMETRIX logo and title from URL input box to main hero section, keeping URL input focused on search functionality only
 - **IMPROVED VISUAL HIERARCHY**: Clear separation between branding (logo in hero) and functionality (search in URL input)
 
+### Production Chromium Browser Detection Enhancement - COMPLETED (January 18, 2025)
+- **ISSUE IDENTIFIED**: Production server Chromium not found at `/usr/bin/chromium-browser` preventing Core Web Vitals functionality
+- **COMPREHENSIVE BROWSER DETECTION**: Enhanced automatic browser detection with 10+ common paths:
+  - Google Chrome: `/usr/bin/google-chrome-stable`, `/usr/bin/google-chrome`, `/opt/google/chrome/chrome`
+  - Chromium: `/usr/bin/chromium`, `/usr/bin/chromium-browser`, `/snap/bin/chromium`
+  - System Libraries: `/usr/lib/chromium-browser/chromium-browser`, `/usr/lib/chromium/chromium`
+  - Flatpak Installations: Complete support for containerized browser installations
+- **SYSTEM COMMAND FALLBACK**: Added automatic detection using `which` command for all major browsers
+- **PRODUCTION COMPATIBILITY**: Enhanced support for Ubuntu, Debian, and ARM64 server architectures
+- **REPLIT ENVIRONMENT**: Maintained compatibility with Nix store Chromium path for development
+- **ERROR HANDLING**: Improved error messages with specific installation guidance for production servers
+- **DOCUMENTATION**: Created `PRODUCTION_CHROMIUM_FIX.md` with installation commands and deployment guide
+- **USER IMPACT**: Production servers will automatically detect installed browsers and enable full Core Web Vitals functionality
+
 ### Production Technical SEO Analysis Fix - COMPLETED (January 16, 2025)
 - **ISSUE RESOLVED**: Fixed Technical SEO Analysis production failure where real DOM data wasn't reaching analysis functions
 - **ROOT CAUSE IDENTIFIED**: When Lighthouse failed, `generateBasicTechnicalChecks` received incorrect fallback data `{ status: 200 }` instead of real SEO data extracted by `fetchBasicSeoData`
