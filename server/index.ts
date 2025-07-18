@@ -4,6 +4,36 @@ import { log } from "./vite";
 
 const app = express();
 
+// Serve sitemap.xml at the very beginning to avoid middleware conflicts
+app.get("/sitemap.xml", (req, res) => {
+  const currentDate = new Date().toISOString().split('T')[0];
+  
+  const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    '  <url>\n' +
+    '    <loc>https://dlmetrix.com/</loc>\n' +
+    '    <lastmod>' + currentDate + '</lastmod>\n' +
+    '    <changefreq>weekly</changefreq>\n' +
+    '    <priority>1.0</priority>\n' +
+    '  </url>\n' +
+    '  <url>\n' +
+    '    <loc>https://dlmetrix.com/home</loc>\n' +
+    '    <lastmod>' + currentDate + '</lastmod>\n' +
+    '    <changefreq>weekly</changefreq>\n' +
+    '    <priority>0.8</priority>\n' +
+    '  </url>\n' +
+    '  <url>\n' +
+    '    <loc>https://dlmetrix.com/share</loc>\n' +
+    '    <lastmod>' + currentDate + '</lastmod>\n' +
+    '    <changefreq>daily</changefreq>\n' +
+    '    <priority>0.6</priority>\n' +
+    '  </url>\n' +
+    '</urlset>';
+  
+  res.set('Content-Type', 'application/xml');
+  res.send(sitemap);
+});
+
 // Security Headers Middleware
 app.use((req, res, next) => {
   // Remove standard technology headers
@@ -23,6 +53,7 @@ app.use((req, res, next) => {
   
   next();
 });
+
 
 // Increase payload limits for sharing large analysis data
 app.use(express.json({ limit: '50mb' }));

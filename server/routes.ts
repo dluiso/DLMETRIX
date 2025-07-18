@@ -9,37 +9,6 @@ import puppeteer from "puppeteer";
 import { nanoid } from "nanoid";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve sitemap.xml for SEO
-  app.get("/sitemap.xml", async (req, res) => {
-    try {
-      const fs = require('fs');
-      const path = require('path');
-      const sitemapPath = path.join(__dirname, '../client/public/sitemap.xml');
-      
-      if (fs.existsSync(sitemapPath)) {
-        const sitemap = fs.readFileSync(sitemapPath, 'utf8');
-        res.set('Content-Type', 'application/xml');
-        res.send(sitemap);
-      } else {
-        // Fallback dynamic sitemap
-        const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://dlmetrix.com/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>`;
-        res.set('Content-Type', 'application/xml');
-        res.send(sitemap);
-      }
-    } catch (error) {
-      console.error('Error serving sitemap:', error);
-      res.status(500).json({ message: "Error generating sitemap" });
-    }
-  });
-
   // Comprehensive web performance analysis
   app.post("/api/web/analyze", async (req, res) => {
     try {
