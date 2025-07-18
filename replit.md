@@ -115,6 +115,25 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### Critical Core Web Vitals Accuracy Fix - COMPLETED (January 18, 2025)
+- **CRITICAL ISSUE IDENTIFIED**: Core Web Vitals metrics were NOT real measurements but synthetic calculations
+- **ROOT CAUSE**: FID calculated as `Math.min(100, loadTime * 0.1)`, LCP as `loadTime * 0.7`, CLS as fixed `0.1`
+- **SOLUTION IMPLEMENTED**: Complete rewrite of Core Web Vitals measurement system
+- **REAL MEASUREMENTS NOW**:
+  - LCP: Actual Largest Contentful Paint timing from PerformanceObserver
+  - FCP: Real First Contentful Paint from paint entries
+  - CLS: Genuine Cumulative Layout Shift from layout-shift entries
+  - FID: Real First Input Delay from user interaction (with simulated click fallback)
+  - TTFB: Accurate Time to First Byte from Navigation Timing
+- **TECHNICAL IMPROVEMENTS**:
+  - Extended measurement window to 8 seconds for accurate capture
+  - Proper PerformanceObserver implementation for all metrics
+  - Fallback to Navigation Timing API only when real measurements fail
+  - Null values preserved when metrics genuinely unavailable
+  - Added comprehensive logging for debugging measurement capture
+- **USER IMPACT**: Core Web Vitals now provide accurate, real-world performance data instead of synthetic approximations based on load time
+- **MEASUREMENT ACCURACY**: Values now vary realistically between different websites reflecting actual performance characteristics
+
 ### Complete SEO Branding and Mobile Optimization Update - COMPLETED (January 18, 2025)
 - **TITLE UPDATE COMPLETED**: Changed application title from "DLMetrix – Free SEO Audit Tool with Web Vitals" to "DLMetrix – Free SEO Audit Tool for Web Vitals & AI Insights"
 - **META DESCRIPTION ENHANCEMENT**: Updated to "DLMetrix is a Free SEO Audit Tool to analyze Web Vitals, performance, and content. Get AI insights instantly. No signup required."
