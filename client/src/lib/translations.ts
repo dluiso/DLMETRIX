@@ -203,7 +203,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     
     // Settings
     analysisSettings: "Analysis Settings",
-    darkMode: "Dark Mode",
+    lightMode: "Light Mode",
     language: "Language",
     english: "English",
     spanish: "Spanish",
@@ -396,7 +396,7 @@ export const translations: Record<'en' | 'es', Translations> = {
     
     // Settings
     analysisSettings: "Configuración de Análisis",
-    darkMode: "Modo Oscuro",
+    lightMode: "Modo Claro",
     language: "Idioma",
     english: "Inglés",
     spanish: "Español",

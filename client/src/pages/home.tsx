@@ -48,7 +48,7 @@ export default function Home() {
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
-  const [darkMode, setDarkMode] = useState(false);
+  // Dark mode removed for performance optimization
   const [language, setLanguage] = useState<'en' | 'es'>('en');
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -113,14 +113,7 @@ export default function Home() {
 
   const t = getTranslations(language);
 
-  // Apply dark mode to document
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
+  // Dark mode effect removed for performance optimization
 
   const handleAnalyze = async (url: string) => {
     setError(null);
@@ -511,14 +504,17 @@ export default function Home() {
                   <span className="hidden lg:inline ml-2">{t.history}</span>
                 </Button>
               )}
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                <Settings className="w-4 h-4" />
-                <span className="hidden lg:inline ml-2">{t.settings}</span>
-              </Button>
+              {/* Settings button hidden temporarily */}
+              {false && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowSettings(!showSettings)}
+                >
+                  <Settings className="w-4 h-4" />
+                  <span className="hidden lg:inline ml-2">{t.settings}</span>
+                </Button>
+              )}
               {seoData && (
                 <>
                   <Button 
@@ -582,18 +578,21 @@ export default function Home() {
                 {/* Settings and History */}
                 <div className="flex flex-col space-y-2 px-2">
                   <div className="flex space-x-3">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => {
-                        setShowSettings(!showSettings);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="justify-start flex-1 text-sm min-h-[44px] py-3"
-                    >
-                      <Settings className="w-5 h-5 mr-2" />
-                      {t.settings}
-                    </Button>
+                    {/* Settings button hidden temporarily */}
+                    {false && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          setShowSettings(!showSettings);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="justify-start flex-1 text-sm min-h-[44px] py-3"
+                      >
+                        <Settings className="w-5 h-5 mr-2" />
+                        {t.settings}
+                      </Button>
+                    )}
                     
                     {analysisHistory.length > 0 && (
                       <Button 
@@ -669,42 +668,39 @@ export default function Home() {
       <main className={seoData ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 relative z-10" : "relative z-10"}>
         {/* Settings Panel */}
         {showSettings && (
-          <Card className="mb-6 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <Card className="mb-6 bg-slate-50 border-slate-200">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Settings className="w-5 h-5 text-primary" />
-                  <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.analysisSettings}</h2>
+                  <h2 className="font-semibold text-slate-900">{t.analysisSettings}</h2>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               {/* Theme and Language Settings */}
               <div className="grid gap-4 sm:grid-cols-2 mb-6">
-                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
+                <div className="p-4 bg-white rounded-lg border">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
-                      {darkMode ? <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{t.darkMode}</span>
+                      <Sun className="w-4 h-4 text-amber-500" />
+                      <span className="font-medium text-slate-900">{t.lightMode}</span>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => {
-                        setDarkMode(!darkMode);
-                        trackEvent('theme_changed', 'settings', darkMode ? 'light' : 'dark');
-                      }}
-                      className="h-8 w-16 bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500"
+                      disabled
+                      className="h-8 w-16 bg-slate-200 hover:bg-slate-300 opacity-50 cursor-not-allowed"
                     >
-                      <div className={`w-4 h-4 rounded-full bg-white transition-transform ${darkMode ? 'translate-x-2' : '-translate-x-2'}`} />
+                      <div className="w-4 h-4 rounded-full bg-white transition-transform -translate-x-2" />
                     </Button>
                   </div>
                 </div>
-                <div className="p-4 bg-white dark:bg-slate-700 rounded-lg border dark:border-slate-600">
+                <div className="p-4 bg-white rounded-lg border">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       <Languages className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{t.language}</span>
+                      <span className="font-medium text-slate-900">{t.language}</span>
                     </div>
                     <select
                       value={language}
@@ -712,7 +708,7 @@ export default function Home() {
                         setLanguage(e.target.value as 'en' | 'es');
                         trackEvent('language_changed', 'settings', e.target.value);
                       }}
-                      className="px-3 py-1 bg-slate-100 dark:bg-slate-600 text-slate-900 dark:text-slate-100 rounded border border-slate-300 dark:border-slate-500 text-sm"
+                      className="px-3 py-1 bg-slate-100 text-slate-900 rounded border border-slate-300 text-sm"
                     >
                       <option value="en">{t.english}</option>
                       <option value="es">{t.spanish}</option>
