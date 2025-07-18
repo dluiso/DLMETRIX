@@ -371,7 +371,39 @@ export const translations: Record<'en' | 'es', Translations> = {
     other: "Other",
     totalResources: "Total Resources",
     totalLoadTime: "Total Load Time",
-    totalSize: "Total Size"
+    totalSize: "Total Size",
+    
+    // OffPage Analysis
+    offPageAnalysis: {
+      title: "OffPage Analysis",
+      notAvailable: "OffPage Analysis not available",
+      domainAuthority: "Domain Authority",
+      authorityScore: "Authority Score",
+      pageRank: "PageRank",
+      trustRank: "TrustRank",
+      backlinks: "Backlinks",
+      totalBacklinks: "Total Backlinks",
+      referringDomains: "Referring Domains",
+      dofollow: "Dofollow",
+      nofollow: "Nofollow",
+      wikipediaBacklinks: "Wikipedia Links",
+      hasWikipediaReferences: "Referenced in Wikipedia",
+      noWikipediaReferences: "Not referenced in Wikipedia",
+      links: "links",
+      wikipediaPages: "Wikipedia Pages",
+      more: "more",
+      topReferrers: "Top Referrers",
+      trust: "Trust",
+      trustMetrics: "Trust Metrics",
+      httpsEnabled: "HTTPS Enabled",
+      certificateValid: "Certificate Valid",
+      domainAge: "Domain Age",
+      years: "years",
+      spamScore: "Spam Score",
+      trustSignals: "Trust Signals",
+      analysisDate: "Analysis Date",
+      dataSource: "Data Source"
+    }
   },
   es: {
     // Header and Navigation
@@ -564,7 +596,39 @@ export const translations: Record<'en' | 'es', Translations> = {
     other: "Otro",
     totalResources: "Total de Recursos",
     totalLoadTime: "Tiempo Total de Carga",
-    totalSize: "Tamaño Total"
+    totalSize: "Tamaño Total",
+    
+    // OffPage Analysis
+    offPageAnalysis: {
+      title: "Análisis OffPage",
+      notAvailable: "Análisis OffPage no disponible",
+      domainAuthority: "Autoridad de Dominio",
+      authorityScore: "Puntuación de Autoridad",
+      pageRank: "PageRank",
+      trustRank: "TrustRank",
+      backlinks: "Backlinks",
+      totalBacklinks: "Total de Backlinks",
+      referringDomains: "Dominios de Referencia",
+      dofollow: "Dofollow",
+      nofollow: "Nofollow",
+      wikipediaBacklinks: "Enlaces de Wikipedia",
+      hasWikipediaReferences: "Referenciado en Wikipedia",
+      noWikipediaReferences: "No referenciado en Wikipedia",
+      links: "enlaces",
+      wikipediaPages: "Páginas de Wikipedia",
+      more: "más",
+      topReferrers: "Principales Referentes",
+      trust: "Confianza",
+      trustMetrics: "Métricas de Confianza",
+      httpsEnabled: "HTTPS Habilitado",
+      certificateValid: "Certificado Válido",
+      domainAge: "Edad del Dominio",
+      years: "años",
+      spamScore: "Puntuación de Spam",
+      trustSignals: "Señales de Confianza",
+      analysisDate: "Fecha de Análisis",
+      dataSource: "Fuente de Datos"
+    }
   }
 };
 

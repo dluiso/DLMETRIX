@@ -7,6 +7,7 @@ import * as cheerio from "cheerio";
 import lighthouse from "lighthouse";
 import puppeteer from "puppeteer";
 import { nanoid } from "nanoid";
+import { offPageAnalyzer } from "./offpage-analyzer";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Comprehensive web performance analysis
@@ -357,11 +358,12 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
       runLighthouseAnalysis(url, 'desktop', browser, basicSeoData)
     ]);
 
-    // Generate screenshots and waterfall analysis
-    const [mobileScreenshot, desktopScreenshot, waterfallAnalysis] = await Promise.all([
+    // Generate screenshots, waterfall analysis, and OffPage analysis
+    const [mobileScreenshot, desktopScreenshot, waterfallAnalysis, offPageData] = await Promise.all([
       captureScreenshot(url, 'mobile', browser),
       captureScreenshot(url, 'desktop', browser),
-      generateWaterfallAnalysis(url, browser)
+      generateWaterfallAnalysis(url, browser),
+offPageAnalyzer.analyzeOffPageData(new URL(url).hostname)
     ]);
 
     // Combine results
@@ -402,7 +404,8 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
       technicalChecks: mobileAnalysis.technicalChecks,
       aiSearchAnalysis: await generateAiSearchAnalysis(url, basicSeoData),
       keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null),
-      waterfallAnalysis
+      waterfallAnalysis,
+      offPageData
     };
 
     return result;
@@ -466,7 +469,8 @@ async function performEnhancedSeoAnalysis(url: string): Promise<WebAnalysisResul
     technicalChecks: generateBasicTechnicalChecks(basicSeoData, url),
     aiSearchAnalysis: await generateAiSearchAnalysis(url, basicSeoData),
     keywordAnalysis: generateKeywordAnalysis(basicSeoData, null, null),
-    waterfallAnalysis: null // No waterfall analysis available in fallback mode
+    waterfallAnalysis: null, // No waterfall analysis available in fallback mode
+    offPageData: await offPageAnalyzer.analyzeOffPageData(new URL(url).hostname)
   };
 }
 

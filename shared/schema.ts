@@ -34,6 +34,7 @@ export const webAnalyses = mysqlTable("web_analyses", {
   insights: json("insights"), // Key findings and opportunities
   technicalChecks: json("technical_checks"),
   waterfallAnalysis: json("waterfall_analysis"), // Waterfall resource loading analysis
+  offPageData: json("off_page_data"), // OffPage SEO analysis: backlinks, domain authority, Wikipedia references
   
   // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
@@ -237,6 +238,71 @@ export const waterfallAnalysisSchema = z.object({
   })),
 });
 
+// OffPage Data schema
+export const offPageDataSchema = z.object({
+  backlinks: z.object({
+    totalBacklinks: z.number(),
+    referringDomains: z.number(),
+    domainPopularity: z.number(),
+    linkPopularity: z.number(),
+    topReferrers: z.array(z.object({
+      domain: z.string(),
+      linkCount: z.number(),
+      trustScore: z.number(),
+      lastSeen: z.string(),
+    })),
+    linkTypes: z.object({
+      dofollow: z.number(),
+      nofollow: z.number(),
+      internal: z.number(),
+      external: z.number(),
+    }),
+  }),
+  wikipediaBacklinks: z.object({
+    isReferenced: z.boolean(),
+    wikipediaPages: z.array(z.object({
+      title: z.string(),
+      url: z.string(),
+      language: z.string(),
+      linkType: z.enum(['citation', 'reference', 'external']),
+    })),
+    totalWikipediaLinks: z.number(),
+    languages: z.array(z.string()),
+  }),
+  domainAuthority: z.object({
+    score: z.number(),
+    pageRank: z.number(),
+    trustRank: z.number(),
+    algorithmUsed: z.enum(['custom-pagerank', 'link-analysis', 'trust-flow']),
+    factors: z.object({
+      linkProfile: z.number(),
+      contentQuality: z.number(),
+      technicalSeo: z.number(),
+      socialSignals: z.number(),
+      brandMentions: z.number(),
+    }),
+  }),
+  socialPresence: z.object({
+    mentions: z.number(),
+    shareCount: z.number(),
+    platforms: z.array(z.object({
+      platform: z.string(),
+      mentions: z.number(),
+      engagement: z.number(),
+    })),
+  }),
+  trustMetrics: z.object({
+    httpsEnabled: z.boolean(),
+    certificateValid: z.boolean(),
+    domainAge: z.number(),
+    whoisPrivacy: z.boolean(),
+    spamScore: z.number(),
+    trustSignals: z.array(z.string()),
+  }),
+  analysisDate: z.string(),
+  dataSource: z.string(),
+});
+
 // Web analysis result type
 export const webAnalysisResultSchema = z.object({
   url: z.string().url(),
@@ -293,6 +359,9 @@ export const webAnalysisResultSchema = z.object({
   
   // Waterfall Analysis
   waterfallAnalysis: waterfallAnalysisSchema.nullable(),
+  
+  // OffPage Data Analysis
+  offPageData: offPageDataSchema.nullable(),
 });
 
 export type WebAnalysisResult = z.infer<typeof webAnalysisResultSchema>;
@@ -306,3 +375,4 @@ export type KeywordTrendData = z.infer<typeof keywordTrendDataSchema>;
 export type SeoKeywordAnalysis = z.infer<typeof seoKeywordAnalysisSchema>;
 export type WaterfallResource = z.infer<typeof waterfallResourceSchema>;
 export type WaterfallAnalysis = z.infer<typeof waterfallAnalysisSchema>;
+export type OffPageData = z.infer<typeof offPageDataSchema>;

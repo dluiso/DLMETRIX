@@ -21,6 +21,7 @@ import ScreenshotsView from "@/components/screenshots-view";
 import AiSearchAnalysisComponent from "@/components/ai-search-analysis";
 import KeywordAnalysis from "@/components/keyword-analysis";
 import { WaterfallAnalysis } from "@/components/waterfall-analysis";
+import OffPageAnalysis from "@/components/offpage-analysis";
 import Footer from "@/components/footer";
 import { trackEvent } from "@/lib/analytics";
 import HelpDialog from "@/components/help-dialog";
@@ -1180,6 +1181,9 @@ export default function Home() {
             {seoData.waterfallAnalysis && (
               <WaterfallAnalysis analysis={seoData.waterfallAnalysis} language={language} />
             )}
+
+            {/* OffPage Analysis */}
+            <OffPageAnalysis data={seoData.offPageData} language={language} />
 
             {/* Legacy SEO Analysis */}
             <div className="grid gap-4 sm:gap-6">
