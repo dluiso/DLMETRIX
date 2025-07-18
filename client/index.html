@@ -18,9 +18,9 @@
     <meta name="application" content="Web Analysis Platform" />
     
     <!-- Primary Meta Tags -->
-    <title>DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker</title>
-    <meta name="title" content="DLMETRIX - Free SEO Analysis Tool | Website Performance & Core Web Vitals Checker">
-    <meta name="description" content="Free comprehensive SEO analysis tool. Check Core Web Vitals, performance scores, technical SEO, mobile readiness, and get AI-powered insights. No signup required - analyze any website instantly.">
+    <title>DLMetrix – Free SEO Audit Tool with Web Vitals</title>
+    <meta name="title" content="DLMetrix – Free SEO Audit Tool with Web Vitals">
+    <meta name="description" content="Free SEO Audit Tool to check Web Vitals, performance, and content quality. Get instant AI-powered insights. No signup required.">
     <meta name="keywords" content="SEO analysis tool, free SEO checker, Core Web Vitals, website performance test, technical SEO audit, mobile SEO, page speed test, accessibility checker, lighthouse audit, SEO report generator, website analyzer, performance monitoring, SEO optimization, meta tag checker, Open Graph validator, schema markup test">
     <meta name="robots" content="index, follow">
     <meta name="language" content="English">
@@ -30,17 +30,21 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://dlmetrix.com/">
-    <meta property="og:title" content="DLMETRIX - Free SEO Analysis Tool | Core Web Vitals & Performance Checker">
-    <meta property="og:description" content="Comprehensive free SEO analysis tool with Core Web Vitals, performance audits, technical SEO checks, and AI-powered insights. Analyze any website instantly without signup.">
-    <meta property="og:image" content="https://dlmetrix.com/og-image.png">
-    <meta property="og:site_name" content="DLMETRIX">
+    <meta property="og:title" content="DLMetrix – Free SEO Audit Tool with Web Vitals">
+    <meta property="og:description" content="Free SEO Audit Tool to check Web Vitals, performance, and content quality. Get instant AI-powered insights. No signup required.">
+    <meta property="og:image" content="https://dlmetrix.com/dlmetrix-social-preview.svg">
+    <meta property="og:site_name" content="DLMetrix">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="DLMetrix SEO Audit Tool - Analyze Web Vitals and Performance">
     
-    <!-- Twitter -->
+    <!-- Twitter / X -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://dlmetrix.com/">
-    <meta property="twitter:title" content="DLMETRIX - Free SEO Analysis Tool | Core Web Vitals Checker">
-    <meta property="twitter:description" content="Free comprehensive SEO analysis with Core Web Vitals, performance scores, technical audits, and AI insights. No signup required.">
-    <meta property="twitter:image" content="https://dlmetrix.com/twitter-image.png">
+    <meta property="twitter:title" content="DLMetrix – Free SEO Audit Tool with Web Vitals">
+    <meta property="twitter:description" content="Free SEO Audit Tool to check Web Vitals, performance, and content quality. Get instant AI-powered insights. No signup required.">
+    <meta property="twitter:image" content="https://dlmetrix.com/dlmetrix-social-preview.svg">
+    <meta property="twitter:image:alt" content="DLMetrix SEO Audit Tool - Analyze Web Vitals and Performance">
     
     <!-- Additional SEO Meta Tags -->
     <meta name="theme-color" content="#3b82f6">
@@ -56,12 +60,18 @@
     <!-- Favicon and App Icons -->
     <link rel="manifest" href="/site.webmanifest">
     
-    <!-- Dynamic SVG Favicon -->
+    <!-- Dynamic SVG Favicon - Consistent with Logo -->
     <script>
       (function() {
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-          <rect width="32" height="32" fill="#3b82f6"/>
-          <text x="16" y="22" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">D</text>
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" fill="url(#grad)" rx="6"/>
+          <text x="16" y="22" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">DLM</text>
         </svg>`;
         const encoded = encodeURIComponent(svg);
         const dataUri = `data:image/svg+xml,${encoded}`;
@@ -85,8 +95,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "DLMETRIX",
-      "description": "Free comprehensive SEO analysis tool with Core Web Vitals, performance audits, technical SEO checks, and AI-powered insights.",
+      "name": "DLMetrix",
+      "description": "Free SEO Audit Tool to check Web Vitals, performance, and content quality. Get instant AI-powered insights. No signup required.",
       "url": "https://dlmetrix.com",
       "applicationCategory": "SEO Tool",
       "operatingSystem": "Web Browser",

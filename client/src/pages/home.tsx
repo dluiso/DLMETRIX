@@ -872,12 +872,12 @@ export default function Home() {
                     <BarChart3 className="w-5 h-5" />
                   </div>
                   <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
-                    DLMETRIX
+                    DLMetrix – Free SEO Audit Tool with Web Vitals
                   </h1>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4">
-                  All-in-one website audit tool: Core Web Vitals, SEO diagnostics, and performance reports.
-                </p>
+                <h2 className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mx-auto px-4 font-medium">
+                  Free SEO Audit Tool to check Web Vitals, performance, and content quality. Get instant AI-powered insights.
+                </h2>
               </div>
               
               {/* Centered URL Input */}
@@ -921,14 +921,14 @@ export default function Home() {
               
               {/* Features Section - Hidden on Mobile */}
               <section className="mt-6 text-center animate-fade-in hidden sm:block" style={{ animationDelay: '0.4s' }}>
-                <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3">
                   {language === 'en' ? 'Comprehensive Website Analysis Features' : 'Características de Análisis Web Integral'}
-                </h2>
+                </h3>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto px-4">
                   <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                    <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Core Web Vitals' : 'Core Web Vitals'}
-                    </h3>
+                    </h4>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                       {language === 'en' 
                         ? 'Measure LCP, FID, CLS and other performance metrics.'
@@ -937,9 +937,9 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                    <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Technical SEO' : 'SEO Técnico'}
-                    </h3>
+                    </h4>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                       {language === 'en' 
                         ? 'Analyze meta tags, heading structure, schema markup.'
@@ -948,9 +948,9 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                    <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Accessibility' : 'Accesibilidad'}
-                    </h3>
+                    </h4>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                       {language === 'en' 
                         ? 'Check website accessibility compliance and get recommendations.'
@@ -959,9 +959,9 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                    <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1">
                       {language === 'en' ? 'Waterfall Analysis' : 'Análisis Waterfall'}
-                    </h3>
+                    </h4>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
                       {language === 'en' 
                         ? 'Resource loading timeline and performance optimization.'
