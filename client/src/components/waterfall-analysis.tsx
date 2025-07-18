@@ -98,47 +98,50 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
 
   const formatTime = (ms: number) => {
     // Manejar valores negativos o inválidos
-    if (ms < 0 || !Number.isFinite(ms)) {
+    if (!Number.isFinite(ms) || ms < 0) {
       return '0ms';
     }
     
-    // Redondear valores muy pequeños a 0
+    // Valores muy pequeños
     if (ms < 1) return '0ms';
     
-    if (ms < 1000) return `${Math.round(ms)}ms`;
-    if (ms < 10000) return `${(ms / 1000).toFixed(1)}s`;
-    if (ms < 60000) return `${Math.round(ms / 1000)}s`;
-    
-    // Para tiempos muy largos, solo mostrar en segundos para consistencia
-    const totalSeconds = Math.round(ms / 1000);
-    if (totalSeconds < 120) {
-      return `${totalSeconds}s`;
+    // Menos de 1 segundo: mostrar en ms (máximo 2 decimales)
+    if (ms < 1000) {
+      const roundedMs = Math.round(ms * 100) / 100; // Redondear a 2 decimales
+      return `${Math.round(roundedMs)}ms`;
     }
     
-    // Solo para tiempos muy extremos (más de 2 minutos)
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+    // 1 segundo o más: mostrar en segundos con 1 decimal máximo
+    const seconds = ms / 1000;
+    if (seconds < 10) {
+      return `${seconds.toFixed(1)}s`;
+    }
+    
+    // 10 segundos o más: sin decimales
+    return `${Math.round(seconds)}s`;
   };
 
   const formatTimeScale = (ms: number) => {
     // Manejar valores negativos o inválidos
-    if (ms < 0 || !Number.isFinite(ms)) {
-      return '0';
+    if (!Number.isFinite(ms) || ms < 0) {
+      return '0ms';
     }
     
-    // Redondear valores muy pequeños
-    if (ms < 1) return '0';
+    // Valores muy pequeños
+    if (ms < 1) return '0ms';
     
-    // SIEMPRE mostrar en segundos para evitar duplicidad
-    if (ms < 1000) return `${Math.round(ms)}ms`;
+    // Menos de 1 segundo: milisegundos sin decimales
+    if (ms < 1000) {
+      return `${Math.round(ms)}ms`;
+    }
     
-    // Para todo lo demás, usar segundos con formato consistente
+    // 1 segundo o más: mostrar en segundos
     const seconds = ms / 1000;
-    if (seconds < 10) return `${seconds.toFixed(1)}s`;
-    if (seconds < 60) return `${Math.round(seconds)}s`;
+    if (seconds < 10) {
+      return `${seconds.toFixed(1)}s`;
+    }
     
-    // Para tiempos largos, mantener formato en segundos para consistencia
+    // 10 segundos o más: sin decimales
     return `${Math.round(seconds)}s`;
   };
 
@@ -228,10 +231,10 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     const intervals = [0, 0.25, 0.5, 0.75, 1];
     
     intervals.forEach(interval => {
-      const relativeTime = Math.abs(totalDuration * interval);
+      const relativeTime = totalDuration * interval;
       markers.push({
         position: interval * 80,
-        time: formatTimeScale(relativeTime)
+        time: interval === 0 ? '0ms' : formatTimeScale(relativeTime)
       });
     });
     
@@ -265,7 +268,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 <Clock className="h-4 w-4 text-green-600" />
                 <span className="text-sm font-medium">{t.totalLoadTime}</span>
               </div>
-              <div className="text-2xl font-bold text-green-600">{formatTime(Math.abs(maxEndTime - minStartTime))}</div>
+              <div className="text-2xl font-bold text-green-600">{formatTime(totalDuration)}</div>
             </div>
             <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
@@ -461,14 +464,15 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
               {/* Marcadores de tiempo */}
               <div className="flex justify-between mt-1">
                 {Array.from({ length: 6 }, (_, i) => {
-                  const time = minStartTime + (totalDuration * (i / 5));
-                  const resourcesLoaded = currentData.resources.filter(r => r.endTime <= time).length;
+                  const relativeTime = totalDuration * (i / 5);
+                  const absoluteTime = minStartTime + relativeTime;
+                  const resourcesLoaded = currentData.resources.filter(r => (r.endTime || 0) <= absoluteTime).length;
                   const percentage = Math.round((resourcesLoaded / currentData.resources.length) * 100);
                   
                   return (
                     <div key={i} className="text-center">
                       <div className="text-xs text-slate-600 dark:text-slate-400">
-                        {formatTime(time)}
+                        {formatTime(relativeTime)}
                       </div>
                       <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
                         {percentage}%
@@ -567,10 +571,10 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             <div className="relative mb-4">
               <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 mb-2">
                 {Array.from({ length: 11 }, (_, i) => {
-                  const time = minStartTime + (totalDuration * (i / 10));
+                  const relativeTime = (totalDuration * (i / 10));
                   return (
                     <span key={i} className="text-center">
-                      {i === 0 ? '0.0' : formatTimeScale(time)}
+                      {i === 0 ? '0ms' : formatTimeScale(relativeTime)}
                     </span>
                   );
                 })}
