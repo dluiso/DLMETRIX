@@ -20,9 +20,13 @@ git fetch origin main
 git reset --hard origin/main
 echo "✅ Code updated to latest version"
 
-# Install/update dependencies if needed
-echo "📦 Ensuring dependencies are up to date..."
-npm install --production
+# Install ALL dependencies (including dev dependencies for build)
+echo "📦 Installing all dependencies..."
+npm install
+
+# Build the application for production
+echo "🏗️ Building application for production..."
+npm run build
 
 # Verify browser is accessible
 echo "🧪 Verifying browser access..."
@@ -36,9 +40,17 @@ else
     echo "❌ No browser found - root setup may have failed"
 fi
 
+# Verify build exists
+if [ -f "dist/index.js" ]; then
+    echo "✅ Production build completed successfully"
+else
+    echo "❌ Production build failed - dist/index.js not found"
+    exit 1
+fi
+
 # Start DLMETRIX service
 echo "🚀 Starting DLMETRIX service..."
-pm2 start dlmetrix
+pm2 restart dlmetrix
 
 # Wait a moment for startup
 sleep 5
@@ -46,6 +58,10 @@ sleep 5
 # Show status
 echo "📊 Service status:"
 pm2 list | grep dlmetrix
+
+# Show recent logs
+echo "📋 Recent logs:"
+pm2 logs dlmetrix --lines 10 --nostream
 
 echo ""
 echo "🎉 App setup complete!"
