@@ -229,14 +229,15 @@ async function performLighthouseAnalysis(url: string): Promise<WebAnalysisResult
     const chromiumPaths = [
       // Replit environment (development)
       '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
+      // Snap installations (user's production server)
+      '/snap/bin/chromium',
+      '/snap/bin/google-chrome-stable',
       // Common production server paths
       '/usr/bin/google-chrome-stable',
       '/usr/bin/google-chrome',
       '/usr/bin/chromium',
       '/usr/bin/chromium-browser',
       '/opt/google/chrome/chrome',
-      '/snap/bin/chromium',
-      '/snap/bin/google-chrome-stable',
       // Additional ARM64 and Ubuntu paths
       '/usr/lib/chromium-browser/chromium-browser',
       '/usr/lib/chromium/chromium',
@@ -799,14 +800,15 @@ async function captureScreenshot(url: string, device: 'mobile' | 'desktop', brow
 // Puppeteer-based SEO data extraction for Cloudflare-protected sites  
 async function fetchSeoDataWithPuppeteer(url: string) {
   const chromiumPaths = [
+    // Snap installations (priority for user's server)
+    '/snap/bin/chromium',
+    '/snap/bin/google-chrome-stable',
     // Common production server paths
     '/usr/bin/google-chrome-stable',
     '/usr/bin/google-chrome',
     '/usr/bin/chromium',
     '/usr/bin/chromium-browser',
     '/opt/google/chrome/chrome',
-    '/snap/bin/chromium',
-    '/snap/bin/google-chrome-stable',
     // Additional paths
     '/usr/lib/chromium-browser/chromium-browser',
     '/usr/lib/chromium/chromium'
