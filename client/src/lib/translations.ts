@@ -182,7 +182,7 @@ export interface Translations {
 export const translations: Record<'en' | 'es', Translations> = {
   en: {
     // Header and Navigation
-    title: "DLMetrix – Free SEO Audit Tool for Web Vitals & AI Insights",
+    title: "DLMETRIX",
     subtitle: "DLMetrix is a Free SEO Audit Tool to analyze Web Vitals, performance, and content. Get AI insights instantly. No signup required.",
     history: "History",
     settings: "Settings", 
@@ -375,7 +375,7 @@ export const translations: Record<'en' | 'es', Translations> = {
   },
   es: {
     // Header and Navigation
-    title: "DLMetrix – Herramienta Gratuita de Auditoría SEO para Web Vitals e Insights de IA",
+    title: "DLMETRIX",
     subtitle: "DLMetrix es una Herramienta Gratuita de Auditoría SEO para analizar Web Vitals, rendimiento y contenido. Obtén insights de IA instantáneamente. No se requiere registro.",
     history: "Historial",
     settings: "Configuración",
