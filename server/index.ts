@@ -16,18 +16,6 @@ app.get("/sitemap.xml", (req, res) => {
     '    <changefreq>weekly</changefreq>\n' +
     '    <priority>1.0</priority>\n' +
     '  </url>\n' +
-    '  <url>\n' +
-    '    <loc>https://dlmetrix.com/home</loc>\n' +
-    '    <lastmod>' + currentDate + '</lastmod>\n' +
-    '    <changefreq>weekly</changefreq>\n' +
-    '    <priority>0.8</priority>\n' +
-    '  </url>\n' +
-    '  <url>\n' +
-    '    <loc>https://dlmetrix.com/share</loc>\n' +
-    '    <lastmod>' + currentDate + '</lastmod>\n' +
-    '    <changefreq>daily</changefreq>\n' +
-    '    <priority>0.6</priority>\n' +
-    '  </url>\n' +
     '</urlset>';
   
   res.set('Content-Type', 'application/xml');
