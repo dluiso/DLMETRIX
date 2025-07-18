@@ -1,0 +1,46 @@
+0|dlmetrix  | ✅ Analysis completed successfully
+0|dlmetrix  | 💾 Attempting to save web analysis to database...
+0|dlmetrix  | 🔧 Database available, inserting web analysis...
+0|dlmetrix  | ❌ Database insert failed: Unknown column 'off_page_data' in 'INSERT INTO'
+0|dlmetrix  | 🔍 Error details: {
+0|dlmetrix  |   code: 'ER_BAD_FIELD_ERROR',
+0|dlmetrix  |   errno: 1054,
+0|dlmetrix  |   sqlMessage: "Unknown column 'off_page_data' in 'INSERT INTO'"
+0|dlmetrix  | }
+0|dlmetrix  | 3:50:43 PM [express] POST /api/web/analyze 200 in 40786ms :: {"url":"https://laserfiche.com","title"…
+0|dlmetrix  | Creating temporary HTML report for: https://laserfiche.com
+0|dlmetrix  | 📄 Creating temporary HTML report...
+0|dlmetrix  | ❌ Error generating HTML report: TypeError: data.diagnostics.slice is not a function
+0|dlmetrix  |     at HtmlReportGenerator.generateHtmlContent (file:///home/dlplusmetrix/DLMETRIX/dist/index.js:1979:40)
+0|dlmetrix  |     at HtmlReportGenerator.generateSharedReport (file:///home/dlplusmetrix/DLMETRIX/dist/index.js:1398:32)
+0|dlmetrix  |     at TempShareService.createSharedReport (file:///home/dlplusmetrix/DLMETRIX/dist/index.js:2047:46)
+0|dlmetrix  |     at file:///home/dlplusmetrix/DLMETRIX/dist/index.js:2164:49
+0|dlmetrix  |     at Layer.handle [as handle_request] (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/layer.js:95:5)
+0|dlmetrix  |     at next (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/route.js:149:13)
+0|dlmetrix  |     at Route.dispatch (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/route.js:119:3)
+0|dlmetrix  |     at Layer.handle [as handle_request] (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/layer.js:95:5)
+0|dlmetrix  |     at /home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:284:15
+0|dlmetrix  |     at Function.process_params (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:346:12)
+0|dlmetrix  | ❌ Error creating shared report: Error: Failed to generate HTML report
+0|dlmetrix  |     at HtmlReportGenerator.generateSharedReport (file:///home/dlplusmetrix/DLMETRIX/dist/index.js:1404:13)
+0|dlmetrix  |     at TempShareService.createSharedReport (file:///home/dlplusmetrix/DLMETRIX/dist/index.js:2047:46)
+0|dlmetrix  |     at file:///home/dlplusmetrix/DLMETRIX/dist/index.js:2164:49
+0|dlmetrix  |     at Layer.handle [as handle_request] (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/layer.js:95:5)
+0|dlmetrix  |     at next (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/route.js:149:13)
+0|dlmetrix  |     at Route.dispatch (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/route.js:119:3)
+0|dlmetrix  |     at Layer.handle [as handle_request] (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/layer.js:95:5)
+0|dlmetrix  |     at /home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:284:15
+0|dlmetrix  |     at Function.process_params (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:346:12)
+0|dlmetrix  |     at next (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:280:10)
+0|dlmetrix  | HTML share creation error: Error: Failed to generate HTML report
+0|dlmetrix  |     at HtmlReportGenerator.generateSharedReport (file:///home/dlplusmetrix/DLMETRIX/dist/index.js:1404:13)
+0|dlmetrix  |     at TempShareService.createSharedReport (file:///home/dlplusmetrix/DLMETRIX/dist/index.js:2047:46)
+0|dlmetrix  |     at file:///home/dlplusmetrix/DLMETRIX/dist/index.js:2164:49
+0|dlmetrix  |     at Layer.handle [as handle_request] (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/layer.js:95:5)
+0|dlmetrix  |     at next (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/route.js:149:13)
+0|dlmetrix  |     at Route.dispatch (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/route.js:119:3)
+0|dlmetrix  |     at Layer.handle [as handle_request] (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/layer.js:95:5)
+0|dlmetrix  |     at /home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:284:15
+0|dlmetrix  |     at Function.process_params (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:346:12)
+0|dlmetrix  |     at next (/home/dlplusmetrix/DLMETRIX/node_modules/express/lib/router/index.js:280:10)
+0|dlmetrix  | 3:51:32 PM [express] POST /api/share/create 500 in 11ms :: {"message":"Failed to create shareable li…

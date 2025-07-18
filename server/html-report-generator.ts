@@ -203,11 +203,12 @@ export class HtmlReportGenerator {
 
     // Helper function to check if we should show a section
     const shouldShowSection = (sectionData: any) => {
-      return sectionData && (
-        Array.isArray(sectionData) ? sectionData.length > 0 : 
-        typeof sectionData === 'object' ? Object.keys(sectionData).length > 0 : 
-        sectionData !== null && sectionData !== undefined
-      );
+      if (!sectionData) return false;
+      if (Array.isArray(sectionData)) return sectionData.length > 0;
+      if (typeof sectionData === 'object') {
+        return Object.keys(sectionData).length > 0 && Object.values(sectionData).some(v => v !== null && v !== undefined);
+      }
+      return sectionData !== null && sectionData !== undefined;
     };
 
     const offPageFormatted = formatOffPageData(data.offPageData);
@@ -713,7 +714,7 @@ export class HtmlReportGenerator {
             <div class="section-card">
                 <h2 class="text-xl font-bold mb-6 text-gray-900">Performance Diagnostics</h2>
                 <div class="space-y-3">
-                    ${data.diagnostics.slice(0, 10).map((diagnostic: any) => `
+                    ${(Array.isArray(data.diagnostics) ? data.diagnostics.slice(0, 10) : []).map((diagnostic: any) => `
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <div class="font-medium text-sm">${diagnostic.title || 'Diagnostic'}</div>
                             <div class="text-xs text-gray-600 mt-1">${diagnostic.description || diagnostic.displayValue || ''}</div>
@@ -728,7 +729,7 @@ export class HtmlReportGenerator {
             <div class="section-card">
                 <h2 class="text-xl font-bold mb-6 text-gray-900">Performance Insights</h2>
                 <div class="space-y-3">
-                    ${data.insights.slice(0, 8).map((insight: any) => `
+                    ${(Array.isArray(data.insights) ? data.insights.slice(0, 8) : []).map((insight: any) => `
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <div class="font-medium text-sm">${insight.title || 'Insight'}</div>
                             <div class="text-xs text-gray-600 mt-1">${insight.description || insight.displayValue || ''}</div>

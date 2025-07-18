@@ -170,14 +170,9 @@ export class DatabaseStorage implements IStorage {
     
     try {
       console.log('🔧 Database available, inserting web analysis...');
-      const [result] = await db.insert(webAnalyses).values({
-        ...insertAnalysis,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }).execute();
       
-      const createdAnalysis: WebAnalysis = {
-        id: result.insertId as number,
+      // Create a compatible data object that excludes fields that might not exist in the database
+      const compatibleData = {
         url: insertAnalysis.url,
         title: insertAnalysis.title ?? null,
         keywords: insertAnalysis.keywords ?? null,
@@ -199,8 +194,23 @@ export class DatabaseStorage implements IStorage {
         diagnostics: insertAnalysis.diagnostics ?? null,
         insights: insertAnalysis.insights ?? null,
         technicalChecks: insertAnalysis.technicalChecks ?? null,
+        waterfallAnalysis: insertAnalysis.waterfallAnalysis ?? null,
         createdAt: new Date(),
         updatedAt: new Date()
+      };
+      
+      // Only include offPageData if it exists in the insertAnalysis
+      if (insertAnalysis.offPageData) {
+        (compatibleData as any).offPageData = insertAnalysis.offPageData;
+      }
+      
+      const [result] = await db.insert(webAnalyses).values(compatibleData).execute();
+      
+      const createdAnalysis: WebAnalysis = {
+        id: result.insertId as number,
+        ...compatibleData,
+        offPageData: insertAnalysis.offPageData ?? null,
+        waterfallAnalysis: insertAnalysis.waterfallAnalysis ?? null
       };
       
       console.log(`✅ Web analysis saved to database with ID: ${createdAnalysis.id}`);
