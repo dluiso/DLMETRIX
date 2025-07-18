@@ -96,14 +96,14 @@ export default function UrlInput({ onAnalyze, isLoading, language = 'en', curren
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="pl-4 pr-10 text-sm sm:text-base h-11 sm:h-12 w-full"
+              className="pl-4 pr-10 text-base sm:text-base h-12 sm:h-12 w-full min-h-[48px]"
               disabled={isLoading}
             />
             <Link className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
           </div>
           <Button 
             type="submit" 
-            className="gradient-button h-11 sm:h-12 text-sm sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200 font-medium flex-shrink-0"
+            className="gradient-button h-12 sm:h-12 text-base sm:text-base w-full sm:w-auto sm:px-6 hover:scale-105 transition-transform duration-200 font-medium flex-shrink-0 min-h-[48px]"
             disabled={isLoading}
           >
             {isLoading ? (

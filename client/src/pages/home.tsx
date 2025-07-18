@@ -481,14 +481,14 @@ export default function Home() {
       
       {/* Header */}
       <header className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-18">
             {/* Logo and Title - Mobile Optimized */}
-            <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onClick={() => window.location.reload()}>
-              <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-1.5 sm:p-2 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
-                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="flex items-center space-x-3 sm:space-x-4 cursor-pointer" onClick={() => window.location.reload()}>
+              <div className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 text-white p-2 sm:p-2.5 rounded-lg flex-shrink-0 hover:scale-105 transition-transform">
+                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <div className="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <div className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 {t.title}
               </div>
             </div>
@@ -556,7 +556,7 @@ export default function Home() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 btn-mobile"
+                className="p-3 min-h-[44px] min-w-[44px] btn-mobile"
               >
                 {isMobileMenuOpen ? (
                   <X className="w-6 h-6" />
@@ -573,7 +573,7 @@ export default function Home() {
               <div className="flex flex-col space-y-2 max-w-full">
                 {/* Main Navigation */}
                 <div className="flex flex-col space-y-2 px-2">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-3">
                     <div className="flex-1"><WhyDlmetrixDialog language={language} /></div>
                     <div className="flex-1"><HelpDialog language={language} /></div>
                   </div>
@@ -581,7 +581,7 @@ export default function Home() {
                 
                 {/* Settings and History */}
                 <div className="flex flex-col space-y-2 px-2">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-3">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -589,9 +589,9 @@ export default function Home() {
                         setShowSettings(!showSettings);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="justify-start flex-1 text-xs"
+                      className="justify-start flex-1 text-sm min-h-[44px] py-3"
                     >
-                      <Settings className="w-4 h-4 mr-1" />
+                      <Settings className="w-5 h-5 mr-2" />
                       {t.settings}
                     </Button>
                     
@@ -603,11 +603,11 @@ export default function Home() {
                           setShowHistory(!showHistory);
                           setIsMobileMenuOpen(false);
                         }}
-                        className="relative justify-start flex-1 text-xs"
+                        className="relative justify-start flex-1 text-sm min-h-[44px] py-3"
                       >
-                        <History className="w-4 h-4 mr-1" />
+                        <History className="w-5 h-5 mr-2" />
                         {t.history}
-                        <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                        <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                           {analysisHistory.length}
                         </span>
                       </Button>
@@ -618,7 +618,7 @@ export default function Home() {
                 {/* Export Options - Only show if there's data */}
                 {seoData && (
                   <div className="flex flex-col space-y-2 px-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-3">
                       <Button 
                         variant="ghost" 
                         size="sm"
@@ -627,14 +627,14 @@ export default function Home() {
                           setIsMobileMenuOpen(false);
                         }}
                         disabled={!seoData}
-                        className="justify-start flex-1 text-xs"
+                        className="justify-start flex-1 text-sm min-h-[44px] py-3"
                       >
-                        <FileDown className="w-4 h-4 mr-1" />
+                        <FileDown className="w-5 h-5 mr-2" />
                         CSV
                       </Button>
                       
                       <Button 
-                        className="bg-primary hover:bg-blue-700 justify-start text-white flex-1 text-xs"
+                        className="bg-primary hover:bg-blue-700 justify-start text-white flex-1 text-sm min-h-[44px] py-3"
                         onClick={() => {
                           handleExportPDF();
                           setIsMobileMenuOpen(false);
@@ -642,9 +642,9 @@ export default function Home() {
                         disabled={!seoData || isExporting}
                       >
                         {isExporting ? (
-                          <Download className="w-4 h-4 mr-1 animate-spin" />
+                          <Download className="w-5 h-5 mr-2 animate-spin" />
                         ) : (
-                          <Bookmark className="w-4 h-4 mr-1" />
+                          <Bookmark className="w-5 h-5 mr-2" />
                         )}
                         PDF
                       </Button>
@@ -654,7 +654,7 @@ export default function Home() {
 
                 {/* Contact and Support */}
                 <div className="flex flex-col space-y-2 px-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-3">
                     <div className="flex-1"><ContactDialog language={language} /></div>
                     <div className="flex-1"><SupportDialog language={language} /></div>
                   </div>
@@ -886,34 +886,34 @@ export default function Home() {
               </div>
               
               {/* Feature Icons Section - Mobile Optimized */}
-              <section className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center items-center text-slate-600 dark:text-slate-400 text-xs max-w-md mx-auto">
-                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
-                    <Monitor className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+              <section className="mt-8 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <div className="flex flex-wrap gap-3 sm:gap-4 justify-center items-center text-slate-600 dark:text-slate-400 text-sm max-w-lg mx-auto">
+                  <div className="flex items-center gap-2 justify-center bg-white dark:bg-slate-800 px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 min-h-[44px]">
+                    <Monitor className="w-4 h-4 text-blue-500 flex-shrink-0" />
                     <span className="font-medium">Desktop</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
-                    <Smartphone className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 justify-center bg-white dark:bg-slate-800 px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 min-h-[44px]">
+                    <Smartphone className="w-4 h-4 text-green-500 flex-shrink-0" />
                     <span className="font-medium">Mobile</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
-                    <BarChart3 className="w-3.5 h-3.5 text-purple-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 justify-center bg-white dark:bg-slate-800 px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 min-h-[44px]">
+                    <BarChart3 className="w-4 h-4 text-purple-500 flex-shrink-0" />
                     <span className="font-medium">Performance</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
-                    <Globe className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 justify-center bg-white dark:bg-slate-800 px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 min-h-[44px]">
+                    <Globe className="w-4 h-4 text-indigo-500 flex-shrink-0" />
                     <span className="font-medium">SEO</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
-                    <Search className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 justify-center bg-white dark:bg-slate-800 px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 min-h-[44px]">
+                    <Search className="w-4 h-4 text-orange-500 flex-shrink-0" />
                     <span className="font-medium">AI Search</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
-                    <FileText className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 justify-center bg-white dark:bg-slate-800 px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 min-h-[44px]">
+                    <FileText className="w-4 h-4 text-pink-500 flex-shrink-0" />
                     <span className="font-medium">Keywords</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-center bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
-                    <BarChart3 className="w-3.5 h-3.5 text-cyan-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 justify-center bg-white dark:bg-slate-800 px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 min-h-[44px]">
+                    <BarChart3 className="w-4 h-4 text-cyan-500 flex-shrink-0" />
                     <span className="font-medium">Waterfall</span>
                   </div>
                 </div>
