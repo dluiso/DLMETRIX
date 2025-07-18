@@ -97,41 +97,66 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
   };
 
   const formatTime = (ms: number) => {
-    if (ms < 1000) return `${ms.toFixed(0)}ms`;
-    if (ms < 10000) return `${(ms / 1000).toFixed(1)}s`;
-    if (ms < 60000) return `${(ms / 1000).toFixed(0)}s`;
-    
-    // Para tiempos muy largos (más de 1 minuto)
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    
-    if (minutes > 0) {
-      return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+    // Manejar valores negativos o inválidos
+    if (ms < 0 || !Number.isFinite(ms)) {
+      return '0ms';
     }
     
-    return `${(ms / 1000).toFixed(1)}s`;
+    // Redondear valores muy pequeños a 0
+    if (ms < 1) return '0ms';
+    
+    if (ms < 1000) return `${Math.round(ms)}ms`;
+    if (ms < 10000) return `${(ms / 1000).toFixed(1)}s`;
+    if (ms < 60000) return `${Math.round(ms / 1000)}s`;
+    
+    // Para tiempos muy largos, solo mostrar en segundos para consistencia
+    const totalSeconds = Math.round(ms / 1000);
+    if (totalSeconds < 120) {
+      return `${totalSeconds}s`;
+    }
+    
+    // Solo para tiempos muy extremos (más de 2 minutos)
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
   };
 
   const formatTimeScale = (ms: number) => {
-    if (ms < 1000) return `${ms.toFixed(0)}`;
-    if (ms < 10000) return `${(ms / 1000).toFixed(1)}`;
-    if (ms < 60000) return `${(ms / 1000).toFixed(0)}`;
-    
-    // Para tiempos muy largos (más de 1 minuto)
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    
-    if (minutes > 0) {
-      return seconds > 0 ? `${minutes}:${seconds.toString().padStart(2, '0')}` : `${minutes}:00`;
+    // Manejar valores negativos o inválidos
+    if (ms < 0 || !Number.isFinite(ms)) {
+      return '0';
     }
     
-    return `${(ms / 1000).toFixed(1)}`;
+    // Redondear valores muy pequeños
+    if (ms < 1) return '0';
+    
+    // SIEMPRE mostrar en segundos para evitar duplicidad
+    if (ms < 1000) return `${Math.round(ms)}ms`;
+    
+    // Para todo lo demás, usar segundos con formato consistente
+    const seconds = ms / 1000;
+    if (seconds < 10) return `${seconds.toFixed(1)}s`;
+    if (seconds < 60) return `${Math.round(seconds)}s`;
+    
+    // Para tiempos largos, mantener formato en segundos para consistencia
+    return `${Math.round(seconds)}s`;
   };
 
-  // Calcular el tiempo máximo para el timeline
-  const maxEndTime = Math.max(...currentData.resources.map(r => r.endTime || 0));
-  const minStartTime = Math.min(...currentData.resources.map(r => r.startTime || 0));
-  const totalDuration = maxEndTime - minStartTime;
+  // Calcular el tiempo máximo para el timeline con validación
+  const validResources = currentData.resources.filter(r => 
+    Number.isFinite(r.endTime) && Number.isFinite(r.startTime) && 
+    r.endTime >= 0 && r.startTime >= 0
+  );
+  
+  let maxEndTime = 0;
+  let minStartTime = 0;
+  let totalDuration = 0;
+  
+  if (validResources.length > 0) {
+    maxEndTime = Math.max(...validResources.map(r => r.endTime || 0));
+    minStartTime = Math.min(...validResources.map(r => r.startTime || 0));
+    totalDuration = Math.abs(maxEndTime - minStartTime);
+  }
   
   // Calcular Total Blocking Time
   const totalBlockingTime = currentData.resources
@@ -197,16 +222,16 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     return t.waterfallVerySlow;
   };
 
-  // Crear marcadores de tiempo para la escala
+  // Crear marcadores de tiempo para la escala (tiempo relativo desde 0)
   const getTimeMarkers = () => {
     const markers = [];
     const intervals = [0, 0.25, 0.5, 0.75, 1];
     
     intervals.forEach(interval => {
-      const time = minStartTime + (totalDuration * interval);
+      const relativeTime = Math.abs(totalDuration * interval);
       markers.push({
         position: interval * 80,
-        time: formatTime(time)
+        time: formatTimeScale(relativeTime)
       });
     });
     
@@ -240,7 +265,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 <Clock className="h-4 w-4 text-green-600" />
                 <span className="text-sm font-medium">{t.totalLoadTime}</span>
               </div>
-              <div className="text-2xl font-bold text-green-600">{formatTime(maxEndTime - minStartTime)}</div>
+              <div className="text-2xl font-bold text-green-600">{formatTime(Math.abs(maxEndTime - minStartTime))}</div>
             </div>
             <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
