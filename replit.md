@@ -115,6 +115,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### Domain Age English Formatting Update - COMPLETED (January 18, 2025)
+- **LANGUAGE CHANGE**: Updated domain age display from Spanish to English format
+- **EXAMPLES**: Now shows "26 years 8 months", "17 years 2 months", "4 days" instead of Spanish equivalents
+- **INTERNATIONAL APPEAL**: English format provides better international accessibility and professional appearance
+- **BILINGUAL SUPPORT**: Backend maintains support for both Spanish and English formatting
+- **USER IMPACT**: Domain age now displays in universally understood English format for better user experience
+
 ### OffPage Analysis Implementation - COMPLETED (January 18, 2025)
 - **COMPREHENSIVE OFFPAGE ANALYSIS SYSTEM**: Complete implementation of OffPage SEO analysis functionality using custom algorithms and free data sources
 - **COST-EFFECTIVE SOLUTION**: Avoided expensive commercial APIs (SEMrush $1,249/month, Ahrefs Enterprise-only) by creating proprietary analysis system
@@ -135,7 +142,7 @@ Preferred communication style: Simple, everyday language.
   - Language-specific Wikipedia page analysis
 - **TRUST METRICS ANALYSIS**:
   - HTTPS/SSL certificate validation
-  - Domain age estimation algorithms
+  - Real domain age calculation using Web Archive API with English formatting
   - Spam score calculation (0-100, lower is better)
   - Trust signals identification (HTTPS, SSL, mature domain)
   - Certificate validity verification

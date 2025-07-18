@@ -110,14 +110,14 @@ Los usuarios ahora verán:
 
 ## Ejemplos de Edad del Dominio Real
 
-- **Google.com**: 26 años 8 meses
-- **GitHub.com**: 17 años 2 meses  
-- **Example.com**: 23 años 6 meses
-- **Stack Overflow**: 25 años 4 meses
-- **Wikipedia.org**: 24 años
+- **Google.com**: 26 years 8 months
+- **GitHub.com**: 17 years 2 months  
+- **Example.com**: 23 years 6 months
+- **Stack Overflow**: 25 years 4 months
+- **Wikipedia.org**: 24 years
 
-### Formato Inteligente
-- Dominios nuevos: "4 días", "15 días"
-- Dominios recientes: "3 meses", "11 meses"
-- Dominios maduros: "2 años", "5 años 3 meses"
-- Dominios establecidos: "15 años 8 meses"
+### Formato Inteligente (Inglés)
+- Dominios nuevos: "4 days", "15 days"
+- Dominios recientes: "3 months", "11 months"
+- Dominios maduros: "2 years", "5 years 3 months"
+- Dominios establecidos: "15 years 8 months"

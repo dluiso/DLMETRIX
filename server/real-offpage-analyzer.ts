@@ -238,7 +238,7 @@ export class RealOffPageAnalyzer {
     const httpsEnabled = await this.checkRealHttps(domain);
     const certificateValid = await this.checkRealCertificate(domain);
     const domainAgeDays = await this.getRealDomainAge(domain);
-    const domainAgeFormatted = this.formatDomainAge(domainAgeDays, 'es'); // Default to Spanish, can be changed based on user preference
+    const domainAgeFormatted = this.formatDomainAge(domainAgeDays, 'en'); // Changed to English for better international appeal
     
     const trustSignals = [];
     if (httpsEnabled) trustSignals.push('HTTPS Enabled');
