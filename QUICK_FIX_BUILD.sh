@@ -24,7 +24,7 @@ echo "🏗️ Building frontend with Vite..."
 npx vite build
 
 echo "🏗️ Building backend with ESBuild..."
-npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:vite
 
 # Verify build
 if [ -f "dist/index.js" ]; then

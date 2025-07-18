@@ -29,8 +29,7 @@ async function initializeDatabase() {
           password: url.password,
           database: url.pathname.slice(1), // Remove leading slash
           ssl: false,
-          connectTimeout: 10000,
-          acquireTimeout: 10000
+          connectTimeout: 10000
         };
       } else {
         console.log('📡 Using individual MySQL parameters');
@@ -41,8 +40,7 @@ async function initializeDatabase() {
           password: 'PxwjcJDm9cgBG7ZHa8uQ',
           database: 'dbmpltrixseo',
           ssl: false,
-          connectTimeout: 10000,
-          acquireTimeout: 10000
+          connectTimeout: 10000
         };
       }
       

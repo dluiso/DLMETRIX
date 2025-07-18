@@ -1,0 +1,185 @@
+0|dlmetrix | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported f                                                                                                                                   rom /home/dlplusmetrix/DLMETRIX/dist/index.js
+0|dlmetrix |     at Object.getPackageJSONURL (node:internal/modules/package_json                                                                                                                                   _reader:256:9)
+0|dlmetrix |     at packageResolve (node:internal/modules/esm/resolve:768:81)
+0|dlmetrix |     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+0|dlmetrix |     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+0|dlmetrix |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loade                                                                                                                                   r:780:12)
+0|dlmetrix |     at #cachedDefaultResolve (node:internal/modules/esm/loader:704:                                                                                                                                   25)
+0|dlmetrix |     at ModuleLoader.resolve (node:internal/modules/esm/loader:687:3                                                                                                                                   8)
+0|dlmetrix |     at ModuleLoader.getModuleJobForImport (node:internal/modules/es                                                                                                                                   m/loader:305:38)
+0|dlmetrix |     at ModuleJob._link (node:internal/modules/esm/module_job:175:49                                                                                                                                   ) {
+0|dlmetrix |   code: 'ERR_MODULE_NOT_FOUND'
+0|dlmetrix | }
+0|dlmetrix |
+0|dlmetrix | Node.js v22.17.1
+0|dlmetrix | Ignoring invalid configuration option passed to Connection: acquire                                                                                                                                   Timeout. This is currently a warning, but in future versions of MySQL2, an error                                                                                                                                    will be thrown if you pass an invalid configuration option to a Connection
+
+/home/dlplusmetrix/.pm2/logs/dlmetrix-out.log last 15 lines:
+0|dlmetrix | 📋 Environment check:
+0|dlmetrix |   - NODE_ENV: production
+0|dlmetrix |   - DATABASE_URL exists: false
+0|dlmetrix | 📡 Using individual MySQL parameters
+0|dlmetrix | 🔗 Connection config: {
+0|dlmetrix |   host: 'localhost',
+0|dlmetrix |   port: 3306,
+0|dlmetrix |   user: 'plusmitseometrix',
+0|dlmetrix |   database: 'dbmpltrixseo'
+0|dlmetrix | }
+0|dlmetrix | 4:11:51 AM [express] serving on port 5000
+0|dlmetrix | 🧪 Testing connection...
+0|dlmetrix | ✅ Database connection established successfully
+0|dlmetrix | 📊 Available tables: 2
+0|dlmetrix | ✅ Drizzle ORM initialized
+
+
+🎉 Quick fix complete!
+dlplusmetrix@hosting-server-2:~/DLMETRIX$ pm2 logs dlmetrix --lines 20
+[TAILING] Tailing last 20 lines for [dlmetrix] process (change the value with --                                                                                                                                   lines option)
+/home/dlplusmetrix/.pm2/logs/dlmetrix-error.log last 20 lines:
+0|dlmetrix | Node.js v22.17.1
+0|dlmetrix | node:internal/modules/package_json_reader:256
+0|dlmetrix |   throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base),                                                                                                                                    null);
+0|dlmetrix |         ^
+0|dlmetrix |
+0|dlmetrix | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported f                                                                                                                                   rom /home/dlplusmetrix/DLMETRIX/dist/index.js
+0|dlmetrix |     at Object.getPackageJSONURL (node:internal/modules/package_json                                                                                                                                   _reader:256:9)
+0|dlmetrix |     at packageResolve (node:internal/modules/esm/resolve:768:81)
+0|dlmetrix |     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+0|dlmetrix |     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+0|dlmetrix |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loade                                                                                                                                   r:780:12)
+0|dlmetrix |     at #cachedDefaultResolve (node:internal/modules/esm/loader:704:                                                                                                                                   25)
+0|dlmetrix |     at ModuleLoader.resolve (node:internal/modules/esm/loader:687:3                                                                                                                                   8)
+0|dlmetrix |     at ModuleLoader.getModuleJobForImport (node:internal/modules/es                                                                                                                                   m/loader:305:38)
+0|dlmetrix |     at ModuleJob._link (node:internal/modules/esm/module_job:175:49                                                                                                                                   ) {
+0|dlmetrix |   code: 'ERR_MODULE_NOT_FOUND'
+0|dlmetrix | }
+0|dlmetrix |
+0|dlmetrix | Node.js v22.17.1
+0|dlmetrix | Ignoring invalid configuration option passed to Connection: acquire                                                                                                                                   Timeout. This is currently a warning, but in future versions of MySQL2, an error                                                                                                                                    will be thrown if you pass an invalid configuration option to a Connection
+
+/home/dlplusmetrix/.pm2/logs/dlmetrix-out.log last 20 lines:
+0|dlmetrix |     'Join Us for Success'
+0|dlmetrix |   ],
+0|dlmetrix |   h3: [
+0|dlmetrix |     'Web Design',
+0|dlmetrix |     'E-Commerce Solutions',
+0|dlmetrix |     'SEO Services',
+0|dlmetrix |     'Ready to Elevate Your Business?',
+0|dlmetrix |     'ABC Retail Solutions',
+0|dlmetrix |     'XYZ Services Group'
+0|dlmetrix |   ],
+0|dlmetrix |   h4: [
+0|dlmetrix |     'Exceptional Service!',
+0|dlmetrix |     'Professional and Dedicated!',
+0|dlmetrix |     'A Partner for Success!'
+0|dlmetrix |   ],
+0|dlmetrix |   h5: [ 'James Smith', 'Michael Johnson', 'Robert Brown' ],
+0|dlmetrix |   h6: []
+0|dlmetrix | }
+0|dlmetrix | DEBUG heading analysis: { hasH1: true, hasMultipleHeadingTypes: tru                                                                                                                                   e, h1Count: 1 }
+0|dlmetrix | Starting waterfall analysis for: https://plusmit.com
+
+0|dlmetrix  | ✅ Analysis completed successfully
+0|dlmetrix  | 💾 Attempting to save web analysis to database...
+0|dlmetrix  | 🔧 Database available, inserting web analysis...
+0|dlmetrix  | ✅ Web analysis saved to database with ID: 108
+0|dlmetrix  | 4:13:24 AM [express] POST /api/web/analyze 200 in 61561ms :: {"url                                                                                                                                   ":"https://plusmit.com","title":"P…
+0|dlmetrix  | Analyzing URL: https://smartfiche.com
+0|dlmetrix  | 🔍 About to call performComprehensiveAnalysis...
+0|dlmetrix  | 🚀 Starting comprehensive analysis with Lighthouse...
+0|dlmetrix  | 🔧 Starting performLighthouseAnalysis...
+0|dlmetrix  | ✅ Using browser executable: /usr/bin/chromium-browser
+0|dlmetrix  | DEBUG fetchBasicSeoData - Starting analysis for URL: https://smart                                                                                                                                   fiche.com
+0|dlmetrix  | DEBUG fetchBasicSeoData - Response status: 200
+0|dlmetrix  | DEBUG fetchBasicSeoData - Content length: 220641
+0|dlmetrix  | DEBUG fetchBasicSeoData - Basic meta extracted: {
+0|dlmetrix  |   title: 'SmartFiche - Laserfiche & IT Services Solutions',
+0|dlmetrix  |   description: true,
+0|dlmetrix  |   viewportMeta: true
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG fetchBasicSeoData - Headings extracted: { h1Count: 1, h2Coun                                                                                                                                   t: 7, h3Count: 10, h1Text: 'Smartfiche' }
+0|dlmetrix  | Starting manual performance analysis for mobile (ARM64 compatible)
+0|dlmetrix  | Starting manual performance analysis for desktop (ARM64 compatible                                                                                                                                   )
+0|dlmetrix  | DEBUG generateBasicTechnicalChecks - seoData keys: [
+0|dlmetrix  |   'title',           'description',
+0|dlmetrix  |   'keywords',        'canonicalUrl',
+0|dlmetrix  |   'robotsMeta',      'viewportMeta',
+0|dlmetrix  |   'charset',         'langAttribute',
+0|dlmetrix  |   'headings',        'headingStructure',
+0|dlmetrix  |   'imageAnalysis',   'linkAnalysis',
+0|dlmetrix  |   'contentAnalysis', 'technicalAnalysis',
+0|dlmetrix  |   'openGraphTags',   'twitterCardTags',
+0|dlmetrix  |   'schemaMarkup',    'robotsTxtExists',
+0|dlmetrix  |   'sitemapExists',   'finalUrl',
+0|dlmetrix  |   'hasSSL'
+0|dlmetrix  | ]
+0|dlmetrix  | DEBUG headings data: {
+0|dlmetrix  |   h1: [ 'Smartfiche' ],
+0|dlmetrix  |   h2: [
+0|dlmetrix  |     'Business Process Automation & Document Management Solutions',
+0|dlmetrix  |     'Digital Transformation with Smartfiche',
+0|dlmetrix  |     'Industries we cover',
+0|dlmetrix  |     'Why Choose Smartfiche',
+0|dlmetrix  |     'Our Technologies',
+0|dlmetrix  |     'What Our Customers Say',
+0|dlmetrix  |     "It's time to automate your business"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h3: [
+0|dlmetrix  |     'What Can We Do for You?',
+0|dlmetrix  |     'Business Automation',
+0|dlmetrix  |     'Document Management',
+0|dlmetrix  |     'Document Capture',
+0|dlmetrix  |     'Template Management',
+0|dlmetrix  |     'Repository Administration',
+0|dlmetrix  |     'Integration',
+0|dlmetrix  |     'Government',
+0|dlmetrix  |     'Education',
+0|dlmetrix  |     "Let's talk"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h4: [],
+0|dlmetrix  |   h5: [],
+0|dlmetrix  |   h6: []
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG heading analysis: { hasH1: true, hasMultipleHeadingTypes: tr                                                                                                                                   ue, h1Count: 1 }
+0|dlmetrix  | DEBUG generateBasicTechnicalChecks - seoData keys: [
+0|dlmetrix  |   'title',           'description',
+0|dlmetrix  |   'keywords',        'canonicalUrl',
+0|dlmetrix  |   'robotsMeta',      'viewportMeta',
+0|dlmetrix  |   'charset',         'langAttribute',
+0|dlmetrix  |   'headings',        'headingStructure',
+0|dlmetrix  |   'imageAnalysis',   'linkAnalysis',
+0|dlmetrix  |   'contentAnalysis', 'technicalAnalysis',
+0|dlmetrix  |   'openGraphTags',   'twitterCardTags',
+0|dlmetrix  |   'schemaMarkup',    'robotsTxtExists',
+0|dlmetrix  |   'sitemapExists',   'finalUrl',
+0|dlmetrix  |   'hasSSL'
+0|dlmetrix  | ]
+0|dlmetrix  | DEBUG headings data: {
+0|dlmetrix  |   h1: [ 'Smartfiche' ],
+0|dlmetrix  |   h2: [
+0|dlmetrix  |     'Business Process Automation & Document Management Solutions',
+0|dlmetrix  |     'Digital Transformation with Smartfiche',
+0|dlmetrix  |     'Industries we cover',
+0|dlmetrix  |     'Why Choose Smartfiche',
+0|dlmetrix  |     'Our Technologies',
+0|dlmetrix  |     'What Our Customers Say',
+0|dlmetrix  |     "It's time to automate your business"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h3: [
+0|dlmetrix  |     'What Can We Do for You?',
+0|dlmetrix  |     'Business Automation',
+0|dlmetrix  |     'Document Management',
+0|dlmetrix  |     'Document Capture',
+0|dlmetrix  |     'Template Management',
+0|dlmetrix  |     'Repository Administration',
+0|dlmetrix  |     'Integration',
+0|dlmetrix  |     'Government',
+0|dlmetrix  |     'Education',
+0|dlmetrix  |     "Let's talk"
+0|dlmetrix  |   ],
+0|dlmetrix  |   h4: [],
+0|dlmetrix  |   h5: [],
+0|dlmetrix  |   h6: []
+0|dlmetrix  | }
+0|dlmetrix  | DEBUG heading analysis: { hasH1: true, hasMultipleHeadingTypes: true, h1Count: 1 }
+0|dlmetrix  | Starting waterfall analysis for: https://smartfiche.com
