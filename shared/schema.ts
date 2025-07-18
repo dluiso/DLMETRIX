@@ -295,6 +295,7 @@ export const offPageDataSchema = z.object({
     httpsEnabled: z.boolean(),
     certificateValid: z.boolean(),
     domainAge: z.number(),
+    domainAgeFormatted: z.string(),
     whoisPrivacy: z.boolean(),
     spamScore: z.number(),
     trustSignals: z.array(z.string()),

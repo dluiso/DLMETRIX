@@ -237,17 +237,19 @@ export class RealOffPageAnalyzer {
   private async analyzeRealTrustMetrics(domain: string): Promise<any> {
     const httpsEnabled = await this.checkRealHttps(domain);
     const certificateValid = await this.checkRealCertificate(domain);
-    const domainAge = await this.getRealDomainAge(domain);
+    const domainAgeDays = await this.getRealDomainAge(domain);
+    const domainAgeFormatted = this.formatDomainAge(domainAgeDays, 'es'); // Default to Spanish, can be changed based on user preference
     
     const trustSignals = [];
     if (httpsEnabled) trustSignals.push('HTTPS Enabled');
     if (certificateValid) trustSignals.push('Valid SSL Certificate');
-    if (domainAge > 365) trustSignals.push('Mature Domain');
+    if (domainAgeDays > 365) trustSignals.push('Mature Domain');
     
     return {
       httpsEnabled,
       certificateValid,
-      domainAge,
+      domainAge: domainAgeDays,
+      domainAgeFormatted,
       whoisPrivacy: false, // Would need WHOIS API
       spamScore: httpsEnabled && certificateValid ? 10 : 50,
       trustSignals
@@ -304,6 +306,46 @@ export class RealOffPageAnalyzer {
     }
     
     return 0;
+  }
+
+  private formatDomainAge(ageDays: number, language: 'es' | 'en' = 'es'): string {
+    if (ageDays === 0) return language === 'es' ? 'Desconocido' : 'Unknown';
+    
+    const dayWord = language === 'es' ? ['día', 'días'] : ['day', 'days'];
+    const monthWord = language === 'es' ? ['mes', 'meses'] : ['month', 'months'];
+    const yearWord = language === 'es' ? ['año', 'años'] : ['year', 'years'];
+    
+    if (ageDays < 30) {
+      return `${ageDays} ${ageDays === 1 ? dayWord[0] : dayWord[1]}`;
+    }
+    
+    if (ageDays < 365) {
+      const months = Math.floor(ageDays / 30);
+      return `${months} ${months === 1 ? monthWord[0] : monthWord[1]}`;
+    }
+    
+    const years = Math.floor(ageDays / 365);
+    const remainingDays = ageDays % 365;
+    const remainingMonths = Math.floor(remainingDays / 30);
+    
+    // Adjust if months > 12
+    if (remainingMonths >= 12) {
+      const additionalYears = Math.floor(remainingMonths / 12);
+      const finalMonths = remainingMonths % 12;
+      const totalYears = years + additionalYears;
+      
+      if (finalMonths === 0) {
+        return `${totalYears} ${totalYears === 1 ? yearWord[0] : yearWord[1]}`;
+      } else {
+        return `${totalYears} ${totalYears === 1 ? yearWord[0] : yearWord[1]} ${finalMonths} ${finalMonths === 1 ? monthWord[0] : monthWord[1]}`;
+      }
+    }
+    
+    if (remainingMonths === 0) {
+      return `${years} ${years === 1 ? yearWord[0] : yearWord[1]}`;
+    } else {
+      return `${years} ${years === 1 ? yearWord[0] : yearWord[1]} ${remainingMonths} ${remainingMonths === 1 ? monthWord[0] : monthWord[1]}`;
+    }
   }
 }
 

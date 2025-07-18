@@ -267,7 +267,7 @@ export default function OffPageAnalysis({ data, language = 'en' }: OffPageAnalys
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-blue-500" />
                   <span className="text-sm">
-                    {t.offPageAnalysis.domainAge}: {Math.round(trustMetrics.domainAge / 365)} {t.offPageAnalysis.years}
+                    {t.offPageAnalysis.domainAge}: {trustMetrics.domainAgeFormatted || (trustMetrics.domainAge > 0 ? `${Math.round(trustMetrics.domainAge / 365)} ${t.offPageAnalysis.years}` : 'Desconocido')}
                   </span>
                 </div>
               </div>
