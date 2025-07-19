@@ -414,7 +414,8 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   const numSnapshots = 10;
                   
                   for (let i = 0; i <= numSnapshots; i++) {
-                    const time = minStartTime + (totalDuration * (i / numSnapshots));
+                    const timeProgress = timelineRange * (i / numSnapshots);
+                    const time = minStartTime + timeProgress;
                     const resourcesLoaded = currentData.resources.filter(r => r.endTime <= time).length;
                     const percentage = (resourcesLoaded / currentData.resources.length) * 100;
                     const position = (i / numSnapshots) * 100;
@@ -431,7 +432,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                         key={i}
                         className={`absolute top-0 w-2 h-full ${bgColor} transition-all duration-300`}
                         style={{ left: `${position}%` }}
-                        title={`${formatTime(time)}: ${Math.round(percentage)}% cargado`}
+                        title={`${formatTime(timeProgress)}: ${Math.round(percentage)}% cargado`}
                       />
                     );
                   }
@@ -443,15 +444,15 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
               {/* Marcadores de tiempo */}
               <div className="flex justify-between mt-1">
                 {Array.from({ length: 6 }, (_, i) => {
-                  const relativeTime = totalDuration * (i / 5);
-                  const absoluteTime = minStartTime + relativeTime;
+                  const timeProgress = timelineRange * (i / 5);
+                  const absoluteTime = minStartTime + timeProgress;
                   const resourcesLoaded = currentData.resources.filter(r => (r.endTime || 0) <= absoluteTime).length;
                   const percentage = Math.round((resourcesLoaded / currentData.resources.length) * 100);
                   
                   return (
                     <div key={i} className="text-center">
                       <div className="text-xs text-slate-600 dark:text-slate-400">
-                        {formatTime(relativeTime)}
+                        {formatTime(timeProgress)}
                       </div>
                       <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
                         {percentage}%
@@ -484,8 +485,8 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
               {firstContentfulPaint !== Infinity && (
                 <div
                   className="absolute top-0 h-full border-l-2 border-green-500"
-                  style={{ left: `${((firstContentfulPaint - minStartTime) / totalDuration) * 85}%` }}
-                  title={`First Contentful Paint: ${formatTime(firstContentfulPaint)}`}
+                  style={{ left: `${((firstContentfulPaint - minStartTime) / timelineRange) * 85}%` }}
+                  title={`First Contentful Paint: ${formatTime(firstContentfulPaint - minStartTime)}`}
                 >
                   <div className="absolute -top-6 transform -translate-x-1/2 text-xs text-green-600 font-bold">
                     FCP
@@ -496,8 +497,8 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
               {largestContentfulPaint > 0 && (
                 <div
                   className="absolute top-0 h-full border-l-2 border-orange-500"
-                  style={{ left: `${((largestContentfulPaint - minStartTime) / totalDuration) * 85}%` }}
-                  title={`Largest Contentful Paint: ${formatTime(largestContentfulPaint)}`}
+                  style={{ left: `${((largestContentfulPaint - minStartTime) / timelineRange) * 85}%` }}
+                  title={`Largest Contentful Paint: ${formatTime(largestContentfulPaint - minStartTime)}`}
                 >
                   <div className="absolute -top-6 transform -translate-x-1/2 text-xs text-orange-600 font-bold">
                     LCP
@@ -550,10 +551,10 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             <div className="relative mb-4">
               <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 mb-2">
                 {Array.from({ length: 11 }, (_, i) => {
-                  const relativeTime = (totalDuration * (i / 10));
+                  const timeAtPosition = minStartTime + (timelineRange * (i / 10));
                   return (
                     <span key={i} className="text-center">
-                      {i === 0 ? '0ms' : formatTimeScale(relativeTime)}
+                      {i === 0 ? '0ms' : formatTimeScale(timeAtPosition - minStartTime)}
                     </span>
                   );
                 })}
@@ -572,17 +573,18 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 {/* Eventos específicos del timeline */}
                 {(() => {
                   const events = [
-                    { time: minStartTime + (totalDuration * 0.02), color: 'bg-teal-500', label: 'DNS', width: '3%' },
-                    { time: minStartTime + (totalDuration * 0.05), color: 'bg-orange-500', label: 'Connect', width: '5%' },
-                    { time: minStartTime + (totalDuration * 0.08), color: 'bg-purple-500', label: 'SSL', width: '4%' },
-                    { time: minStartTime + (totalDuration * 0.25), color: 'bg-green-500', label: 'Start Render', width: '2%' },
-                    { time: minStartTime + (totalDuration * 0.45), color: 'bg-indigo-500', label: 'DOM Loaded', width: '3%' },
-                    { time: minStartTime + (totalDuration * 0.70), color: 'bg-cyan-500', label: 'On Load', width: '4%' },
-                    { time: minStartTime + (totalDuration * 0.90), color: 'bg-slate-500', label: 'Complete', width: '2%' }
+                    { timePercent: 0.02, color: 'bg-teal-500', label: 'DNS', width: '3%' },
+                    { timePercent: 0.05, color: 'bg-orange-500', label: 'Connect', width: '5%' },
+                    { timePercent: 0.08, color: 'bg-purple-500', label: 'SSL', width: '4%' },
+                    { timePercent: 0.25, color: 'bg-green-500', label: 'Start Render', width: '2%' },
+                    { timePercent: 0.45, color: 'bg-indigo-500', label: 'DOM Loaded', width: '3%' },
+                    { timePercent: 0.70, color: 'bg-cyan-500', label: 'On Load', width: '4%' },
+                    { timePercent: 0.90, color: 'bg-slate-500', label: 'Complete', width: '2%' }
                   ];
                   
                   return events.map((event, index) => {
-                    const position = ((event.time - minStartTime) / totalDuration) * 100;
+                    const relativeTime = timelineRange * event.timePercent;
+                    const position = event.timePercent * 100;
                     return (
                       <div
                         key={index}
@@ -592,7 +594,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                           width: event.width,
                           zIndex: 10
                         }}
-                        title={`${event.label}: ${formatTime(event.time)}`}
+                        title={`${event.label}: ${formatTime(relativeTime)}`}
                       />
                     );
                   });
