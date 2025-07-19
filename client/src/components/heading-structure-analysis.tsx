@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AlertTriangle, CheckCircle, Info, ArrowRight } from "lucide-react";
 
 interface HeadingStructureAnalysisProps {
@@ -495,71 +496,95 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
 
         {/* Hierarchy Issues */}
         {hierarchyIssues.length > 0 && (
-          <div>
-            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">
-              {language === 'es' ? 'Problemas de Jerarquía Detectados' : 'Hierarchy Issues Detected'}
-            </h4>
-            <div className="space-y-2">
-              {hierarchyIssues.map((issue, index) => (
-                <Alert 
-                  key={`hierarchy-${index}`} 
-                  className={`${
-                    issue.severity === 'error' 
-                      ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
-                      : issue.severity === 'warning'
-                      ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20'
-                      : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
-                  }`}
-                >
-                  <AlertTriangle 
-                    className={`h-4 w-4 ${
-                      issue.severity === 'error' 
-                        ? 'text-red-600 dark:text-red-400'
-                        : issue.severity === 'warning'
-                        ? 'text-yellow-600 dark:text-yellow-400'
-                        : 'text-blue-600 dark:text-blue-400'
-                    }`} 
-                  />
-                  <AlertDescription 
-                    className={`${
-                      issue.severity === 'error' 
-                        ? 'text-red-700 dark:text-red-300'
-                        : issue.severity === 'warning'
-                        ? 'text-yellow-700 dark:text-yellow-300'
-                        : 'text-blue-700 dark:text-blue-300'
-                    }`}
-                  >
-                    {issue.message}
-                  </AlertDescription>
-                </Alert>
-              ))}
-            </div>
-          </div>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="hierarchy-issues">
+              <AccordionTrigger className="text-gray-800 dark:text-gray-200 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-orange-500" />
+                  <span className="font-semibold">
+                    {language === 'es' ? 'Problemas de Jerarquía Detectados' : 'Hierarchy Issues Detected'}
+                  </span>
+                  <Badge variant="secondary" className="ml-2">
+                    {hierarchyIssues.length}
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-2 pt-2">
+                  {hierarchyIssues.map((issue, index) => (
+                    <Alert 
+                      key={`hierarchy-${index}`} 
+                      className={`${
+                        issue.severity === 'error' 
+                          ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
+                          : issue.severity === 'warning'
+                          ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20'
+                          : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
+                      }`}
+                    >
+                      <AlertTriangle 
+                        className={`h-4 w-4 ${
+                          issue.severity === 'error' 
+                            ? 'text-red-600 dark:text-red-400'
+                            : issue.severity === 'warning'
+                            ? 'text-yellow-600 dark:text-yellow-400'
+                            : 'text-blue-600 dark:text-blue-400'
+                        }`} 
+                      />
+                      <AlertDescription 
+                        className={`${
+                          issue.severity === 'error' 
+                            ? 'text-red-700 dark:text-red-300'
+                            : issue.severity === 'warning'
+                            ? 'text-yellow-700 dark:text-yellow-300'
+                            : 'text-blue-700 dark:text-blue-300'
+                        }`}
+                      >
+                        {issue.message}
+                      </AlertDescription>
+                    </Alert>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
 
         {/* Traditional Issues and Recommendations */}
         {(issues.length > 0 || recommendations.length > 0) && (
-          <div>
-            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">{t.recommendations}</h4>
-            <div className="space-y-3">
-              {issues.map((issue, index) => (
-                <Alert key={`issue-${index}`} className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
-                  <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
-                  <AlertDescription className="text-red-700 dark:text-red-300">
-                    {issue}
-                  </AlertDescription>
-                </Alert>
-              ))}
-              {recommendations.map((recommendation, index) => (
-                <Alert key={`rec-${index}`} className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
-                  <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <AlertDescription className="text-blue-700 dark:text-blue-300">
-                    {recommendation}
-                  </AlertDescription>
-                </Alert>
-              ))}
-            </div>
-          </div>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="recommendations">
+              <AccordionTrigger className="text-gray-800 dark:text-gray-200 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Info className="h-4 w-4 text-blue-500" />
+                  <span className="font-semibold">{t.recommendations}</span>
+                  <Badge variant="secondary" className="ml-2">
+                    {issues.length + recommendations.length}
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-3 pt-2">
+                  {issues.map((issue, index) => (
+                    <Alert key={`issue-${index}`} className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+                      <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                      <AlertDescription className="text-red-700 dark:text-red-300">
+                        {issue}
+                      </AlertDescription>
+                    </Alert>
+                  ))}
+                  {recommendations.map((recommendation, index) => (
+                    <Alert key={`rec-${index}`} className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
+                      <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <AlertDescription className="text-blue-700 dark:text-blue-300">
+                        {recommendation}
+                      </AlertDescription>
+                    </Alert>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
       </CardContent>
     </Card>
