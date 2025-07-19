@@ -212,6 +212,17 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
         <CardDescription>
           {t.waterfallAnalysisDesc}
         </CardDescription>
+        
+        {/* Device tabs movidos aquí */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium mb-2">{language === 'es' ? 'Dispositivo' : 'Device'}:</label>
+          <Tabs value={selectedDevice} onValueChange={(value) => setSelectedDevice(value as 'mobile' | 'desktop')}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="mobile">{t.mobile}</TabsTrigger>
+              <TabsTrigger value="desktop">{t.desktop}</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -264,15 +275,6 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
 
           {/* Controles de filtros */}
           <div className="flex flex-col gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">{language === 'es' ? 'Dispositivo' : 'Device'}:</label>
-              <Tabs value={selectedDevice} onValueChange={(value) => setSelectedDevice(value as 'mobile' | 'desktop')}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="mobile">{t.mobile}</TabsTrigger>
-                  <TabsTrigger value="desktop">{t.desktop}</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
             <div>
               <label className="block text-sm font-medium mb-2">{language === 'es' ? 'Tipo de Recurso' : 'Resource Type'}:</label>
               {/* Dropdown para móvil */}
