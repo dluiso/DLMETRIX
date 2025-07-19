@@ -124,7 +124,122 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
     
     return structure;
   })();
-  const firstHeadingLevel = orderedStructure.length > 0 ? orderedStructure[0].level : null;
+
+  // Analyze hierarchy issues and overuse of heading tags
+  const analyzeHeadingIssues = (structure: Array<{ level: string; text: string; order: number }>) => {
+    const issues = [];
+    const suggestions = [];
+    
+    for (let i = 0; i < structure.length; i++) {
+      const current = structure[i];
+      const currentLevel = parseInt(current.level.replace('h', ''));
+      const previous = i > 0 ? structure[i - 1] : null;
+      const previousLevel = previous ? parseInt(previous.level.replace('h', '')) : 0;
+      
+      // Check for hierarchy violations
+      if (i === 0 && currentLevel !== 1) {
+        issues.push({
+          index: i,
+          type: 'wrongStart',
+          message: language === 'es' 
+            ? `Página debe comenzar con H1, no ${current.level.toUpperCase()}`
+            : `Page should start with H1, not ${current.level.toUpperCase()}`,
+          severity: 'error'
+        });
+      }
+      
+      if (previous && currentLevel > previousLevel + 1) {
+        issues.push({
+          index: i,
+          type: 'skipLevel',
+          message: language === 'es'
+            ? `Salto de jerarquía: de ${previous.level.toUpperCase()} a ${current.level.toUpperCase()}`
+            : `Hierarchy jump: from ${previous.level.toUpperCase()} to ${current.level.toUpperCase()}`,
+          severity: 'warning'
+        });
+      }
+      
+      // Check for potential overuse (content that should be paragraphs)
+      const textLength = current.text.length;
+      if (textLength > 100 && currentLevel >= 4) {
+        issues.push({
+          index: i,
+          type: 'overuse',
+          message: language === 'es'
+            ? `Texto largo en ${current.level.toUpperCase()}, considerar usar <p>`
+            : `Long text in ${current.level.toUpperCase()}, consider using <p>`,
+          severity: 'suggestion'
+        });
+      }
+      
+      // Check for excessive depth
+      if (currentLevel > 4) {
+        issues.push({
+          index: i,
+          type: 'excessive',
+          message: language === 'es'
+            ? `${current.level.toUpperCase()} puede ser excesivo, considerar <p> o <span>`
+            : `${current.level.toUpperCase()} might be excessive, consider <p> or <span>`,
+          severity: 'suggestion'
+        });
+      }
+    }
+    
+    return issues;
+  };
+
+  // Generate optimized structure suggestions
+  const generateSuggestedStructure = (structure: Array<{ level: string; text: string; order: number }>) => {
+    const suggested = [];
+    let expectedLevel = 1;
+    
+    for (let i = 0; i < structure.length; i++) {
+      const current = structure[i];
+      const currentLevel = parseInt(current.level.replace('h', ''));
+      
+      // Determine appropriate level or alternative tag
+      let suggestedLevel = expectedLevel;
+      let suggestedTag = `h${suggestedLevel}`;
+      let change = false;
+      
+      // If text is too long for heading level or we're too deep, suggest paragraph
+      if (current.text.length > 100 || expectedLevel > 4) {
+        suggestedTag = 'p';
+        change = true;
+      }
+      // If it's a time/date pattern, suggest span
+      else if (/^(hace|ago|\d+\s*(hora|hour|min|día|day|mes|month|año|year))/i.test(current.text)) {
+        suggestedTag = 'span';
+        change = true;
+      }
+      // Normal heading progression
+      else {
+        if (currentLevel !== expectedLevel) {
+          change = true;
+        }
+        // Only increment expected level if we're using a heading tag
+        if (suggestedTag.startsWith('h') && expectedLevel < 4) {
+          expectedLevel++;
+        }
+      }
+      
+      suggested.push({
+        ...current,
+        suggestedLevel: suggestedTag,
+        hasChange: change,
+        reason: change ? (
+          suggestedTag === 'p' ? (language === 'es' ? 'Texto largo, mejor como párrafo' : 'Long text, better as paragraph') :
+          suggestedTag === 'span' ? (language === 'es' ? 'Información temporal, mejor como span' : 'Temporal info, better as span') :
+          (language === 'es' ? 'Jerarquía corregida' : 'Hierarchy corrected')
+        ) : ''
+      });
+    }
+    
+    return suggested;
+  };
+  
+  const hierarchyIssues = analyzeHeadingIssues(orderedStructure);
+  const suggestedStructure = generateSuggestedStructure(orderedStructure);
   
   // Analyze hierarchy issues
   const issues = [];
@@ -142,6 +257,7 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
   }
   
   // Check if page starts with H1
+  const firstHeadingLevel = orderedStructure.length > 0 ? orderedStructure[0].level : null;
   if (firstHeadingLevel && firstHeadingLevel !== 'h1') {
     issues.push(t.issues.noH1Start);
     recommendations.push(t.recommendationTexts.startWithH1);
@@ -177,8 +293,8 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
     if (status === 'good') status = 'warning';
   }
   
-  // Generate suggested structure
-  const generateSuggestedStructure = () => {
+  // Generate simple suggested structure display
+  const generateSimpleSuggestedStructure = () => {
     if (orderedStructure.length === 0) return [];
     
     const suggested = [];
@@ -206,7 +322,7 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
     return suggested;
   };
   
-  const suggestedStructure = generateSuggestedStructure();
+
   
   const getStatusIcon = () => {
     switch (status) {
@@ -305,10 +421,11 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
                 {language === 'es' ? 'Estructura recomendada para SEO óptimo' : 'Recommended structure for optimal SEO'}
               </div>
               {suggestedStructure.map((item, index) => {
-                const levelNumber = item.level.replace('h', '');
-                const indent = (parseInt(levelNumber) - 1) * 20;
-                const originalItem = orderedStructure[index];
-                const hasChanged = originalItem && originalItem.level !== item.level;
+                const levelTag = item.suggestedLevel;
+                const isHeading = levelTag.startsWith('h');
+                const levelNumber = isHeading ? levelTag.replace('h', '') : '0';
+                const indent = isHeading ? (parseInt(levelNumber) - 1) * 20 : 0;
+                const hasChanged = item.hasChange;
                 
                 return (
                   <div 
@@ -328,7 +445,7 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
                           : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
                       }`}
                     >
-                      {item.level.toUpperCase()}
+                      {levelTag.toUpperCase()}
                     </Badge>
                     {hasChanged && (
                       <ArrowRight className="h-3 w-3 text-green-500" />
@@ -336,9 +453,9 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
                     <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">
                       {item.text || `(${language === 'es' ? 'Vacío' : 'Empty'})`}
                     </span>
-                    {hasChanged && originalItem && (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {language === 'es' ? 'era' : 'was'} {originalItem.level.toUpperCase()}
+                    {hasChanged && item.reason && (
+                      <span className="text-xs text-green-600 dark:text-green-400 italic">
+                        {item.reason}
                       </span>
                     )}
                   </div>
@@ -376,7 +493,51 @@ export default function HeadingStructureAnalysis({ data, language = 'en' }: Head
           </div>
         </div>
 
-        {/* Issues and Recommendations */}
+        {/* Hierarchy Issues */}
+        {hierarchyIssues.length > 0 && (
+          <div>
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">
+              {language === 'es' ? 'Problemas de Jerarquía Detectados' : 'Hierarchy Issues Detected'}
+            </h4>
+            <div className="space-y-2">
+              {hierarchyIssues.map((issue, index) => (
+                <Alert 
+                  key={`hierarchy-${index}`} 
+                  className={`${
+                    issue.severity === 'error' 
+                      ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
+                      : issue.severity === 'warning'
+                      ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20'
+                      : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
+                  }`}
+                >
+                  <AlertTriangle 
+                    className={`h-4 w-4 ${
+                      issue.severity === 'error' 
+                        ? 'text-red-600 dark:text-red-400'
+                        : issue.severity === 'warning'
+                        ? 'text-yellow-600 dark:text-yellow-400'
+                        : 'text-blue-600 dark:text-blue-400'
+                    }`} 
+                  />
+                  <AlertDescription 
+                    className={`${
+                      issue.severity === 'error' 
+                        ? 'text-red-700 dark:text-red-300'
+                        : issue.severity === 'warning'
+                        ? 'text-yellow-700 dark:text-yellow-300'
+                        : 'text-blue-700 dark:text-blue-300'
+                    }`}
+                  >
+                    {issue.message}
+                  </AlertDescription>
+                </Alert>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Traditional Issues and Recommendations */}
         {(issues.length > 0 || recommendations.length > 0) && (
           <div>
             <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">{t.recommendations}</h4>
