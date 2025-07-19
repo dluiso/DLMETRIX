@@ -272,13 +272,65 @@ export default function OffPageAnalysis({ data, language = 'en' }: OffPageAnalys
                 </div>
               </div>
               
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {t.offPageAnalysis.spamScore}
-                </span>
-                <span className="text-lg font-semibold text-orange-600">
-                  {trustMetrics.spamScore}/100
-                </span>
+              {/* Spam Score Section with detailed information */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t.offPageAnalysis.spamScore}:
+                    </span>
+                    <span className={`text-lg font-bold ${
+                      trustMetrics.spamScore <= 30 ? 'text-green-600' : 
+                      trustMetrics.spamScore <= 60 ? 'text-orange-600' : 
+                      'text-red-600'
+                    }`}>
+                      {trustMetrics.spamScore}/100
+                    </span>
+                  </div>
+                  <div className={`px-2 py-1 rounded text-xs font-medium ${
+                    trustMetrics.spamScore <= 30 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
+                    trustMetrics.spamScore <= 60 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' : 
+                    'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                  }`}>
+                    {trustMetrics.spamScore <= 30 ? t.offPageAnalysis.excellent : 
+                     trustMetrics.spamScore <= 60 ? t.offPageAnalysis.moderate : 
+                     t.offPageAnalysis.risky}
+                  </div>
+                </div>
+                
+                {/* Explanation and recommendations */}
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  {trustMetrics.spamScore <= 30 ? (
+                    <div>
+                      <p className="font-medium text-green-700 dark:text-green-300 mb-1">✅ {t.offPageAnalysis.spamScoreExcellent}</p>
+                      <p>{t.offPageAnalysis.spamScoreExcellentDesc}</p>
+                    </div>
+                  ) : trustMetrics.spamScore <= 60 ? (
+                    <div>
+                      <p className="font-medium text-orange-700 dark:text-orange-300 mb-1">⚠️ {t.offPageAnalysis.spamScoreModerate}</p>
+                      <p className="mb-2">{t.offPageAnalysis.spamScoreModerateDesc}</p>
+                      <p className="font-medium">{t.offPageAnalysis.recommendations}:</p>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>{t.offPageAnalysis.improveSecurity}</li>
+                        <li>{t.offPageAnalysis.removeSpamContent}</li>
+                        <li>{t.offPageAnalysis.buildQualityBacklinks}</li>
+                      </ul>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="font-medium text-red-700 dark:text-red-300 mb-1">🚨 {t.offPageAnalysis.spamScoreRisky}</p>
+                      <p className="mb-2">{t.offPageAnalysis.spamScoreRiskyDesc}</p>
+                      <p className="font-medium">{t.offPageAnalysis.urgentActions}:</p>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>{t.offPageAnalysis.enableHttps}</li>
+                        <li>{t.offPageAnalysis.getValidCertificate}</li>
+                        <li>{t.offPageAnalysis.cleanSpamContent}</li>
+                        <li>{t.offPageAnalysis.auditBacklinks}</li>
+                        <li>{t.offPageAnalysis.improveContentQuality}</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
               
               {trustMetrics.trustSignals.length > 0 && (

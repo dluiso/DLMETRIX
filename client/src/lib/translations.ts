@@ -402,7 +402,26 @@ export const translations: Record<'en' | 'es', Translations> = {
       spamScore: "Spam Score",
       trustSignals: "Trust Signals",
       analysisDate: "Analysis Date",
-      dataSource: "Data Source"
+      dataSource: "Data Source",
+      excellent: "Excellent",
+      moderate: "Moderate",
+      risky: "High Risk",
+      spamScoreExcellent: "Excellent Trust Score",
+      spamScoreExcellentDesc: "Your website has excellent trust signals and very low spam characteristics. This is ideal for SEO rankings.",
+      spamScoreModerate: "Moderate Trust Issues",
+      spamScoreModerateDesc: "Your website has some trust issues that could affect search engine rankings.",
+      spamScoreRisky: "High Spam Risk Detected",
+      spamScoreRiskyDesc: "Your website shows characteristics associated with spam sites. This seriously affects SEO performance.",
+      recommendations: "Recommendations",
+      urgentActions: "Urgent Actions Required",
+      improveSecurity: "Improve website security and SSL implementation",
+      removeSpamContent: "Remove or improve low-quality content",
+      buildQualityBacklinks: "Build high-quality, relevant backlinks",
+      enableHttps: "Enable HTTPS with valid SSL certificate",
+      getValidCertificate: "Obtain a valid SSL certificate from trusted authority",
+      cleanSpamContent: "Remove spam content and improve content quality",
+      auditBacklinks: "Audit and disavow harmful backlinks",
+      improveContentQuality: "Improve overall content quality and relevance"
     }
   },
   es: {
@@ -627,7 +646,26 @@ export const translations: Record<'en' | 'es', Translations> = {
       spamScore: "Puntuación de Spam",
       trustSignals: "Señales de Confianza",
       analysisDate: "Fecha de Análisis",
-      dataSource: "Fuente de Datos"
+      dataSource: "Fuente de Datos",
+      excellent: "Excelente",
+      moderate: "Moderado",
+      risky: "Alto Riesgo",
+      spamScoreExcellent: "Puntuación de Confianza Excelente",
+      spamScoreExcellentDesc: "Tu sitio web tiene excelentes señales de confianza y muy pocas características de spam. Esto es ideal para el posicionamiento SEO.",
+      spamScoreModerate: "Problemas de Confianza Moderados",
+      spamScoreModerateDesc: "Tu sitio web tiene algunos problemas de confianza que podrían afectar el posicionamiento en motores de búsqueda.",
+      spamScoreRisky: "Alto Riesgo de Spam Detectado",
+      spamScoreRiskyDesc: "Tu sitio web muestra características asociadas con sitios spam. Esto afecta seriamente el rendimiento SEO.",
+      recommendations: "Recomendaciones",
+      urgentActions: "Acciones Urgentes Requeridas",
+      improveSecurity: "Mejorar la seguridad del sitio web e implementación SSL",
+      removeSpamContent: "Eliminar o mejorar contenido de baja calidad",
+      buildQualityBacklinks: "Construir backlinks de alta calidad y relevantes",
+      enableHttps: "Habilitar HTTPS con certificado SSL válido",
+      getValidCertificate: "Obtener un certificado SSL válido de una autoridad confiable",
+      cleanSpamContent: "Eliminar contenido spam y mejorar la calidad del contenido",
+      auditBacklinks: "Auditar y desautorizar backlinks dañinos",
+      improveContentQuality: "Mejorar la calidad general y relevancia del contenido"
     }
   }
 };
