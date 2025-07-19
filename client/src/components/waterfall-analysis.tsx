@@ -105,6 +105,9 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     return result.formatted;
   };
 
+  // Use the correct total duration from backend analysis
+  const totalDuration = currentData.totalDuration || 0;
+  
   // Calcular el tiempo máximo para el timeline con validación
   const validResources = currentData.resources.filter(r => 
     Number.isFinite(r.endTime) && Number.isFinite(r.startTime) && 
@@ -113,12 +116,12 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
   
   let maxEndTime = 0;
   let minStartTime = 0;
-  let totalDuration = 0;
+  let timelineRange = 0;
   
   if (validResources.length > 0) {
     maxEndTime = Math.max(...validResources.map(r => r.endTime || 0));
     minStartTime = Math.min(...validResources.map(r => r.startTime || 0));
-    totalDuration = Math.abs(maxEndTime - minStartTime);
+    timelineRange = Math.abs(maxEndTime - minStartTime);
   }
   
   // Use real Total Blocking Time from backend measurement
@@ -137,20 +140,20 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     const duration = resource.duration || 0;
     const minWidth = 2; // Ancho mínimo en porcentaje
     
-    if (totalDuration === 0) return minWidth;
+    if (timelineRange === 0) return minWidth;
     
     // Calcular ancho proporcional al tiempo real
-    const width = (duration / totalDuration) * 85;
+    const width = (duration / timelineRange) * 85;
     return Math.max(width, minWidth);
   };
 
   const getResourceBarOffset = (resource: any) => {
     const startTime = resource.startTime || 0;
     
-    if (totalDuration === 0) return 0;
+    if (timelineRange === 0) return 0;
     
     // Calcular offset proporcional al tiempo real de inicio
-    const offset = ((startTime - minStartTime) / totalDuration) * 85;
+    const offset = ((startTime - minStartTime) / timelineRange) * 85;
     return Math.max(offset, 0);
   };
 
@@ -189,7 +192,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     const intervals = [0, 0.25, 0.5, 0.75, 1];
     
     intervals.forEach(interval => {
-      const relativeTime = totalDuration * interval;
+      const relativeTime = timelineRange * interval;
       markers.push({
         position: interval * 80,
         time: interval === 0 ? '0ms' : formatTimeScale(relativeTime)

@@ -3535,6 +3535,8 @@ async function captureWaterfallData(url: string, browser: any, device: 'mobile' 
     // Navigate to URL and measure performance metrics
     const navigationStartTime = Date.now();
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+    const navigationEndTime = Date.now();
+    const actualLoadTime = navigationEndTime - navigationStartTime;
 
     // Measure Total Blocking Time (TBT) using real main thread tasks
     const totalBlockingTime = await measureTotalBlockingTime(page, url);
@@ -3561,7 +3563,9 @@ async function captureWaterfallData(url: string, browser: any, device: 'mobile' 
     const totalResources = resources.length;
     const totalSize = resources.reduce((sum, r) => sum + r.size, 0);
     const totalTransferSize = resources.reduce((sum, r) => sum + r.transferSize, 0);
-    const totalDuration = Math.max(...resources.map(r => r.endTime)) - Math.min(...resources.map(r => r.startTime));
+    
+    // Use actual page load time instead of resource timing difference
+    const totalDuration = actualLoadTime;
     const renderBlockingResources = resources.filter(r => r.isRenderBlocking).length;
     const criticalResources = resources.filter(r => r.isCritical).length;
     const cachedResources = resources.filter(r => r.cached).length;
