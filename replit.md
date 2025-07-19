@@ -115,6 +115,28 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+### Waterfall Analysis Time Formatting and Accordion Organization Fix - COMPLETED (January 19, 2025)
+- **CORRECTED TIME CALCULATIONS**: Fixed major waterfall timing issues where values showed as 3337.8s instead of realistic milliseconds
+- **TIMELINE CALCULATION IMPROVEMENTS**: 
+  - Used totalDuration from backend instead of calculated minStartTime/maxEndTime for accurate timeline range
+  - Added proper bounds checking (100ms to 60s) for realistic timeline ranges
+  - Fixed time markers to show correct relative times using formatTime instead of formatTimeScale
+  - Updated backend schema to include firstByteTime and largestContentfulPaint for accurate metrics display
+- **ACCORDION OPTIMIZATION APPLIED**: Implemented accordion/collapsible sections for Resource Loading Timeline
+  - **Three Performance Categories**: Critical Resources (blocking/critical), Fast Resources (<300ms), Slow Resources (>300ms)
+  - **Reduced Scrolling**: Each category limited to 20 resources with "...and X more" indicators
+  - **Professional Organization**: Color-coded sections with descriptive icons and backgrounds
+  - **Improved Navigation**: Expandable sections allow users to focus on specific performance categories
+- **BACKEND METRICS INTEGRATION**: Updated waterfall analysis to use real backend measurements:
+  - firstByteTime from backend instead of calculated minStartTime
+  - firstContentfulPaint and largestContentfulPaint from actual Core Web Vitals measurements
+  - totalBlockingTime from real measurements instead of estimates
+- **CONSISTENT TIME FORMATTING**: Applied unified time formatting rules throughout component:
+  - <1000ms displayed as milliseconds (e.g., "850ms")
+  - ≥1000ms displayed as seconds with 1 decimal (e.g., "1.2s")
+  - Enhanced slow loading indicators for values ≥10 seconds
+- **USER IMPACT**: Waterfall analysis now shows realistic timing values and is organized with collapsible sections to prevent excessive scrolling, providing accurate performance insights without UI clutter
+
 ### Complete HTML Reports System with All Missing Sections - COMPLETED (January 18, 2025)
 - **COMPREHENSIVE SECTION INTEGRATION**: Successfully implemented all missing sections identified in live reports
 - **COMPLETE FEATURE PARITY**: HTML reports now include all 15+ sections from main application interface

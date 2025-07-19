@@ -206,6 +206,8 @@ export const waterfallAnalysisSchema = z.object({
     compressionSavings: z.number(), // percentage
     totalBlockingTime: z.number().nullable(), // Real TBT measurement in milliseconds
     firstContentfulPaint: z.number().nullable(), // FCP timing in milliseconds
+    largestContentfulPaint: z.number().nullable(), // LCP timing in milliseconds
+    firstByteTime: z.number().nullable(), // TTFB timing in milliseconds
   }),
   desktop: z.object({
     resources: z.array(waterfallResourceSchema),
@@ -220,6 +222,8 @@ export const waterfallAnalysisSchema = z.object({
     compressionSavings: z.number(), // percentage
     totalBlockingTime: z.number().nullable(), // Real TBT measurement in milliseconds
     firstContentfulPaint: z.number().nullable(), // FCP timing in milliseconds
+    largestContentfulPaint: z.number().nullable(), // LCP timing in milliseconds
+    firstByteTime: z.number().nullable(), // TTFB timing in milliseconds
   }),
   recommendations: z.array(z.object({
     type: z.enum(['critical', 'warning', 'suggestion']),

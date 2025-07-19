@@ -3541,21 +3541,50 @@ async function captureWaterfallData(url: string, browser: any, device: 'mobile' 
     // Measure Total Blocking Time (TBT) using real main thread tasks
     const totalBlockingTime = await measureTotalBlockingTime(page, url);
     
-    // Measure other Core Web Vitals timing
-    const firstContentfulPaint = await page.evaluate(() => {
+    // Measure Core Web Vitals timing with comprehensive measurements
+    const coreWebVitals = await page.evaluate(() => {
       return new Promise((resolve) => {
+        let firstContentfulPaint = null;
+        let largestContentfulPaint = null;
+        let firstByteTime = null;
+        
+        // Get Navigation Timing for First Byte Time (TTFB)
+        try {
+          const navTiming = performance.getEntriesByType('navigation')[0];
+          if (navTiming) {
+            firstByteTime = navTiming.responseStart - navTiming.fetchStart;
+          }
+        } catch (e) {
+          console.log('Navigation timing not available');
+        }
+        
+        // Track paint entries
         new PerformanceObserver((list) => {
           const entries = list.getEntries();
           for (const entry of entries) {
             if (entry.name === 'first-contentful-paint') {
-              resolve(entry.startTime);
-              return;
+              firstContentfulPaint = entry.startTime;
             }
           }
         }).observe({ entryTypes: ['paint'] });
         
-        // Fallback timeout
-        setTimeout(() => resolve(null), 3000);
+        // Track LCP
+        new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          if (lastEntry) {
+            largestContentfulPaint = lastEntry.startTime;
+          }
+        }).observe({ entryTypes: ['largest-contentful-paint'] });
+        
+        // Resolve after timeout with collected data
+        setTimeout(() => {
+          resolve({
+            firstContentfulPaint,
+            largestContentfulPaint,
+            firstByteTime
+          });
+        }, 3000);
       });
     });
 
@@ -3587,7 +3616,9 @@ async function captureWaterfallData(url: string, browser: any, device: 'mobile' 
       cacheHitRate,
       compressionSavings,
       totalBlockingTime, // Real TBT measurement
-      firstContentfulPaint
+      firstContentfulPaint: coreWebVitals.firstContentfulPaint,
+      largestContentfulPaint: coreWebVitals.largestContentfulPaint,
+      firstByteTime: coreWebVitals.firstByteTime
     };
 
   } finally {

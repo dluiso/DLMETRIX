@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Alert, AlertDescription } from './ui/alert';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Clock, Download, FileText, Image, Zap, AlertTriangle, CheckCircle, XCircle, Globe, Layers, Code, FileImage, Type, Database, Wifi } from 'lucide-react';
 import type { WaterfallAnalysis } from '@shared/schema';
@@ -108,33 +109,35 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
   // Use the correct total duration from backend analysis
   const totalDuration = currentData.totalDuration || 0;
   
-  // Calcular el tiempo máximo para el timeline con validación
-  const validResources = currentData.resources.filter(r => 
-    Number.isFinite(r.endTime) && Number.isFinite(r.startTime) && 
-    r.endTime >= 0 && r.startTime >= 0
-  );
-  
-  let maxEndTime = 0;
+  // Calculate realistic timeline range using totalDuration or fallback to resource analysis
+  let timelineRange = totalDuration;
+  let maxEndTime = totalDuration;
   let minStartTime = 0;
-  let timelineRange = 0;
   
-  if (validResources.length > 0) {
-    maxEndTime = Math.max(...validResources.map(r => r.endTime || 0));
-    minStartTime = Math.min(...validResources.map(r => r.startTime || 0));
-    timelineRange = Math.abs(maxEndTime - minStartTime);
+  // If no totalDuration, calculate from resources
+  if (!timelineRange && currentData.resources.length > 0) {
+    const validResources = currentData.resources.filter(r => 
+      Number.isFinite(r.endTime) && Number.isFinite(r.startTime) && 
+      r.endTime >= 0 && r.startTime >= 0
+    );
+    
+    if (validResources.length > 0) {
+      maxEndTime = Math.max(...validResources.map(r => r.endTime || 0));
+      minStartTime = Math.min(...validResources.map(r => r.startTime || 0));
+      timelineRange = Math.abs(maxEndTime - minStartTime);
+    }
   }
+  
+  // Ensure reasonable timeline range (between 100ms and 60s)
+  timelineRange = Math.max(100, Math.min(timelineRange, 60000));
   
   // Use real Total Blocking Time from backend measurement
   const totalBlockingTime = currentData.totalBlockingTime || 0;
   
-  // Calcular métricas adicionales
-  const firstContentfulPaint = currentData.resources
-    .filter(r => r.type === 'document')
-    .reduce((min, r) => Math.min(min, r.endTime || Infinity), Infinity);
-  
-  const largestContentfulPaint = Math.max(...currentData.resources
-    .filter(r => r.type === 'image' || r.type === 'document')
-    .map(r => r.endTime || 0));
+  // Use actual backend measurements for accurate timing
+  const firstByteTime = currentData.firstByteTime || 0;
+  const firstContentfulPaint = currentData.firstContentfulPaint || 0;
+  const largestContentfulPaint = currentData.largestContentfulPaint || 0;
 
   const getResourceBarWidth = (resource: any) => {
     const duration = resource.duration || 0;
@@ -186,7 +189,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
     return t.waterfallVerySlow;
   };
 
-  // Crear marcadores de tiempo para la escala (tiempo relativo desde 0)
+  // Create realistic time markers for the timeline scale
   const getTimeMarkers = () => {
     const markers = [];
     const intervals = [0, 0.25, 0.5, 0.75, 1];
@@ -195,7 +198,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
       const relativeTime = timelineRange * interval;
       markers.push({
         position: interval * 80,
-        time: interval === 0 ? '0ms' : formatTimeScale(relativeTime)
+        time: interval === 0 ? '0ms' : formatTime(relativeTime)
       });
     });
     
@@ -349,7 +352,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   {language === 'es' ? 'Primer Byte' : 'First Byte'}
                 </div>
                 <div className="text-sm font-bold text-slate-900 dark:text-slate-100">
-                  {formatTime(minStartTime)}
+                  {formatTime(firstByteTime)}
                 </div>
               </div>
               <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
@@ -357,7 +360,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                   {language === 'es' ? 'Primer Paint' : 'First Paint'}
                 </div>
                 <div className="text-sm font-bold text-green-600">
-                  {formatTime(firstContentfulPaint === Infinity ? 0 : firstContentfulPaint)}
+                  {formatTime(firstContentfulPaint)}
                 </div>
               </div>
               <div className="bg-white dark:bg-slate-900 p-2 rounded-lg border">
@@ -553,10 +556,10 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             <div className="relative mb-4">
               <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 mb-2">
                 {Array.from({ length: 11 }, (_, i) => {
-                  const timeAtPosition = minStartTime + (timelineRange * (i / 10));
+                  const relativeTime = (timelineRange * (i / 10));
                   return (
                     <span key={i} className="text-center">
-                      {i === 0 ? '0ms' : formatTimeScale(timeAtPosition - minStartTime)}
+                      {i === 0 ? '0ms' : formatTime(relativeTime)}
                     </span>
                   );
                 })}
@@ -631,7 +634,7 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
             </div>
           </div>
 
-          {/* Timeline de recursos */}
+          {/* Timeline de recursos con acordeones organizados */}
           <div className="space-y-2">
             <h4 className="font-medium mb-3">{t.resourceLoadingTimeline}:</h4>
             
@@ -640,95 +643,156 @@ export function WaterfallAnalysis({ analysis, language = 'en' }: WaterfallAnalys
                 {t.noResourcesFound}
               </div>
             ) : (
-              <div className="space-y-1">
-                {filteredResources.slice(0, 50).map((resource, index) => (
-                  <div
-                    key={index}
-                    className="group relative border border-slate-200 dark:border-slate-700 rounded-md p-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        {getResourceIcon(resource.type)}
-                        <span className="text-sm font-medium truncate" title={resource.url}>
-                          {resource.url.split('/').pop() || resource.url}
-                        </span>
-                        {getStatusIcon(resource.status)}
-                      </div>
-                      
-                      <div className="flex items-center gap-1">
-                        <Badge variant="secondary" className="text-xs py-0 px-1">
-                          {formatBytes(resource.size)}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs py-0 px-1">
-                          {formatTime(resource.duration)}
-                        </Badge>
-                      </div>
-                    </div>
+              <Accordion type="multiple" className="w-full space-y-2">
+                {/* Group resources by performance categories */}
+                {(() => {
+                  const criticalResources = filteredResources.filter(r => r.isCritical || r.isBlocking);
+                  const fastResources = filteredResources.filter(r => r.duration <= 300 && !r.isCritical && !r.isBlocking);
+                  const slowResources = filteredResources.filter(r => r.duration > 300 && !r.isCritical && !r.isBlocking);
+                  
+                  const sections = [
+                    {
+                      key: 'critical',
+                      title: language === 'es' ? 'Recursos Críticos' : 'Critical Resources',
+                      count: criticalResources.length,
+                      resources: criticalResources,
+                      icon: <AlertTriangle className="h-4 w-4 text-red-500" />,
+                      bgColor: 'bg-red-50 dark:bg-red-900/20',
+                      description: language === 'es' ? 'Recursos que bloquean el renderizado o son críticos para la página' : 'Resources that block rendering or are critical for the page'
+                    },
+                    {
+                      key: 'fast',
+                      title: language === 'es' ? 'Recursos Rápidos' : 'Fast Resources',
+                      count: fastResources.length,
+                      resources: fastResources,
+                      icon: <CheckCircle className="h-4 w-4 text-green-500" />,
+                      bgColor: 'bg-green-50 dark:bg-green-900/20',
+                      description: language === 'es' ? 'Recursos que cargan en menos de 300ms' : 'Resources that load in under 300ms'
+                    },
+                    {
+                      key: 'slow',
+                      title: language === 'es' ? 'Recursos Lentos' : 'Slow Resources',
+                      count: slowResources.length,
+                      resources: slowResources,
+                      icon: <XCircle className="h-4 w-4 text-orange-500" />,
+                      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
+                      description: language === 'es' ? 'Recursos que tardan más de 300ms en cargar' : 'Resources that take more than 300ms to load'
+                    }
+                  ].filter(section => section.count > 0);
 
-                    {/* Barra de tiempo visual proporcional */}
-                    <div className="relative h-4 bg-slate-100 dark:bg-slate-700 rounded-sm overflow-hidden mb-1">
-                      {/* Líneas de referencia sutiles */}
-                      <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '25%' }}></div>
-                      <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '50%' }}></div>
-                      <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '75%' }}></div>
-                      
-                      {/* Barra de recurso con código de colores por tipo */}
-                      <div
-                        className={`absolute top-0 h-full rounded-sm shadow-sm transition-all duration-300 ${getResourceTypeColor(resource.type)}`}
-                        style={{
-                          left: `${getResourceBarOffset(resource)}%`,
-                          width: `${getResourceBarWidth(resource)}%`
-                        }}
-                      >
-                        {/* Mostrar tiempo solo si la barra es lo suficientemente ancha */}
-                        {getResourceBarWidth(resource) > 10 && (
-                          <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white mix-blend-overlay">
-                            {formatTime(resource.duration)}
-                          </span>
-                        )}
-                      </div>
-                      
-                      {/* Indicador de inicio */}
-                      <div
-                        className="absolute top-0 h-full w-px bg-slate-800 dark:bg-slate-200"
-                        style={{ left: `${getResourceBarOffset(resource)}%` }}
-                      ></div>
-                    </div>
+                  return sections.map((section) => (
+                    <AccordionItem key={section.key} value={section.key} className={`border rounded-lg ${section.bgColor}`}>
+                      <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-3">
+                            {section.icon}
+                            <div className="text-left">
+                              <div className="font-medium">{section.title} ({section.count})</div>
+                              <div className="text-sm text-slate-600 dark:text-slate-400">{section.description}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4">
+                        <div className="space-y-2">
+                          {section.resources.slice(0, 20).map((resource, index) => (
+                            <div
+                              key={index}
+                              className="group relative border border-slate-200 dark:border-slate-700 rounded-md p-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors bg-white dark:bg-slate-900"
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2 flex-1 min-w-0">
+                                  {getResourceIcon(resource.type)}
+                                  <span className="text-sm font-medium truncate" title={resource.url}>
+                                    {resource.url.split('/').pop() || resource.url}
+                                  </span>
+                                  {getStatusIcon(resource.status)}
+                                </div>
+                                
+                                <div className="flex items-center gap-1">
+                                  <Badge variant="secondary" className="text-xs py-0 px-1">
+                                    {formatBytes(resource.size)}
+                                  </Badge>
+                                  <Badge variant="outline" className="text-xs py-0 px-1">
+                                    {formatTime(resource.duration)}
+                                  </Badge>
+                                </div>
+                              </div>
 
-                    {/* Badges de estado - compactos */}
-                    <div className="flex flex-wrap gap-1">
-                      {resource.cached && (
-                        <Badge variant="success" className="text-xs py-0 px-1 h-4">
-                          {t.cached}
-                        </Badge>
-                      )}
-                      {resource.isBlocking && (
-                        <Badge variant="destructive" className="text-xs py-0 px-1 h-4">
-                          {t.blocking}
-                        </Badge>
-                      )}
-                      {resource.isCritical && (
-                        <Badge variant="warning" className="text-xs py-0 px-1 h-4">
-                          {t.critical}
-                        </Badge>
-                      )}
-                      <Badge variant="outline" className="text-xs py-0 px-1 h-4">
-                        {getPerformanceLabel(resource.duration)}
-                      </Badge>
-                    </div>
+                              {/* Barra de tiempo visual proporcional */}
+                              <div className="relative h-4 bg-slate-100 dark:bg-slate-700 rounded-sm overflow-hidden mb-1">
+                                {/* Líneas de referencia sutiles */}
+                                <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '25%' }}></div>
+                                <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '50%' }}></div>
+                                <div className="absolute top-0 h-full w-px bg-slate-300 dark:bg-slate-600" style={{ left: '75%' }}></div>
+                                
+                                {/* Barra de recurso con código de colores por tipo */}
+                                <div
+                                  className={`absolute top-0 h-full rounded-sm shadow-sm transition-all duration-300 ${getResourceTypeColor(resource.type)}`}
+                                  style={{
+                                    left: `${getResourceBarOffset(resource)}%`,
+                                    width: `${getResourceBarWidth(resource)}%`
+                                  }}
+                                >
+                                  {/* Mostrar tiempo solo si la barra es lo suficientemente ancha */}
+                                  {getResourceBarWidth(resource) > 10 && (
+                                    <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white mix-blend-overlay">
+                                      {formatTime(resource.duration)}
+                                    </span>
+                                  )}
+                                </div>
+                                
+                                {/* Indicador de inicio */}
+                                <div
+                                  className="absolute top-0 h-full w-px bg-slate-800 dark:bg-slate-200"
+                                  style={{ left: `${getResourceBarOffset(resource)}%` }}
+                                ></div>
+                              </div>
 
-                    {/* Información detallada visible en hover */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 text-xs text-slate-600 dark:text-slate-400">
-                      <div className="grid grid-cols-2 gap-1">
-                        <div>Start: {formatTime(resource.startTime)}</div>
-                        <div>End: {formatTime(resource.endTime)}</div>
-                        <div>Status: {resource.status}</div>
-                        <div>Type: {resource.type}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                              {/* Badges de estado - compactos */}
+                              <div className="flex flex-wrap gap-1">
+                                {resource.cached && (
+                                  <Badge variant="success" className="text-xs py-0 px-1 h-4">
+                                    {t.cached}
+                                  </Badge>
+                                )}
+                                {resource.isBlocking && (
+                                  <Badge variant="destructive" className="text-xs py-0 px-1 h-4">
+                                    {t.blocking}
+                                  </Badge>
+                                )}
+                                {resource.isCritical && (
+                                  <Badge variant="warning" className="text-xs py-0 px-1 h-4">
+                                    {t.critical}
+                                  </Badge>
+                                )}
+                                <Badge variant="outline" className="text-xs py-0 px-1 h-4">
+                                  {getPerformanceLabel(resource.duration)}
+                                </Badge>
+                              </div>
+
+                              {/* Información detallada visible en hover */}
+                              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 text-xs text-slate-600 dark:text-slate-400">
+                                <div className="grid grid-cols-2 gap-1">
+                                  <div>Start: {formatTime(resource.startTime)}</div>
+                                  <div>End: {formatTime(resource.endTime)}</div>
+                                  <div>Status: {resource.status}</div>
+                                  <div>Type: {resource.type}</div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          {section.resources.length > 20 && (
+                            <div className="text-center py-2 text-sm text-slate-600 dark:text-slate-400">
+                              {language === 'es' ? `... y ${section.resources.length - 20} recursos más` : `... and ${section.resources.length - 20} more resources`}
+                            </div>
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ));
+                })()}
+              </Accordion>
             )}
           </div>
 
