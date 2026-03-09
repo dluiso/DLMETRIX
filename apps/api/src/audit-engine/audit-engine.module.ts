@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { BullModule } from 'bullmq';
+import { BullModule } from '@nestjs/bullmq';
 import { AuditEngineService } from './audit-engine.service';
 import { AuditWorker } from './audit.worker';
 import { LighthouseAnalyzer } from './analyzers/lighthouse.analyzer';

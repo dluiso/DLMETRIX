@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectQueue } from 'bullmq';
-import { Queue } from 'bullmq';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import {

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { BullModule } from 'bullmq';
+import { BullModule } from '@nestjs/bullmq';
 import { AuditsController } from './audits.controller';
 import { AuditsService } from './audits.service';
 import { AuditRateLimitService } from './audit-rate-limit.service';

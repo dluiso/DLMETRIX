@@ -1,10 +1,11 @@
 import {
   Injectable,
   NotFoundException,
-  TooManyRequestsException,
+  HttpException,
+  HttpStatus,
   BadRequestException,
 } from '@nestjs/common';
-import { InjectQueue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditRateLimitService } from './audit-rate-limit.service';
@@ -49,12 +50,15 @@ export class AuditsService {
     );
 
     if (!rateCheck.allowed) {
-      throw new TooManyRequestsException({
-        message: 'Daily audit limit reached',
-        resetAt: rateCheck.resetAt,
-        limit,
-        current: rateCheck.current,
-      });
+      throw new HttpException(
+        {
+          message: 'Daily audit limit reached',
+          resetAt: rateCheck.resetAt,
+          limit,
+          current: rateCheck.current,
+        },
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
     }
 
     // ── Create audit record ───────────────────────────

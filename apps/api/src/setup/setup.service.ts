@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import * as fs from 'fs';
 import * as path from 'path';
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 
 const SETUP_FLAG = path.join(process.cwd(), '.setup-complete');
 
@@ -41,18 +41,21 @@ export class SetupService {
     port: number,
     password?: string,
   ): Promise<{ ok: boolean; message: string }> {
-    const client = createClient({
-      socket: { host, port, connectTimeout: 5000 },
+    const client = new Redis({
+      host,
+      port,
       password: password || undefined,
+      connectTimeout: 5000,
+      lazyConnect: true,
     });
 
     try {
       await client.connect();
       await client.ping();
-      await client.disconnect();
+      client.disconnect();
       return { ok: true, message: `Redis connected at ${host}:${port}` };
     } catch (err: any) {
-      try { await client.disconnect(); } catch {}
+      client.disconnect();
       return { ok: false, message: err.message || 'Redis connection failed' };
     }
   }

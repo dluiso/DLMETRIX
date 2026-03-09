@@ -1,4 +1,4 @@
-import { Processor, WorkerHost } from 'bullmq';
+import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { AuditEngineService } from './audit-engine.service';
