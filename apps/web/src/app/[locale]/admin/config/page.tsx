@@ -42,7 +42,7 @@ export default function AdminConfigPage() {
     } finally { setSaving(null); }
   };
 
-  const groups = [...new Set(configs.map(c => c.group))];
+  const groups = Array.from(new Set(configs.map(c => c.group)));
 
   if (loading) return (
     <div className="flex items-center gap-2 text-muted-foreground">
