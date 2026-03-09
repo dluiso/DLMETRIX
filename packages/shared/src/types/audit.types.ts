@@ -81,6 +81,35 @@ export interface AuditResult {
   completedAt?: string;
 }
 
+export interface BrowserTimings {
+  redirect?: number;        // ms
+  dns?: number;             // ms
+  connection?: number;      // ms
+  ssl?: number;             // ms
+  backend?: number;         // ms (request → response start)
+  domInteractive?: number;  // ms from nav start
+  domContentLoaded?: number; // ms from nav start
+  onload?: number;          // ms from nav start
+  fullyLoaded?: number;     // ms from nav start
+}
+
+export interface ResourceTypeBreakdown {
+  type: string;         // 'script' | 'image' | 'stylesheet' | 'font' | 'document' | 'other'
+  size: number;         // bytes (uncompressed)
+  transferSize: number; // bytes (compressed/wire)
+  count: number;
+}
+
+export interface NetworkRequest {
+  url: string;
+  type: string;
+  size: number;         // bytes
+  transferSize: number;
+  duration: number;     // ms
+  status: number;
+  startTime: number;    // ms from navigation start
+}
+
 export interface PerformanceData {
   fcp?: number;     // First Contentful Paint (ms)
   lcp?: number;     // Largest Contentful Paint (ms)
@@ -95,6 +124,10 @@ export interface PerformanceData {
   renderBlockingResources?: string[];
   unusedCss?: number; // bytes
   unusedJs?: number;  // bytes
+  lighthouseScore?: number;           // 0-100
+  browserTimings?: BrowserTimings;
+  resourceBreakdown?: ResourceTypeBreakdown[];
+  networkRequests?: NetworkRequest[];
 }
 
 export interface SeoData {

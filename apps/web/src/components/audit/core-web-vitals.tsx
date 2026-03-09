@@ -73,6 +73,24 @@ const VITALS: VitalMetric[] = [
     description: 'Time to Interactive',
     icon: Clock,
   },
+  {
+    key: 'tbt',
+    label: 'TBT',
+    unit: 'ms',
+    good: 150,
+    poor: 600,
+    description: 'Total Blocking Time',
+    icon: Clock,
+  },
+  {
+    key: 'si',
+    label: 'SI',
+    unit: 'ms',
+    good: 3400,
+    poor: 5800,
+    description: 'Speed Index',
+    icon: Zap,
+  },
 ];
 
 function getRating(value: number, good: number, poor: number): 'good' | 'needs-improvement' | 'poor' {

@@ -97,6 +97,29 @@ export class AuditEngineService {
       onProgress('performance', 30, 'Running Lighthouse performance analysis...');
       const performanceData = await this.lighthouse.analyze(pageUrl);
 
+      // ── Browser Timings (from Puppeteer) ──────────
+      let browserTimings;
+      try {
+        browserTimings = await page.evaluate(() => {
+          const t = (window.performance.timing as any);
+          const nav = t.navigationStart;
+          return {
+            redirect:         Math.max(0, t.redirectEnd - t.redirectStart),
+            dns:              Math.max(0, t.domainLookupEnd - t.domainLookupStart),
+            connection:       Math.max(0, t.connectEnd - t.connectStart),
+            ssl:              t.secureConnectionStart > 0 ? Math.max(0, t.connectEnd - t.secureConnectionStart) : 0,
+            backend:          Math.max(0, t.responseStart - t.requestStart),
+            domInteractive:   Math.max(0, t.domInteractive - nav),
+            domContentLoaded: Math.max(0, t.domContentLoadedEventEnd - nav),
+            onload:           Math.max(0, t.loadEventEnd - nav),
+            fullyLoaded:      Math.max(0, t.loadEventEnd - nav),
+          };
+        });
+        performanceData.browserTimings = browserTimings;
+      } catch (e) {
+        this.logger.warn('Browser timings extraction failed: ' + e.message);
+      }
+
       // ── SEO ───────────────────────────────────────
       onProgress('seo', 48, 'Auditing SEO signals...');
       const seoData = await this.seo.analyze(html, pageUrl);

@@ -12,6 +12,9 @@ import { ScoreGauge } from './score-gauge';
 import { CategoryCard } from './category-card';
 import { IssuesList } from './issues-list';
 import { CoreWebVitals } from './core-web-vitals';
+import { BrowserTimings } from './browser-timings';
+import { ResourceBreakdown } from './resource-breakdown';
+import { WaterfallChart } from './waterfall-chart';
 import { Button } from '@/components/ui/button';
 import { Download, RefreshCw, Share2, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,6 +22,14 @@ import { useRouter } from 'next/navigation';
 
 interface Props {
   audit: AuditResult;
+}
+
+function getLetterGrade(score: number): { grade: string; color: string } {
+  if (score >= 90) return { grade: 'A', color: '#22c55e' };
+  if (score >= 80) return { grade: 'B', color: '#84cc16' };
+  if (score >= 70) return { grade: 'C', color: '#f59e0b' };
+  if (score >= 60) return { grade: 'D', color: '#f97316' };
+  return { grade: 'F', color: '#ef4444' };
 }
 
 export function AuditResults({ audit }: Props) {
@@ -73,6 +84,7 @@ export function AuditResults({ audit }: Props) {
   };
 
   const scoreInfo = getScoreLabel(audit.overallScore);
+  const letterGrade = getLetterGrade(audit.overallScore);
 
   const radarData = audit.categories.map((c) => ({
     subject: t(`categories.${c.category}` as any),
@@ -128,6 +140,20 @@ export function AuditResults({ audit }: Props) {
           >
             {scoreInfo.label}
           </div>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <div
+              className="text-4xl font-black leading-none"
+              style={{ color: letterGrade.color }}
+            >
+              {letterGrade.grade}
+            </div>
+            <div className="text-xs text-muted-foreground leading-tight">
+              <div>Grade</div>
+              <div className="font-medium" style={{ color: letterGrade.color }}>
+                {audit.overallScore}/100
+              </div>
+            </div>
+          </div>
           {audit.metadata?.title && (
             <p className="mt-2 text-sm text-muted-foreground text-center truncate max-w-xs">
               {audit.metadata.title}
@@ -176,6 +202,25 @@ export function AuditResults({ audit }: Props) {
 
       {/* Core Web Vitals */}
       {audit.performance && <CoreWebVitals performance={audit.performance} />}
+
+      {/* Browser Timings */}
+      {audit.performance?.browserTimings && (
+        <BrowserTimings timings={audit.performance.browserTimings} />
+      )}
+
+      {/* Resource Breakdown */}
+      {audit.performance?.resourceBreakdown && audit.performance.resourceBreakdown.length > 0 && (
+        <ResourceBreakdown
+          resources={audit.performance.resourceBreakdown}
+          totalRequests={audit.performance.requests}
+          totalSize={audit.performance.pageSize}
+        />
+      )}
+
+      {/* Waterfall Chart */}
+      {audit.performance?.networkRequests && audit.performance.networkRequests.length > 0 && (
+        <WaterfallChart requests={audit.performance.networkRequests} />
+      )}
 
       {/* Issues list */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border">
