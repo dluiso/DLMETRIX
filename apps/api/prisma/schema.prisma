@@ -1,0 +1,263 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// USERS
+// ─────────────────────────────────────────────
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  name          String
+  passwordHash  String
+  role          UserRole     @default(PRO)
+  status        UserStatus   @default(ACTIVE)
+  locale        String       @default("en")
+  avatarUrl     String?
+  emailVerified Boolean      @default(false)
+  lastLoginAt   DateTime?
+
+  // Relations
+  subscription  Subscription?
+  audits        Audit[]
+  refreshTokens RefreshToken[]
+  activityLogs  ActivityLog[]
+  payments      Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+enum UserRole {
+  PUBLIC
+  PRO
+  PREMIUM
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ─────────────────────────────────────────────
+// PLANS & SUBSCRIPTIONS
+// ─────────────────────────────────────────────
+
+model Plan {
+  id              String   @id @default(uuid())
+  name            String
+  tier            PlanTier
+  description     String
+  priceMonthly    Decimal  @db.Decimal(10, 2)
+  priceYearly     Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD")
+  auditsPerDay    Int      // -1 = unlimited
+  historyDays     Int      // -1 = unlimited
+  maxDomains      Int      @default(1)
+  hasExport       Boolean  @default(false)
+  hasComparisons  Boolean  @default(false)
+  hasApi          Boolean  @default(false)
+  hasWhiteLabel   Boolean  @default(false)
+  features        String[] // JSON array of feature strings
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+
+  subscriptions   Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("plans")
+}
+
+enum PlanTier {
+  FREE
+  PRO
+  PREMIUM
+}
+
+model Subscription {
+  id                    String             @id @default(uuid())
+  userId                String             @unique
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId                String
+  plan                  Plan               @relation(fields: [planId], references: [id])
+  status                SubscriptionStatus @default(ACTIVE)
+  billingCycle          BillingCycle       @default(MONTHLY)
+  currentPeriodStart    DateTime
+  currentPeriodEnd      DateTime
+  cancelAtPeriodEnd     Boolean            @default(false)
+  paymentGateway        String             @default("paypal")
+  gatewaySubscriptionId String?
+  trialEndsAt           DateTime?
+
+  payments              Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([planId])
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  TRIALING
+  PAST_DUE
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  subscriptionId  String?
+  subscription    Subscription? @relation(fields: [subscriptionId], references: [id])
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("USD")
+  status          PaymentStatus @default(PENDING)
+  gateway         String        // paypal, stripe, etc.
+  gatewayPaymentId String?
+  gatewayResponse Json?
+  description     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+// ─────────────────────────────────────────────
+// AUDITS
+// ─────────────────────────────────────────────
+
+model Audit {
+  id            String      @id @default(uuid())
+  url           String
+  domain        String
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ipAddress     String?     // for anonymous users
+  status        AuditStatus @default(PENDING)
+  overallScore  Int?
+  jobId         String?     // BullMQ job ID
+
+  // Scores per category
+  performanceScore  Int?
+  seoScore          Int?
+  contentScore      Int?
+  metadataScore     Int?
+  linksScore        Int?
+  accessibilityScore Int?
+  securityScore     Int?
+
+  // Full result stored as JSON
+  result        Json?
+
+  // Metadata snapshot
+  pageTitle     String?
+  pageSize      Int?
+  loadTime      Int?
+  httpStatus    Int?
+  screenshot    String?     // filename
+
+  error         String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([domain])
+  @@index([status])
+  @@index([createdAt])
+  @@map("audits")
+}
+
+enum AuditStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+// ─────────────────────────────────────────────
+// SYSTEM
+// ─────────────────────────────────────────────
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+
+model SystemConfig {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  group     String   @default("general")
+  isPublic  Boolean  @default(false)
+  label     String?
+  updatedBy String?
+
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([group])
+  @@map("system_configs")
+}

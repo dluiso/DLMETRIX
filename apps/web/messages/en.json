@@ -1,0 +1,180 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "refresh": "Refresh",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "audits": "Audits",
+    "history": "History",
+    "compare": "Compare",
+    "pricing": "Pricing",
+    "admin": "Admin",
+    "login": "Login",
+    "register": "Sign Up",
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "home": {
+    "hero": {
+      "badge": "Free web audit tool",
+      "title": "Analyze your website like a pro",
+      "subtitle": "Get instant insights on performance, SEO, security, accessibility and more. No login required.",
+      "cta": "Analyze a website",
+      "placeholder": "Enter a URL (e.g. https://example.com)",
+      "analyze": "Run Analysis",
+      "analyzing": "Analyzing..."
+    },
+    "features": {
+      "title": "Everything you need to audit a website",
+      "performance": "Performance",
+      "performanceDesc": "Core Web Vitals, loading times, resource optimization",
+      "seo": "SEO",
+      "seoDesc": "Technical SEO, meta tags, headings, sitemap, indexability",
+      "security": "Security",
+      "securityDesc": "HTTPS, security headers, vulnerability detection",
+      "accessibility": "Accessibility",
+      "accessibilityDesc": "WCAG compliance, ARIA, keyboard navigation",
+      "content": "Content",
+      "contentDesc": "Keyword density, readability, content structure",
+      "metadata": "Metadata",
+      "metadataDesc": "Open Graph, Twitter Card, structured data"
+    },
+    "stats": {
+      "audits": "Audits run",
+      "sites": "Sites analyzed",
+      "issues": "Issues found"
+    }
+  },
+  "audit": {
+    "title": "Audit Results",
+    "score": "Overall Score",
+    "analyzing": "Analyzing your website",
+    "phases": {
+      "initializing": "Initializing analysis engine",
+      "fetching": "Loading the page",
+      "performance": "Analyzing performance",
+      "seo": "Auditing SEO",
+      "content": "Analyzing content",
+      "metadata": "Checking metadata",
+      "links": "Scanning links",
+      "accessibility": "Checking accessibility",
+      "security": "Auditing security",
+      "scoring": "Calculating scores",
+      "completed": "Analysis complete!",
+      "failed": "Analysis failed"
+    },
+    "categories": {
+      "performance": "Performance",
+      "seo": "SEO",
+      "content": "Content",
+      "metadata": "Metadata",
+      "links": "Links",
+      "accessibility": "Accessibility",
+      "security": "Security"
+    },
+    "severity": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "info": "Info"
+    },
+    "scoreLabels": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "poor": "Poor"
+    },
+    "issues": "Issues",
+    "noIssues": "No issues found",
+    "recommendation": "Recommendation",
+    "technicalDetail": "Technical Detail"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Create account",
+    "email": "Email address",
+    "password": "Password",
+    "name": "Full name",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginSuccess": "Welcome back!",
+    "registerSuccess": "Account created successfully",
+    "logoutSuccess": "Logged out successfully"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "totalAudits": "Total Audits",
+    "todayAudits": "Today's Audits",
+    "avgScore": "Average Score",
+    "topDomains": "Top Domains",
+    "recentAudits": "Recent Audits",
+    "newAudit": "New Audit",
+    "noAudits": "No audits yet. Run your first analysis!",
+    "auditLimit": "Daily limit",
+    "auditLimitReached": "Daily audit limit reached. Upgrade your plan for more audits."
+  },
+  "plans": {
+    "title": "Choose your plan",
+    "subtitle": "Start free, upgrade when you need more power",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "save": "Save {percent}%",
+    "current": "Current plan",
+    "upgrade": "Upgrade",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "features": {
+      "auditsPerDay": "{count} audits/day",
+      "unlimitedAudits": "Unlimited audits",
+      "historyDays": "{days}-day history",
+      "unlimitedHistory": "Unlimited history",
+      "export": "PDF & CSV export",
+      "comparisons": "Domain comparisons",
+      "api": "API access",
+      "whiteLabel": "White-label reports",
+      "support": "Priority support",
+      "dedicated": "Dedicated support"
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "users": "Users",
+    "audits": "Audits",
+    "plans": "Plans",
+    "logs": "Activity Logs",
+    "config": "Configuration",
+    "payments": "Payments",
+    "totalUsers": "Total Users",
+    "activeSubscriptions": "Active Subscriptions",
+    "totalAudits": "Total Audits",
+    "revenue": "Total Revenue"
+  },
+  "errors": {
+    "rateLimit": "You've reached your daily audit limit ({limit} audits/day). Resets at {resetAt}.",
+    "invalidUrl": "Please enter a valid URL",
+    "networkError": "Network error. Please try again.",
+    "unauthorized": "Please login to access this page",
+    "forbidden": "You don't have permission to access this page",
+    "notFound": "Page not found"
+  }
+}

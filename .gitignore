@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Turbo
+.turbo/
+
+# Setup completion flag (generated at install time)
+.setup-complete
+
+# Test coverage
+coverage/
+
+# Uploads / reports
+apps/api/uploads/
+apps/api/reports/
+
+# Puppeteer
+.local-chromium/

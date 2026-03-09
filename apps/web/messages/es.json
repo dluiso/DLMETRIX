@@ -1,0 +1,180 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "submit": "Enviar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "refresh": "Actualizar",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "audits": "Auditorías",
+    "history": "Historial",
+    "compare": "Comparar",
+    "pricing": "Precios",
+    "admin": "Admin",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "profile": "Perfil",
+    "settings": "Configuración"
+  },
+  "home": {
+    "hero": {
+      "badge": "Herramienta gratuita de auditoría web",
+      "title": "Analiza tu sitio web como un profesional",
+      "subtitle": "Obtén información instantánea sobre rendimiento, SEO, seguridad, accesibilidad y más. Sin registro requerido.",
+      "cta": "Analizar un sitio web",
+      "placeholder": "Ingresa una URL (ej: https://ejemplo.com)",
+      "analyze": "Ejecutar análisis",
+      "analyzing": "Analizando..."
+    },
+    "features": {
+      "title": "Todo lo que necesitas para auditar un sitio web",
+      "performance": "Rendimiento",
+      "performanceDesc": "Core Web Vitals, tiempos de carga, optimización de recursos",
+      "seo": "SEO",
+      "seoDesc": "SEO técnico, meta etiquetas, encabezados, sitemap, indexabilidad",
+      "security": "Seguridad",
+      "securityDesc": "HTTPS, cabeceras de seguridad, detección de vulnerabilidades",
+      "accessibility": "Accesibilidad",
+      "accessibilityDesc": "Cumplimiento WCAG, ARIA, navegación por teclado",
+      "content": "Contenido",
+      "contentDesc": "Densidad de palabras clave, legibilidad, estructura de contenido",
+      "metadata": "Metadatos",
+      "metadataDesc": "Open Graph, Twitter Card, datos estructurados"
+    },
+    "stats": {
+      "audits": "Auditorías realizadas",
+      "sites": "Sitios analizados",
+      "issues": "Problemas encontrados"
+    }
+  },
+  "audit": {
+    "title": "Resultados de auditoría",
+    "score": "Puntuación general",
+    "analyzing": "Analizando tu sitio web",
+    "phases": {
+      "initializing": "Inicializando motor de análisis",
+      "fetching": "Cargando la página",
+      "performance": "Analizando rendimiento",
+      "seo": "Auditando SEO",
+      "content": "Analizando contenido",
+      "metadata": "Verificando metadatos",
+      "links": "Escaneando enlaces",
+      "accessibility": "Verificando accesibilidad",
+      "security": "Auditando seguridad",
+      "scoring": "Calculando puntuaciones",
+      "completed": "¡Análisis completo!",
+      "failed": "Análisis fallido"
+    },
+    "categories": {
+      "performance": "Rendimiento",
+      "seo": "SEO",
+      "content": "Contenido",
+      "metadata": "Metadatos",
+      "links": "Enlaces",
+      "accessibility": "Accesibilidad",
+      "security": "Seguridad"
+    },
+    "severity": {
+      "critical": "Crítico",
+      "high": "Alto",
+      "medium": "Medio",
+      "low": "Bajo",
+      "info": "Info"
+    },
+    "scoreLabels": {
+      "excellent": "Excelente",
+      "good": "Bueno",
+      "fair": "Regular",
+      "poor": "Malo"
+    },
+    "issues": "Problemas",
+    "noIssues": "No se encontraron problemas",
+    "recommendation": "Recomendación",
+    "technicalDetail": "Detalle técnico"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "register": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "name": "Nombre completo",
+    "confirmPassword": "Confirmar contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "loginSuccess": "¡Bienvenido de vuelta!",
+    "registerSuccess": "Cuenta creada exitosamente",
+    "logoutSuccess": "Sesión cerrada exitosamente"
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "welcome": "Bienvenido de vuelta",
+    "totalAudits": "Total de auditorías",
+    "todayAudits": "Auditorías de hoy",
+    "avgScore": "Puntuación promedio",
+    "topDomains": "Dominios principales",
+    "recentAudits": "Auditorías recientes",
+    "newAudit": "Nueva auditoría",
+    "noAudits": "Sin auditorías aún. ¡Ejecuta tu primer análisis!",
+    "auditLimit": "Límite diario",
+    "auditLimitReached": "Límite diario de auditorías alcanzado. Mejora tu plan para más auditorías."
+  },
+  "plans": {
+    "title": "Elige tu plan",
+    "subtitle": "Comienza gratis, mejora cuando necesites más potencia",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "save": "Ahorra {percent}%",
+    "current": "Plan actual",
+    "upgrade": "Mejorar",
+    "perMonth": "/mes",
+    "perYear": "/año",
+    "features": {
+      "auditsPerDay": "{count} auditorías/día",
+      "unlimitedAudits": "Auditorías ilimitadas",
+      "historyDays": "{days} días de historial",
+      "unlimitedHistory": "Historial ilimitado",
+      "export": "Exportación PDF y CSV",
+      "comparisons": "Comparación de dominios",
+      "api": "Acceso a API",
+      "whiteLabel": "Reportes con marca propia",
+      "support": "Soporte prioritario",
+      "dedicated": "Soporte dedicado"
+    }
+  },
+  "admin": {
+    "title": "Panel de administración",
+    "users": "Usuarios",
+    "audits": "Auditorías",
+    "plans": "Planes",
+    "logs": "Registro de actividad",
+    "config": "Configuración",
+    "payments": "Pagos",
+    "totalUsers": "Total de usuarios",
+    "activeSubscriptions": "Suscripciones activas",
+    "totalAudits": "Total de auditorías",
+    "revenue": "Ingresos totales"
+  },
+  "errors": {
+    "rateLimit": "Has alcanzado tu límite diario de auditorías ({limit} auditorías/día). Se restablece el {resetAt}.",
+    "invalidUrl": "Por favor ingresa una URL válida",
+    "networkError": "Error de red. Por favor intenta de nuevo.",
+    "unauthorized": "Por favor inicia sesión para acceder a esta página",
+    "forbidden": "No tienes permiso para acceder a esta página",
+    "notFound": "Página no encontrada"
+  }
+}
