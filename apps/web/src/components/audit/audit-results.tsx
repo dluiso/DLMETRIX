@@ -128,9 +128,9 @@ export function AuditResults({ audit }: Props) {
           >
             {scoreInfo.label}
           </div>
-          {audit.metadata?.pageTitle && (
+          {audit.metadata?.title && (
             <p className="mt-2 text-sm text-muted-foreground text-center truncate max-w-xs">
-              {audit.metadata.pageTitle}
+              {audit.metadata.title}
             </p>
           )}
         </div>
