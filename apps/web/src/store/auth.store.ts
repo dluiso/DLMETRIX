@@ -8,6 +8,7 @@ interface User {
   name: string;
   role: 'PUBLIC' | 'PRO' | 'PREMIUM' | 'ADMIN';
   locale: string;
+  emailVerified: boolean;
   subscription?: { plan: { name: string; tier: string }; status: string };
 }
 
