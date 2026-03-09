@@ -130,7 +130,7 @@ export default function HistoryPage() {
     if (!selected.size) return;
     setDeleting(true);
     try {
-      await Promise.all([...selected].map(id => api.delete(`/audits/${id}`)));
+      await Promise.all(Array.from(selected).map(id => api.delete(`/audits/${id}`)));
       setSelected(new Set());
       loadAudits();
     } finally {
