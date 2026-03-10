@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add nodemailer @types/nodemailer)",
+      "Bash(pnpm add nodemailer @types/nodemailer --filter api)",
+      "Bash(pnpm add nodemailer @types/nodemailer --filter api --ignore-workspace-root-check)",
+      "Bash(xargs grep -L \"Suspense\")",
+      "Bash(\"d:/Documentos/+PLUSMIT/DLMETRIX/apps/api/.env.example\":*)",
+      "Bash(\"d:/Documentos/+PLUSMIT/DLMETRIX/apps/web/.env.example\":*)",
+      "Bash(ls apps/web/src/app/ apps/web/src/app/[locale]/)",
+      "Bash(pnpm build --filter=web)",
+      "Bash(pnpm install)",
+      "Bash(pnpm build --filter=shared)",
+      "Bash(pnpm build --filter=@dlmetrix/shared)",
+      "Bash(pnpm build --filter=@dlmetrix/web)",
+      "Bash(cat \"d:/Documentos/+PLUSMIT/DLMETRIX/apps/api/src/auth/guards/\"*.ts)",
+      "Bash(python3 -c \" import sys, json lines = sys.stdin.read\\(\\).strip\\(\\).split\\(''\\\\n''\\) for line in lines[-20:]: try: obj = json.loads\\(line\\) if obj.get\\(''type''\\) == ''user'' or obj.get\\(''role''\\) in [''user'', ''assistant'']: content = obj.get\\(''content'', ''''\\) if isinstance\\(content, list\\): for c in content: if isinstance\\(c, dict\\) and c.get\\(''type''\\) == ''text'': print\\(f''[{obj.get\\(\"\"role\"\",\"\"?\"\"\\)}]: {c[\"\"text\"\"][:500]}''\\) elif isinstance\\(content, str\\): print\\(f''[{obj.get\\(\"\"role\"\",obj.get\\(\"\"type\"\",\"\"?\"\"\\)\\)}]: {content[:500]}''\\) except: pass \")",
+      "Bash(ls apps/web/src/app/[locale]/dashboard/compare/)",
+      "Bash(ls apps/web/src/app/[locale]/dashboard/history/)",
+      "Bash(ls apps/web/src/app/[locale]/dashboard/billing/)",
+      "Bash(cat apps/web/src/app/[locale]/dashboard/compare/page.tsx)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(node -e \"const d=require\\(''./apps/web/messages/en.json''\\); console.log\\(Object.keys\\(d\\).join\\('', ''\\)\\)\")",
+      "Bash(node -e \"const d=require\\(''./apps/web/messages/en.json''\\); console.log\\(JSON.stringify\\(d.audit, null, 2\\)\\)\")",
+      "Bash(pnpm --filter @dlmetrix/web tsc --noEmit)"
+    ]
+  }
+}

@@ -23,43 +23,47 @@ export class ReportsController {
     @Res() res: Response,
   ) {
     const user = (req as any).user;
+    const isAdmin = user.role === 'ADMIN';
 
-    // Verify user has access to this audit
+    // Verify user has access to this audit (owner or admin)
     const audit = await this.prisma.audit.findFirst({
-      where: {
-        id: auditId,
-        OR: [
-          { userId: user.id },
-          ...(user.role === 'ADMIN' ? [{}] : []),
-        ],
-      },
+      where: isAdmin
+        ? { id: auditId }
+        : { id: auditId, userId: user.id },
     });
 
-    // Check plan allows export
     if (!audit) {
       return res.status(404).json({ message: 'Audit not found' });
     }
 
-    const sub = await this.prisma.subscription.findUnique({
-      where: { userId: user.id },
-      include: { plan: true },
-    });
-
-    if (user.role !== 'ADMIN' && user.role !== 'PREMIUM' && !sub?.plan?.hasExport) {
-      return res.status(403).json({ message: 'PDF export requires PRO or PREMIUM plan' });
+    // PRO / PREMIUM / ADMIN can export; for PUBLIC users check subscription plan
+    const canExport = ['ADMIN', 'PREMIUM', 'PRO'].includes(user.role);
+    if (!canExport) {
+      // Check if subscription plan explicitly grants export
+      const sub = await this.prisma.subscription.findUnique({
+        where: { userId: user.id },
+        include: { plan: true },
+      });
+      if (!sub?.plan?.hasExport) {
+        return res.status(403).json({ message: 'PDF export requires PRO or PREMIUM plan' });
+      }
     }
 
-    const pdf = await this.reportService.generatePdf(auditId);
-    const domain = audit.domain.replace(/[^a-z0-9]/gi, '_');
-    const filename = `dlmetrix_${domain}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    try {
+      const pdf = await this.reportService.generatePdf(auditId);
+      const domain   = audit.domain.replace(/[^a-z0-9]/gi, '_');
+      const filename = `dlmetrix_${domain}_${new Date().toISOString().slice(0, 10)}.pdf`;
 
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${filename}"`,
-      'Content-Length': pdf.length,
-    });
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': pdf.length,
+      });
 
-    res.send(pdf);
+      res.send(pdf);
+    } catch (err) {
+      return res.status(500).json({ message: 'PDF generation failed', error: err.message });
+    }
   }
 
   @Get(':id/json')

@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
+import { writeFileSync, mkdirSync } from 'fs';
+import { join } from 'path';
 import { LighthouseAnalyzer } from './analyzers/lighthouse.analyzer';
 import { SeoAnalyzer } from './analyzers/seo.analyzer';
 import { ContentAnalyzer } from './analyzers/content.analyzer';
@@ -7,6 +9,7 @@ import { MetadataAnalyzer } from './analyzers/metadata.analyzer';
 import { LinksAnalyzer } from './analyzers/links.analyzer';
 import { AccessibilityAnalyzer } from './analyzers/accessibility.analyzer';
 import { SecurityAnalyzer } from './analyzers/security.analyzer';
+import { TechAnalyzer } from './analyzers/tech.analyzer';
 import { ScoreCalculator } from './score-calculator';
 import { AuditResult } from '@dlmetrix/shared';
 
@@ -24,6 +27,7 @@ export class AuditEngineService {
     private links: LinksAnalyzer,
     private accessibility: AccessibilityAnalyzer,
     private security: SecurityAnalyzer,
+    private tech: TechAnalyzer,
     private scorer: ScoreCalculator,
   ) {}
 
@@ -63,6 +67,7 @@ export class AuditEngineService {
 
       let httpStatus = 200;
       let redirectChain: string[] = [];
+      let responseHeaders: Record<string, string> = {};
 
       const response = await page.goto(url, {
         waitUntil: 'networkidle2',
@@ -74,6 +79,7 @@ export class AuditEngineService {
       if (response) {
         httpStatus = response.status();
         redirectChain = response.request().redirectChain().map(r => r.url());
+        responseHeaders = response.headers();
       }
 
       onProgress('fetching', 20, 'Page loaded, extracting HTML...');
@@ -82,13 +88,14 @@ export class AuditEngineService {
       const pageUrl = page.url(); // final URL after redirects
 
       // ── Screenshot ───────────────────────────────
+      const uploadsDir = join(process.cwd(), 'uploads');
+      mkdirSync(uploadsDir, { recursive: true });
+
       let screenshot: string | undefined;
       try {
         const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 70 });
         screenshot = `screenshot_${auditId}.jpg`;
-        const { writeFileSync, mkdirSync } = require('fs');
-        mkdirSync('./uploads', { recursive: true });
-        writeFileSync(`./uploads/${screenshot}`, screenshotBuffer);
+        writeFileSync(join(uploadsDir, screenshot), screenshotBuffer);
       } catch (e) {
         this.logger.warn('Screenshot failed: ' + e.message);
       }
@@ -137,9 +144,7 @@ export class AuditEngineService {
         await mobilePage.goto(pageUrl, { waitUntil: 'networkidle2', timeout: 20000 });
         const mobileBuffer = await mobilePage.screenshot({ type: 'jpeg', quality: 70 });
         mobileScreenshot = `screenshot_mobile_${auditId}.jpg`;
-        const { writeFileSync: wfs, mkdirSync: mds } = require('fs');
-        mds('./uploads', { recursive: true });
-        wfs(`./uploads/${mobileScreenshot}`, mobileBuffer);
+        writeFileSync(join(uploadsDir, mobileScreenshot), mobileBuffer);
         await mobilePage.close();
       } catch (e) {
         this.logger.warn('Mobile screenshot failed: ' + e.message);
@@ -175,8 +180,11 @@ export class AuditEngineService {
       onProgress('links', 78, 'Scanning internal and external links...');
       const linksData = await this.links.analyze(html, pageUrl);
 
+      // ── Tech Stack ────────────────────────────────
+      onProgress('security', 88, 'Detecting technology stack...');
+      const techStack = await this.tech.analyze(html, responseHeaders);
+
       // ── Accessibility ─────────────────────────────
-      onProgress('accessibility', 88, 'Checking accessibility compliance...');
       const accessibilityData = await this.accessibility.analyze(page, html);
 
       // ── Security ──────────────────────────────────
@@ -218,6 +226,7 @@ export class AuditEngineService {
           httpStatus,
           redirectChain,
         },
+        techStack,
         performance: performanceData,
         seo: seoData,
         content: {

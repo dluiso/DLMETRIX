@@ -10,6 +10,7 @@ import { LinksAnalyzer } from './analyzers/links.analyzer';
 import { AccessibilityAnalyzer } from './analyzers/accessibility.analyzer';
 import { SecurityAnalyzer } from './analyzers/security.analyzer';
 import { ScoreCalculator } from './score-calculator';
+import { TechAnalyzer } from './analyzers/tech.analyzer';
 import { ReportService } from './report.service';
 import { ReportsController } from './reports.controller';
 import { WebsocketsModule } from '../websockets/websockets.module';
@@ -31,6 +32,7 @@ import { WebsocketsModule } from '../websockets/websockets.module';
     AccessibilityAnalyzer,
     SecurityAnalyzer,
     ScoreCalculator,
+    TechAnalyzer,
     ReportService,
   ],
   exports: [AuditEngineService, ReportService],

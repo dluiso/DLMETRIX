@@ -18,6 +18,7 @@ import { WaterfallChart } from './waterfall-chart';
 import { SeoDetailPanel } from './seo-detail';
 import { ContentDetailPanel } from './content-detail';
 import { LinksDetailPanel } from './links-detail';
+import { TechStackPanel } from './tech-stack';
 import { Button } from '@/components/ui/button';
 import { Download, RefreshCw, Share2, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -89,8 +90,9 @@ export function AuditResults({ audit }: Props) {
     router.push(`/?url=${encodeURIComponent(audit.url)}`);
   };
 
-  const scoreInfo = getScoreLabel(audit.overallScore);
+  const scoreInfo   = getScoreLabel(audit.overallScore);
   const letterGrade = getLetterGrade(audit.overallScore);
+  const apiBase     = (process.env.NEXT_PUBLIC_API_URL ?? '').replace('/api/v1', '');
 
   const radarData = audit.categories.map((c) => ({
     subject: t(`categories.${c.category}` as any),
@@ -189,6 +191,62 @@ export function AuditResults({ audit }: Props) {
         </div>
       </div>
 
+      {/* Page Details + Tech Stack */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {audit.metadata && (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border p-6">
+            <h3 className="font-semibold mb-4">Page Details</h3>
+            <dl className="grid grid-cols-2 gap-4">
+              {audit.metadata.loadTime && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">Load Time</dt>
+                  <dd className="font-semibold">{(audit.metadata.loadTime / 1000).toFixed(2)}s</dd>
+                </div>
+              )}
+              {audit.metadata.pageSize && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">Page Size</dt>
+                  <dd className="font-semibold">{(audit.metadata.pageSize / 1024).toFixed(0)} KB</dd>
+                </div>
+              )}
+              {audit.metadata.httpStatus && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">HTTP Status</dt>
+                  <dd className="font-semibold">{audit.metadata.httpStatus}</dd>
+                </div>
+              )}
+              {audit.metadata.redirectChain && audit.metadata.redirectChain.length > 0 && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">Redirects</dt>
+                  <dd className="font-semibold">{audit.metadata.redirectChain.length}</dd>
+                </div>
+              )}
+              {audit.metadata?.domainAge != null && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">Domain Age</dt>
+                  <dd className="font-semibold">
+                    {audit.metadata.domainAge >= 365
+                      ? `${Math.floor(audit.metadata.domainAge / 365)}y ${Math.floor((audit.metadata.domainAge % 365) / 30)}m`
+                      : `${audit.metadata.domainAge} days`}
+                  </dd>
+                </div>
+              )}
+              {audit.metadata.description && (
+                <div className="col-span-2">
+                  <dt className="text-xs text-muted-foreground">Meta Description</dt>
+                  <dd className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 mt-0.5">
+                    {audit.metadata.description}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </div>
+        )}
+        {audit.techStack && audit.techStack.length > 0 && (
+          <TechStackPanel techStack={audit.techStack} />
+        )}
+      </div>
+
       {/* Category cards */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Category Scores</h3>
@@ -237,7 +295,7 @@ export function AuditResults({ audit }: Props) {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Desktop (1280px)</p>
                 <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/uploads/${audit.metadata.screenshot}`}
+                  src={`${apiBase}/uploads/${audit.metadata.screenshot}`}
                   alt="Desktop screenshot"
                   className="w-full rounded-xl border shadow-sm object-cover"
                   loading="lazy"
@@ -248,7 +306,7 @@ export function AuditResults({ audit }: Props) {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Mobile (390px)</p>
                 <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/uploads/${audit.metadata.mobileScreenshot}`}
+                  src={`${apiBase}/uploads/${audit.metadata.mobileScreenshot}`}
                   alt="Mobile screenshot"
                   className="w-full rounded-xl border shadow-sm object-cover"
                   loading="lazy"
@@ -295,48 +353,6 @@ export function AuditResults({ audit }: Props) {
         </div>
       </div>
 
-      {/* Metadata summary */}
-      {audit.metadata && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border p-6">
-          <h3 className="font-semibold mb-4">Page Details</h3>
-          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {audit.metadata.loadTime && (
-              <div>
-                <dt className="text-xs text-muted-foreground">Load Time</dt>
-                <dd className="font-semibold">{(audit.metadata.loadTime / 1000).toFixed(2)}s</dd>
-              </div>
-            )}
-            {audit.metadata.pageSize && (
-              <div>
-                <dt className="text-xs text-muted-foreground">Page Size</dt>
-                <dd className="font-semibold">{(audit.metadata.pageSize / 1024).toFixed(0)} KB</dd>
-              </div>
-            )}
-            {audit.metadata.httpStatus && (
-              <div>
-                <dt className="text-xs text-muted-foreground">HTTP Status</dt>
-                <dd className="font-semibold">{audit.metadata.httpStatus}</dd>
-              </div>
-            )}
-            {audit.metadata.redirectChain && audit.metadata.redirectChain.length > 0 && (
-              <div>
-                <dt className="text-xs text-muted-foreground">Redirects</dt>
-                <dd className="font-semibold">{audit.metadata.redirectChain.length}</dd>
-              </div>
-            )}
-            {audit.metadata?.domainAge != null && (
-              <div>
-                <dt className="text-xs text-muted-foreground">Domain Age</dt>
-                <dd className="font-semibold">
-                  {audit.metadata.domainAge >= 365
-                    ? `${Math.floor(audit.metadata.domainAge / 365)}y ${Math.floor((audit.metadata.domainAge % 365) / 30)}m`
-                    : `${audit.metadata.domainAge} days`}
-                </dd>
-              </div>
-            )}
-          </dl>
-        </div>
-      )}
     </div>
   );
 }

@@ -54,6 +54,16 @@ export type AuditPhase =
   | 'completed'
   | 'failed';
 
+export type TechCategory =
+  | 'CMS' | 'Framework' | 'UI' | 'Analytics' | 'CDN' | 'Hosting'
+  | 'Server' | 'Ecommerce' | 'Library' | 'Payment' | 'Auth'
+  | 'Backend' | 'Marketing';
+
+export interface TechStack {
+  name: string;
+  category: TechCategory;
+}
+
 export interface AuditResult {
   id: string;
   url: string;
@@ -74,6 +84,7 @@ export interface AuditResult {
     redirectChain?: string[];
     technologies?: string[];
   };
+  techStack?: TechStack[];
   performance: PerformanceData;
   seo: SeoData;
   content?: ContentData;
@@ -170,10 +181,20 @@ export interface SecurityData {
   vulnerableDeps?: string[];
 }
 
+export interface LinkEntry {
+  url: string;
+  text: string;
+  type: 'internal' | 'external';
+  nofollow: boolean;
+  broken?: boolean;
+  status?: number;
+}
+
 export interface LinksData {
   internalLinks?: number;
   externalLinks?: number;
   brokenLinks?: { url: string; status: number }[];
+  allLinks?: LinkEntry[];
   redirects?: number;
   nofollow?: number;
 }

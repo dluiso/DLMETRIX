@@ -48,9 +48,10 @@ async function bootstrap() {
     }),
   );
 
-  // ── Static files (reports, screenshots) ──────────────
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
-  app.useStaticAssets(join(__dirname, '..', 'reports'), { prefix: '/reports' });
+  // ── Static files (screenshots) ────────────────────────
+  // process.cwd() siempre apunta a apps/api/ independientemente de si se corre
+  // con ts-node-dev (dev) o desde dist/ (prod), evitando el problema de __dirname
+  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
 
   // ── Swagger (dev only) ───────────────────────────────
   if (isDev) {

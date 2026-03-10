@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as cheerio from 'cheerio';
-import { LinksData } from '@dlmetrix/shared';
+import { LinksData, LinkEntry } from '@dlmetrix/shared';
 import { URL } from 'url';
 
 @Injectable()
@@ -14,38 +14,44 @@ export class LinksAnalyzer {
     let internalLinks = 0;
     let externalLinks = 0;
     let nofollow = 0;
-    const allLinks: { url: string; rel: string }[] = [];
+    const allLinks: LinkEntry[] = [];
+    const externalUrls: string[] = [];
 
     $('a[href]').each((_, el) => {
       const href = $(el).attr('href')?.trim() || '';
-      const rel = $(el).attr('rel') || '';
+      const rel  = $(el).attr('rel') || '';
+      const text = $(el).text().trim().substring(0, 120);
 
       if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) {
         return;
       }
 
       try {
-        const resolved = new URL(href, pageUrl);
+        const resolved  = new URL(href, pageUrl);
+        const isInternal = resolved.hostname === base.hostname;
+        const isNofollow = rel.includes('nofollow');
 
-        if (resolved.hostname === base.hostname) {
-          internalLinks++;
-        } else {
-          externalLinks++;
-        }
+        if (isInternal) internalLinks++;
+        else            externalLinks++;
+        if (isNofollow) nofollow++;
 
-        if (rel.includes('nofollow')) nofollow++;
-        allLinks.push({ url: resolved.href, rel });
+        allLinks.push({
+          url:      resolved.href,
+          text:     text || resolved.pathname,
+          type:     isInternal ? 'internal' : 'external',
+          nofollow: isNofollow,
+        });
+
+        if (!isInternal) externalUrls.push(resolved.href);
       } catch {}
     });
 
-    // Check broken links (sample, max 10 external links to avoid timeout)
+    // Check broken links (sample up to 15 external links to avoid long timeouts)
     const brokenLinks: { url: string; status: number }[] = [];
-    const sampleLinks = allLinks
-      .filter(l => !l.url.includes(base.hostname))
-      .slice(0, 10);
+    const sampleExternal = externalUrls.slice(0, 15);
 
     await Promise.allSettled(
-      sampleLinks.map(async ({ url }) => {
+      sampleExternal.map(async (url) => {
         try {
           const res = await fetch(url, {
             method: 'HEAD',
@@ -54,9 +60,13 @@ export class LinksAnalyzer {
           });
           if (res.status >= 400) {
             brokenLinks.push({ url, status: res.status });
+            const entry = allLinks.find(l => l.url === url);
+            if (entry) { entry.broken = true; entry.status = res.status; }
           }
         } catch {
           brokenLinks.push({ url, status: 0 });
+          const entry = allLinks.find(l => l.url === url);
+          if (entry) { entry.broken = true; entry.status = 0; }
         }
       }),
     );
@@ -65,6 +75,7 @@ export class LinksAnalyzer {
       internalLinks,
       externalLinks,
       brokenLinks,
+      allLinks,
       nofollow,
     };
   }
