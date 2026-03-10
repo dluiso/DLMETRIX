@@ -43,8 +43,9 @@ export function AuditResults({ audit }: Props) {
   const { user } = useAuthStore();
   const userRole = user?.role;
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [copied, setCopied]       = useState(false);
+  const [copied, setCopied]         = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfError, setPdfError]     = useState<string | null>(null);
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -65,13 +66,18 @@ export function AuditResults({ audit }: Props) {
 
   const handleExportPdf = async () => {
     setPdfLoading(true);
+    setPdfError(null);
     try {
       const token = localStorage.getItem('accessToken');
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/reports/${audit.id}/pdf`,
         { headers: token ? { Authorization: `Bearer ${token}` } : {} },
       );
-      if (!res.ok) throw new Error('PDF export failed');
+      if (!res.ok) {
+        let msg = `Error ${res.status}`;
+        try { const j = await res.json(); msg = j.error || j.message || msg; } catch {}
+        throw new Error(msg);
+      }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -79,8 +85,8 @@ export function AuditResults({ audit }: Props) {
       a.download = `dlmetrix-audit-${audit.domain}-${audit.id.slice(0, 8)}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      setPdfError(e?.message || 'PDF export failed');
     } finally {
       setPdfLoading(false);
     }
@@ -134,6 +140,9 @@ export function AuditResults({ audit }: Props) {
             <RefreshCw className="h-4 w-4 mr-2" /> Re-analyze
           </Button>
         </div>
+        {pdfError && (
+          <p className="w-full text-xs text-red-500 mt-1 text-right">{pdfError}</p>
+        )}
       </div>
 
       {/* Overall score + radar */}

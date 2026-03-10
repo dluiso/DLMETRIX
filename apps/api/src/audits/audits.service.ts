@@ -206,19 +206,43 @@ export class AuditsService {
     return [headers.join(','), ...rows].join('\n');
   }
 
-  async compareDomains(domain1: string, domain2: string, userId?: string) {
-    const getLatest = (domain: string) =>
+  async compareDomains(domain1: string, domain2: string, userId?: string, userRole?: string) {
+    const isAdmin = userRole === 'ADMIN';
+
+    // Normaliza: quita protocolo y www. para matching flexible
+    const normalizeDomain = (d: string): string => {
+      try {
+        const withProto = d.startsWith('http') ? d : `https://${d}`;
+        return new URL(withProto).hostname.replace(/^www\./, '');
+      } catch {
+        return d.replace(/^www\./, '');
+      }
+    };
+
+    const nd1 = normalizeDomain(domain1);
+    const nd2 = normalizeDomain(domain2);
+
+    const getLatest = (normalizedDomain: string) =>
       this.prisma.audit.findFirst({
-        where: { domain, status: 'COMPLETED', ...(userId ? { userId } : {}) },
+        where: {
+          OR: [
+            { domain: normalizedDomain },
+            { domain: `www.${normalizedDomain}` },
+          ],
+          status: 'COMPLETED',
+          // Admin compara cualquier auditoría; el resto solo las propias
+          ...(!isAdmin && userId ? { userId } : {}),
+        },
         orderBy: { createdAt: 'desc' },
         select: {
           id: true, domain: true, overallScore: true,
           performanceScore: true, seoScore: true, accessibilityScore: true,
-          securityScore: true, contentScore: true, createdAt: true,
+          securityScore: true, contentScore: true, metadataScore: true,
+          linksScore: true, createdAt: true,
         },
       });
 
-    const [a, b] = await Promise.all([getLatest(domain1), getLatest(domain2)]);
+    const [a, b] = await Promise.all([getLatest(nd1), getLatest(nd2)]);
     return { domain1: a, domain2: b };
   }
 }

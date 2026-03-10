@@ -54,15 +54,13 @@ export class ReportsController {
       const domain   = audit.domain.replace(/[^a-z0-9]/gi, '_');
       const filename = `dlmetrix_${domain}_${new Date().toISOString().slice(0, 10)}.pdf`;
 
-      res.set({
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': pdf.length,
-      });
-
-      res.send(pdf);
+      // No setear Content-Length manualmente (puede corromper si el tamaño difiere)
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.end(pdf);
     } catch (err) {
-      return res.status(500).json({ message: 'PDF generation failed', error: err.message });
+      const message = err?.message || 'PDF generation failed';
+      return res.status(500).json({ message: 'PDF generation failed', error: message });
     }
   }
 

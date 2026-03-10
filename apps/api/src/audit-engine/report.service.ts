@@ -23,13 +23,14 @@ export class ReportService {
     let browser: puppeteer.Browser | null = null;
     try {
       browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+        headless: process.env.PUPPETEER_HEADLESS !== 'false',
         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
       });
 
       const page = await browser.newPage();
-      await page.setContent(html, { waitUntil: 'networkidle0' });
+      // domcontentloaded es más fiable que networkidle0 para HTML auto-contenido
+      await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 15000 });
       await page.emulateMediaType('print');
 
       const pdf = await page.pdf({
@@ -40,7 +41,7 @@ export class ReportService {
 
       return Buffer.from(pdf);
     } finally {
-      await browser?.close();
+      await browser?.close().catch(() => {});
     }
   }
 

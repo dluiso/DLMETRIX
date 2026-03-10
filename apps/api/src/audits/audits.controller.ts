@@ -82,7 +82,7 @@ export class AuditsController {
     @Query('domain1') domain1: string,
     @Query('domain2') domain2: string,
   ) {
-    return this.auditsService.compareDomains(domain1, domain2, user.id);
+    return this.auditsService.compareDomains(domain1, domain2, user.id, user.role);
   }
 
   @Get(':id')

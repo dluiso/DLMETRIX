@@ -46,14 +46,20 @@ export default function ComparePage() {
     setLoading(true);
     try {
       const data = await api.get<any>(`/audits/compare?domain1=${encodeURIComponent(domain1)}&domain2=${encodeURIComponent(domain2)}`);
-      if (!data.domain1 || !data.domain2) {
-        setError('No completed audits found for one or both domains. Run an audit for each domain first.');
+      if (!data.domain1 && !data.domain2) {
+        setError('No completed audits found for either domain. Run an audit for each domain first.');
+        setResult(null);
+      } else if (!data.domain1) {
+        setError(`No completed audit found for "${domain1}". Run an audit for this domain first.`);
+        setResult(null);
+      } else if (!data.domain2) {
+        setError(`No completed audit found for "${domain2}". Run an audit for this domain first.`);
         setResult(null);
       } else {
         setResult(data);
       }
-    } catch {
-      setError('Comparison failed. Please try again.');
+    } catch (e: any) {
+      setError(e?.message || 'Comparison failed. Please try again.');
     } finally { setLoading(false); }
   };
 
