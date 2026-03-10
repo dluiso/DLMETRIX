@@ -68,7 +68,7 @@ export function AuditResults({ audit }: Props) {
     setPdfLoading(true);
     setPdfError(null);
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem('access_token');
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/reports/${audit.id}/pdf`,
         { headers: token ? { Authorization: `Bearer ${token}` } : {} },
