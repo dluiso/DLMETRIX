@@ -66,6 +66,8 @@ export interface AuditResult {
     description?: string;
     favicon?: string;
     screenshot?: string;
+    mobileScreenshot?: string;
+    domainAge?: number;          // days since domain registration (from RDAP)
     loadTime?: number;
     pageSize?: number;
     httpStatus?: number;
@@ -74,6 +76,7 @@ export interface AuditResult {
   };
   performance: PerformanceData;
   seo: SeoData;
+  content?: ContentData;
   accessibility: AccessibilityData;
   security: SecurityData;
   links: LinksData;
@@ -173,4 +176,15 @@ export interface LinksData {
   brokenLinks?: { url: string; status: number }[];
   redirects?: number;
   nofollow?: number;
+}
+
+export interface ContentData {
+  wordCount?: number;
+  readabilityScore?: number;     // 0-100
+  keywordDensity?: { keyword: string; count: number; density: number }[];
+  paragraphCount?: number;
+  avgSentenceLength?: number;
+  hasStructuredContent?: boolean;
+  textToHtmlRatio?: number;      // %
+  contentLength?: 'thin' | 'adequate' | 'rich';
 }

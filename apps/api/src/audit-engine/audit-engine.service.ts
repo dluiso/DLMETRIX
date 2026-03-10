@@ -128,6 +128,45 @@ export class AuditEngineService {
       onProgress('content', 60, 'Analyzing content structure...');
       const contentData = await this.content.analyze(html, pageUrl);
 
+      // ── Mobile Screenshot ─────────────────────────
+      let mobileScreenshot: string | undefined;
+      try {
+        const mobilePage = await browser.newPage();
+        await mobilePage.setViewport({ width: 390, height: 844, isMobile: true, deviceScaleFactor: 2 });
+        await mobilePage.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1');
+        await mobilePage.goto(pageUrl, { waitUntil: 'networkidle2', timeout: 20000 });
+        const mobileBuffer = await mobilePage.screenshot({ type: 'jpeg', quality: 70 });
+        mobileScreenshot = `screenshot_mobile_${auditId}.jpg`;
+        const { writeFileSync: wfs, mkdirSync: mds } = require('fs');
+        mds('./uploads', { recursive: true });
+        wfs(`./uploads/${mobileScreenshot}`, mobileBuffer);
+        await mobilePage.close();
+      } catch (e) {
+        this.logger.warn('Mobile screenshot failed: ' + e.message);
+      }
+
+      // ── Domain Age (RDAP) ─────────────────────────
+      let domainAge: number | undefined;
+      try {
+        const domain = new URL(pageUrl).hostname.replace(/^www\./, '');
+        const rdapRes = await fetch(`https://rdap.org/domain/${domain}`, {
+          signal: AbortSignal.timeout(5000),
+          headers: { 'Accept': 'application/json' },
+        });
+        if (rdapRes.ok) {
+          const rdapData = await rdapRes.json();
+          const events: any[] = rdapData.events || [];
+          const registration = events.find((e: any) => e.eventAction === 'registration');
+          if (registration?.eventDate) {
+            const regDate = new Date(registration.eventDate);
+            const now = new Date();
+            domainAge = Math.floor((now.getTime() - regDate.getTime()) / (1000 * 60 * 60 * 24));
+          }
+        }
+      } catch (e) {
+        this.logger.warn('Domain age lookup failed: ' + e.message);
+      }
+
       // ── Metadata ──────────────────────────────────
       onProgress('metadata', 68, 'Checking metadata and structured data...');
       const metadataData = await this.metadata.analyze(html, pageUrl);
@@ -172,6 +211,8 @@ export class AuditEngineService {
           title: seoData.title,
           description: seoData.metaDescription,
           screenshot,
+          mobileScreenshot,
+          domainAge,
           loadTime: performanceData.fcp,
           pageSize,
           httpStatus,
@@ -179,6 +220,16 @@ export class AuditEngineService {
         },
         performance: performanceData,
         seo: seoData,
+        content: {
+          wordCount: contentData.wordCount,
+          readabilityScore: contentData.readabilityScore,
+          keywordDensity: contentData.keywordDensity,
+          paragraphCount: contentData.paragraphCount,
+          avgSentenceLength: contentData.avgSentenceLength,
+          hasStructuredContent: contentData.hasStructuredContent,
+          textToHtmlRatio: contentData.textToHtmlRatio,
+          contentLength: contentData.contentLength,
+        },
         accessibility: accessibilityData,
         security: securityData,
         links: linksData,

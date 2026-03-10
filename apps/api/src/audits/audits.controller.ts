@@ -7,6 +7,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger'
 import { AuditsService } from './audits.service';
 import { CreateAuditDto } from './dto/create-audit.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Request } from 'express';
 
@@ -16,13 +17,13 @@ export class AuditsController {
   constructor(private auditsService: AuditsService) {}
 
   @Post()
+  @UseGuards(OptionalJwtAuthGuard)
   @ApiOperation({ summary: 'Create a new audit (public or authenticated)' })
   async createAudit(
     @Body() dto: CreateAuditDto,
+    @CurrentUser() user: any,
     @Req() req: Request,
   ) {
-    // Try to extract user from token if present (optional auth)
-    const user = (req as any).user;
     const ipAddress =
       (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
       req.socket?.remoteAddress;

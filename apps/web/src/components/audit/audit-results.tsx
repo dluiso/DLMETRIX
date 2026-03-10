@@ -15,10 +15,14 @@ import { CoreWebVitals } from './core-web-vitals';
 import { BrowserTimings } from './browser-timings';
 import { ResourceBreakdown } from './resource-breakdown';
 import { WaterfallChart } from './waterfall-chart';
+import { SeoDetailPanel } from './seo-detail';
+import { ContentDetailPanel } from './content-detail';
+import { LinksDetailPanel } from './links-detail';
 import { Button } from '@/components/ui/button';
 import { Download, RefreshCw, Share2, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth.store';
 
 interface Props {
   audit: AuditResult;
@@ -35,6 +39,8 @@ function getLetterGrade(score: number): { grade: string; color: string } {
 export function AuditResults({ audit }: Props) {
   const t = useTranslations('audit');
   const router = useRouter();
+  const { user } = useAuthStore();
+  const userRole = user?.role;
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [copied, setCopied]       = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -222,6 +228,52 @@ export function AuditResults({ audit }: Props) {
         <WaterfallChart requests={audit.performance.networkRequests} />
       )}
 
+      {/* Screenshots */}
+      {(audit.metadata?.screenshot || audit.metadata?.mobileScreenshot) && (
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border p-6">
+          <h3 className="font-semibold mb-4">Page Screenshots</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {audit.metadata.screenshot && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Desktop (1280px)</p>
+                <img
+                  src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/uploads/${audit.metadata.screenshot}`}
+                  alt="Desktop screenshot"
+                  className="w-full rounded-xl border shadow-sm object-cover"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            {audit.metadata.mobileScreenshot && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Mobile (390px)</p>
+                <img
+                  src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/uploads/${audit.metadata.mobileScreenshot}`}
+                  alt="Mobile screenshot"
+                  className="w-full rounded-xl border shadow-sm object-cover"
+                  loading="lazy"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* SEO Detail */}
+      {audit.seo && (
+        <SeoDetailPanel seo={audit.seo} userRole={userRole} />
+      )}
+
+      {/* Content Detail */}
+      {audit.content && (
+        <ContentDetailPanel content={audit.content} userRole={userRole} />
+      )}
+
+      {/* Links Detail */}
+      {audit.links && (
+        <LinksDetailPanel links={audit.links} userRole={userRole} />
+      )}
+
       {/* Issues list */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border">
         <div className="px-6 py-4 border-b flex items-center justify-between">
@@ -270,6 +322,16 @@ export function AuditResults({ audit }: Props) {
               <div>
                 <dt className="text-xs text-muted-foreground">Redirects</dt>
                 <dd className="font-semibold">{audit.metadata.redirectChain.length}</dd>
+              </div>
+            )}
+            {audit.metadata?.domainAge != null && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Domain Age</dt>
+                <dd className="font-semibold">
+                  {audit.metadata.domainAge >= 365
+                    ? `${Math.floor(audit.metadata.domainAge / 365)}y ${Math.floor((audit.metadata.domainAge % 365) / 30)}m`
+                    : `${audit.metadata.domainAge} days`}
+                </dd>
               </div>
             )}
           </dl>
