@@ -50,6 +50,11 @@ export class AdminController {
     return this.adminService.getAllAudits(+page, +limit);
   }
 
+  @Get('payments/chart')
+  getRevenueChart(@Query('months') months = 8) {
+    return this.adminService.getMonthlyRevenueChart(+months);
+  }
+
   @Get('logs')
   getLogs(@Query('page') page = 1, @Query('limit') limit = 50) {
     return this.adminService.getActivityLogs(+page, +limit);

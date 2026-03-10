@@ -18,36 +18,25 @@ const STATUS_COLOR: Record<string, string> = {
   CANCELLED: 'bg-gray-100 text-gray-600',
 };
 
-// Generate mock revenue chart data
-const mockRevenueData = () =>
-  Array.from({ length: 8 }, (_, i) => {
-    const d = new Date();
-    d.setMonth(d.getMonth() - (7 - i));
-    return {
-      month: d.toLocaleDateString('en', { month: 'short', year: '2-digit' }),
-      revenue: Math.floor(Math.random() * 1500) + 300,
-    };
-  });
-
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [total, setTotal]       = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [page, setPage]         = useState(1);
   const [loading, setLoading]   = useState(true);
-  const [chartData]             = useState(mockRevenueData);
+  const [chartData, setChartData] = useState<{ month: string; revenue: number }[]>([]);
   const limit = 20;
 
   const load = async () => {
     setLoading(true);
     try {
-      // Fetch admin stats for total revenue
-      const stats = await api.get<any>('/admin/stats');
+      const [stats, chart, data] = await Promise.all([
+        api.get<any>('/admin/stats'),
+        api.get<{ month: string; revenue: number }[]>('/admin/payments/chart'),
+        api.get<any[]>('/payments/history'),
+      ]);
       setTotalRevenue(Number(stats.totalRevenue) || 0);
-
-      // For payments we'd need a dedicated admin endpoint
-      // Using the user's own as fallback for now
-      const data = await api.get<any[]>('/payments/history');
+      setChartData(Array.isArray(chart) ? chart : []);
       const list = Array.isArray(data) ? data : [];
       setPayments(list.slice((page - 1) * limit, page * limit));
       setTotal(list.length);
@@ -92,15 +81,21 @@ export default function AdminPaymentsPage() {
           <TrendingUp className="h-4 w-4 text-brand-600" />
           <h3 className="font-semibold text-sm">Monthly Revenue (8 months)</h3>
         </div>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-            <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `$${v}`} />
-            <Tooltip formatter={(v: any) => [`$${v}`, 'Revenue']} />
-            <Bar dataKey="revenue" fill="#2563eb" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        {chartData.every(d => d.revenue === 0) ? (
+          <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">
+            No revenue recorded yet
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+              <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `$${v}`} />
+              <Tooltip formatter={(v: any) => [`$${v}`, 'Revenue']} />
+              <Bar dataKey="revenue" fill="#2563eb" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* Transactions table */}

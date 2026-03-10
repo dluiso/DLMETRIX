@@ -28,7 +28,8 @@
     "register": "Registrarse",
     "logout": "Cerrar sesión",
     "profile": "Perfil",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "billing": "Facturación"
   },
   "home": {
     "hero": {
@@ -131,7 +132,8 @@
     "newAudit": "Nueva auditoría",
     "noAudits": "Sin auditorías aún. ¡Ejecuta tu primer análisis!",
     "auditLimit": "Límite diario",
-    "auditLimitReached": "Límite diario de auditorías alcanzado. Mejora tu plan para más auditorías."
+    "auditLimitReached": "Límite diario de auditorías alcanzado. Mejora tu plan para más auditorías.",
+    "history": "Historial"
   },
   "plans": {
     "title": "Elige tu plan",

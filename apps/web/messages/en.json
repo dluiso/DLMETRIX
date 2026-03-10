@@ -28,7 +28,8 @@
     "register": "Sign Up",
     "logout": "Logout",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "billing": "Billing"
   },
   "home": {
     "hero": {
@@ -131,7 +132,8 @@
     "newAudit": "New Audit",
     "noAudits": "No audits yet. Run your first analysis!",
     "auditLimit": "Daily limit",
-    "auditLimitReached": "Daily audit limit reached. Upgrade your plan for more audits."
+    "auditLimitReached": "Daily audit limit reached. Upgrade your plan for more audits.",
+    "history": "History"
   },
   "plans": {
     "title": "Choose your plan",

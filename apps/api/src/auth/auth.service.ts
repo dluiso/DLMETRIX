@@ -36,23 +36,25 @@ export class AuthService {
     return result;
   }
 
-  async login(user: any) {
+  async login(user: any, ipAddress?: string) {
     const tokens = await this.generateTokens(user.id, user.email, user.role);
 
-    // Store refresh token
-    await this.prisma.refreshToken.create({
-      data: {
-        token: tokens.refreshToken,
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      },
-    });
-
-    // Update last login
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
-    });
+    await Promise.all([
+      this.prisma.refreshToken.create({
+        data: {
+          token: tokens.refreshToken,
+          userId: user.id,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      }),
+      this.prisma.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() },
+      }),
+      this.prisma.activityLog.create({
+        data: { userId: user.id, action: 'LOGIN', entity: 'User', entityId: user.id, ipAddress },
+      }),
+    ]);
 
     return { user: this.sanitizeUser(user), ...tokens };
   }
@@ -84,7 +86,10 @@ export class AuthService {
       },
     });
 
-    // Send verification email (non-blocking)
+    // Log activity and send verification email (non-blocking)
+    this.prisma.activityLog.create({
+      data: { userId: user.id, action: 'REGISTER', entity: 'User', entityId: user.id },
+    }).catch(() => {});
     this.sendVerificationEmail(user.id, user.email, user.name).catch(() => {});
 
     return { user: this.sanitizeUser(user), ...tokens };

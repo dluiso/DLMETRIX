@@ -27,8 +27,9 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email and password' })
-  async login(@CurrentUser() user: any) {
-    return this.authService.login(user);
+  async login(@CurrentUser() user: any, @Req() req: Request) {
+    const ip = req.ip || req.socket?.remoteAddress;
+    return this.authService.login(user, ip);
   }
 
   @Post('refresh')

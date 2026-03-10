@@ -89,6 +89,20 @@ export class AuditsService {
       data: { jobId: job.id },
     });
 
+    // Log activity (non-blocking)
+    if (user?.id) {
+      this.prisma.activityLog.create({
+        data: {
+          userId: user.id,
+          action: 'AUDIT_CREATED',
+          entity: 'Audit',
+          entityId: audit.id,
+          metadata: { domain, url: normalizedUrl },
+          ipAddress,
+        },
+      }).catch(() => {});
+    }
+
     return {
       auditId: audit.id,
       status: 'pending',

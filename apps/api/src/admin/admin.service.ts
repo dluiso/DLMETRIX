@@ -127,6 +127,35 @@ export class AdminService {
     return result;
   }
 
+  // ── Monthly revenue chart ─────────────────────────────────────────────────
+
+  async getMonthlyRevenueChart(months = 8) {
+    const result: { month: string; revenue: number }[] = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const from = new Date();
+      from.setDate(1);
+      from.setMonth(from.getMonth() - i);
+      from.setHours(0, 0, 0, 0);
+
+      const to = new Date(from);
+      to.setMonth(to.getMonth() + 1);
+      to.setMilliseconds(-1);
+
+      const agg = await this.prisma.payment.aggregate({
+        _sum: { amount: true },
+        where: { status: 'COMPLETED', createdAt: { gte: from, lte: to } },
+      });
+
+      result.push({
+        month: from.toLocaleDateString('en', { month: 'short', year: '2-digit' }),
+        revenue: Number(agg._sum.amount || 0),
+      });
+    }
+
+    return result;
+  }
+
   // ── Activity logs ─────────────────────────────────────────────────────────
 
   async getActivityLogs(page = 1, limit = 50) {
