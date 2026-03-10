@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
 import { Navbar } from '@/components/layout/navbar';
 import { DashboardSidebar } from '@/components/dashboard/sidebar';
@@ -29,16 +28,13 @@ const CATEGORIES = [
 
 export default function ComparePage() {
   const t = useTranslations('nav');
-  const { isAuthenticated, user } = useAuthStore();
-  const router = useRouter();
+  const { user } = useAuthStore();
 
   const [domain1, setDomain1] = useState('');
   const [domain2, setDomain2] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult]   = useState<any>(null);
   const [error, setError]     = useState('');
-
-  if (!isAuthenticated) { router.push('/login'); return null; }
 
   const compare = async () => {
     if (!domain1 || !domain2) return;

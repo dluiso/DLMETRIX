@@ -2,16 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuthStore } from '@/store/auth.store';
 import { Navbar } from '@/components/layout/navbar';
 import { DashboardSidebar } from '@/components/dashboard/sidebar';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { getScoreLabel } from '@dlmetrix/shared';
 import {
-  Search, Filter, Trash2, ExternalLink,
+  Search, Trash2, ExternalLink,
   ChevronLeft, ChevronRight, ArrowUpDown,
   CheckCircle, XCircle, Clock, Loader2, Download,
 } from 'lucide-react';
@@ -30,8 +28,6 @@ const STATUS_CONFIG: Record<string, { icon: any; color: string; label: string }>
 
 export default function HistoryPage() {
   const t = useTranslations('dashboard');
-  const { isAuthenticated } = useAuthStore();
-  const router = useRouter();
 
   const [audits, setAudits]         = useState<any[]>([]);
   const [total, setTotal]           = useState(0);
@@ -47,10 +43,6 @@ export default function HistoryPage() {
 
   const limit = 15;
   const totalPages = Math.ceil(total / limit);
-
-  useEffect(() => {
-    if (!isAuthenticated) { router.push('/login'); return; }
-  }, [isAuthenticated]);
 
   useEffect(() => {
     loadAudits();

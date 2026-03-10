@@ -16,6 +16,8 @@ interface AuthState {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  _hasHydrated: boolean;
+  setHasHydrated: (v: boolean) => void;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string, locale?: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -28,6 +30,8 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isLoading: false,
       isAuthenticated: false,
+      _hasHydrated: false,
+      setHasHydrated: (v) => set({ _hasHydrated: v }),
 
       login: async (email, password) => {
         set({ isLoading: true });
@@ -73,6 +77,9 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'dlmetrix-auth',
       partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     },
   ),
 );

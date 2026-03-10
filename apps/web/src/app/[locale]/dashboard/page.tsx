@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { BarChart3, Plus, TrendingUp, Clock, CheckCircle, Mail, X } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { Button } from '@/components/ui/button';
@@ -14,8 +13,7 @@ import { cn } from '@/lib/utils';
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
-  const { user, isAuthenticated } = useAuthStore();
-  const router = useRouter();
+  const { user } = useAuthStore();
 
   const [stats, setStats] = useState({ total: 0, todayCount: 0, completed: 0, failed: 0, dailyLimit: 10 });
   const [audits, setAudits] = useState<any[]>([]);
@@ -35,12 +33,8 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
     loadDashboard();
-  }, [isAuthenticated]);
+  }, []);
 
   const loadDashboard = async () => {
     try {
@@ -56,8 +50,6 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
-
-  if (!isAuthenticated) return null;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
